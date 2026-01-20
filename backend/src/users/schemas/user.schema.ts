@@ -27,11 +27,22 @@ export class User {
   @Prop({ required: true })
   phone_number: string;
 
-  @Prop({ required: true, select: false })
+  @Prop({
+    required: true,
+    //  select: false
+  })
   password: string;
 
   @Prop()
   avatar: string;
+
+  @Prop({
+    type: String,
+    enum: UserRole,
+    default: UserRole.USER,
+    required: true,
+  })
+  role: UserRole;
 
   @Prop({
     type: String,
