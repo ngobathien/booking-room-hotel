@@ -24,6 +24,7 @@ const Register = () => {
 
       console.log("Registration successful:", response);
       setMessage("Đăng ký thành công! Vui lòng đăng nhập.");
+
       toast.success(
         "Đăng ký thành công! Vui lòng kiểm tra email để xác minh tài khoản.",
       );
@@ -34,75 +35,103 @@ const Register = () => {
     }
     setLoading(false); // 2. Kết thúc loading
   };
+
   return (
-    <div className="">
-      <h2 className="">Đăng ký</h2>
-      <form onSubmit={handleRegister}>
-        {/* full_name */}
-        <input
-          id="name"
-          type="text"
-          placeholder="Họ và Tên"
-          // className="w-full px-4 py-2 border rounded mb-3"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          disabled={loading} // Vô hiệu hóa khi đang loading
-        />
-        <br />
-        {/* email */}
-        <input
-          id="email"
-          type="email"
-          placeholder="Email"
-          // className="w-full px-4 py-2 border rounded mb-3"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          disabled={loading} // Vô hiệu hóa khi đang loading
-        />
-        <br />
-        {/* password */}
-        <input
-          id="password"
-          type="password"
-          placeholder="Mật khẩu"
-          // className="w-full px-4 py-2 border rounded mb-3"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          disabled={loading} // Vô hiệu hóa khi đang loading
-        />
-        <br />
-        <button
-          id="registerBtn"
-          type="submit"
-          // className={`w-full text-white py-2 rounded transition duration-150 ${
-          //   loading
-          //     ? "bg-gray-400 cursor-not-allowed"
-          //     : "bg-green-500 hover:bg-green-600"
-          // }`}
-          disabled={loading} // Vô hiệu hóa nút khi đang loading
-        >
-          {loading ? (
-            // Hiển thị hiệu ứng loading xoay tròn
-            <div className="flex items-center justify-center">
-              <BeatLoader size={8} color={"#ffffff"} loading={loading} />
+    <>
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+            Đăng ký tài khoản
+          </h2>
+
+          {/* form đăng ký */}
+          <form onSubmit={handleRegister} className="space-y-4">
+            {/* full_name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Họ và Tên
+              </label>
+              {/*  */}
+              <input
+                id="name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                disabled={loading} // Vô hiệu hóa khi đang loading
+                type="text"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                placeholder="Họ và Tên"
+              />
             </div>
-          ) : (
-            // Nội dung nút bình thường
-            "Đăng ký"
-          )}
-        </button>
-      </form>
 
-      {message && <p className="text-center mt-3 text-red-500">{message}</p>}
+            {/* email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
+              {/*  */}
+              <input
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading} // Vô hiệu hóa khi đang loading
+                type="email"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                placeholder="your@email.com"
+              />
+            </div>
 
-      <p className="text-center mt-3 text-sm">
-        Đã có tài khoản? {/* chuyển hướng sang login */}
-        <Link to="/login" className="text-blue-500">
-          Đăng nhập
-        </Link>
-      </p>
-      <ToastContainer position="top-right" autoClose={3000} />
-    </div>
+            {/* password */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Mật khẩu
+              </label>
+              {/*  */}
+              <input
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading} // Vô hiệu hóa khi đang loading
+                type="password"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                placeholder="••••••••"
+              />
+            </div>
+
+            {/* nút đăng ký */}
+            <button
+              id="registerBtn"
+              type="submit"
+              className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-colors cursor-pointer
+                  // nút khi đang loading
+                  ${loading ? "bg-gray-600 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"}`}
+              disabled={loading} // Vô hiệu hóa nút khi đang loading
+            >
+              {loading ? (
+                // Hiển thị hiệu ứng loading xoay tròn
+                <div className="flex items-center justify-center">
+                  <BeatLoader size={8} color={"#ffffff"} loading={loading} />
+                </div>
+              ) : (
+                // Nội dung nút bình thường
+                "Đăng ký"
+              )}
+            </button>
+          </form>
+
+          {/*  */}
+          <div className="mt-6 text-center text-sm text-gray-600">
+            Đã có tài khoản? {/* chuyển hướng sang login */}
+            <Link
+              to="/login"
+              className="text-indigo-600 hover:text-indigo-500 font-medium"
+            >
+              Đăng nhập
+            </Link>
+          </div>
+        </div>
+      </div>
+      <ToastContainer position="top-right" autoClose={3000} />;
+    </>
   );
 };
 

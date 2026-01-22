@@ -7,6 +7,11 @@ const auth = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+interface RegisterData {
+  email: string;
+  password: string;
+}
+
 interface LoginData {
   email: string;
   password: string;
@@ -14,7 +19,7 @@ interface LoginData {
 
 // Đăng ký
 
-export const register = async (userData: any) => {
+export const register = async (userData: RegisterData) => {
   try {
     const response = await api.post("/auth/register", userData);
     console.log("response", response);
@@ -27,9 +32,11 @@ export const register = async (userData: any) => {
 
 // Đăng nhập
 
-export const login = async (userData: any) => {
+export const loginApi = async (userData: LoginData) => {
   try {
     const response = await api.post("/auth/login", userData);
+    // console.log("response", response);
+    // console.log("response data", response.data);
     return response.data;
   } catch (error) {
     console.error("Error during login:", error);
