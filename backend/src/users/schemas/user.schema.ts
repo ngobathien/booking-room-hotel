@@ -19,12 +19,13 @@ export enum UserStatus {
 @Schema({ timestamps: true })
 export class User {
   @Prop({ required: true })
-  full_name: string;
+  fullName: string;
 
   @Prop({ required: true, unique: true, lowercase: true })
   email: string;
 
-  @Prop({ required: true })
+  // @Prop({ required: false, unique: true })
+  @Prop()
   phone_number: string;
 
   @Prop({

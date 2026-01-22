@@ -21,7 +21,7 @@ export class UsersService {
   }
 
   // lấy tất cả danh sách user
-  findAll(): Promise<User[]> {
+  getAllUsers(): Promise<User[]> {
     return this.userModel.find().exec();
   }
 
@@ -34,7 +34,7 @@ export class UsersService {
   // lấy thông tin user theo id
   async findById(id: string): Promise<User | null> {
     console.log(this.userModel);
-    return this.userModel.findOne({ _id: id }).exec();
+    return this.userModel.findById({ _id: id }).exec();
   }
 
   // findAll() {

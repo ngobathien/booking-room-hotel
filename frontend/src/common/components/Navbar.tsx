@@ -22,17 +22,21 @@ const Navbar = () => {
           {isLoggedIn ? (
             // hiển thị nút đăng xuất và trang cá nhân
             <>
+              {/* Chỉ hiện lời chào khi đã đăng nhập thành công */}
+              <span className="ml-4 font-bold">
+                Xin chào {user?.role} {user?.fullName}
+              </span>
+
+              {/* link đến trang cá nhân */}
+              <Link to="/profile">Trang cá nhân</Link>
+
+              {/* nút đăng xuất */}
               <button
                 className="text-indigo-600 hover:text-indigo-500 font-medium cursor-pointer"
                 onClick={handleLogout}
               >
                 Đăng xuất
               </button>
-              {/* Chỉ hiện lời chào khi đã đăng nhập thành công */}
-              <span className="ml-4 font-bold">
-                Xin chào {user?.role} {user?.fullName}
-              </span>
-              <Link to="/profile">Trang cá nhân</Link>
             </>
           ) : (
             // hiển thị nút đăng nhập và đăng ký

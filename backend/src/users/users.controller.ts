@@ -6,10 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { UserRole } from './schemas/user.schema';
 
 @Controller('users')
 export class UsersController {
@@ -19,22 +24,6 @@ export class UsersController {
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
-
-  @Get()
-  findAll() {
-    // return `hi`;
-    return this.usersService.findAll();
-  }
-
-  @Get(':email')
-  findOne(@Param('email') email: string) {
-    return this.usersService.findByEmail(email);
-  }
-
-  // @Get(':email')
-  // findOne(@Param('email') email: string) {
-  //   return this.usersService.findOne(email);
-  // }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {

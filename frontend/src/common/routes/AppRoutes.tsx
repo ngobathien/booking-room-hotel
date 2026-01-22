@@ -6,26 +6,41 @@ import ProfilePage from "../components/ProfilePage";
 import DashboardPage from "../../admin/pages/DashboardPage";
 import ManageUsersPage from "../../admin/pages/ManageUsersPage";
 import ProtectedRoute from "../ProtectedRoute";
-
-// import AuthLayout from "../components/layouts/AuthLayout";
+import { ROLES } from "../constants";
+import ManageRoomPage from "../../admin/pages/ManageRoomPage";
 
 const AppRoutes = () => (
   <Routes>
-    <Route index element={<HomePage />} />
+    <Route
+      index
+      element={
+        <ProtectedRoute allowedRoles={[ROLES.USER]}>
+          <HomePage />
+        </ProtectedRoute>
+      }
+    />
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<Register />} />
-    <Route path="/profile" element={<ProfilePage />} />
+    <Route
+      path="/profile"
+      element={
+        <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.USER]}>
+          <ProfilePage />
+        </ProtectedRoute>
+      }
+    />
 
     {/* admin */}
     <Route
       path="dashboard"
       element={
-        <ProtectedRoute allowedRoles={["admin"]}>
+        <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
           <DashboardPage />
         </ProtectedRoute>
       }
     >
       <Route path="users" element={<ManageUsersPage />} />
+      <Route path="rooms" element={<ManageRoomPage />} />
     </Route>
 
     {/* admin */}

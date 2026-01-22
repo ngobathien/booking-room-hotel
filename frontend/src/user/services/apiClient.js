@@ -23,10 +23,13 @@ apiClient.interceptors.response.use(
 
       // Optional: xóa user info nếu có
       localStorage.removeItem("user");
+
+      // Redirect về login
+      window.location.href = "/login";
     }
 
     return Promise.reject(error);
-  },
+  }
 );
 
 export default apiClient;

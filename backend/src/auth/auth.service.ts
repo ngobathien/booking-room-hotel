@@ -17,9 +17,10 @@ export class AuthService {
   // đăng nhập
   // signInDto: CreateAuthDto là để check dữ liệu từ client gửi lên có hợp lệ dữ liệu không
   async singIn(signInDto: SignInDto) {
+    console.log('signInDto:', signInDto);
+
     // lấy email và password từ client gửi lên thông qua signInDto
     const { email, password } = signInDto;
-    console.log(signInDto);
 
     // kiểm tra email có tồn tại không, dùng email để tìm user
     const user = await this.usersService.findByEmail(email);
@@ -55,10 +56,10 @@ export class AuthService {
       expires_in: '15m',
       user: {
         // id: user._id,
-        full_name: user.full_name,
+        fullName: user.fullName,
         email: user.email,
-        phone_number: user.phone_number,
-        avatar: user.avatar,
+        phone_number: user.phone_number || '',
+        avatar: user.avatar || '',
         role: user.role,
         status: user.status,
       },
@@ -67,6 +68,8 @@ export class AuthService {
 
   // đăng ký
   async singUp(signUpDto: SignUpDto) {
+    console.log('signUpDto:', signUpDto);
+
     const { password } = signUpDto;
     // =============================bcrypt mật khẩu==================================
     const saltOrRounds = 10;

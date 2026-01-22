@@ -10,7 +10,7 @@ import {
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
-  full_name: string;
+  fullName: string;
 
   @IsNotEmpty()
   @IsEmail()
@@ -18,15 +18,6 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsString()
-  // có thể là string hoặc number
-  phone_number: string;
-
-  @IsNotEmpty()
-  @IsString()
   @MinLength(6)
   password: string;
-
-  @IsOptional()
-  @IsString()
-  avatar?: string;
 }
