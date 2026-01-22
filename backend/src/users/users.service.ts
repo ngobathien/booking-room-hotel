@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 // import { CreateUserDto } from './dto/create-user.dto';
 // import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -37,16 +38,19 @@ export class UsersService {
     return this.userModel.findById({ _id: id }).exec();
   }
 
-  // findAll() {
-  //   return `This action returns all users`;
-  // }
-  // findOne(id: number) {
-  //   return `This action returns a #${id} user`;
-  // }
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
+  async updateUser(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User | null> {
+    return this.userModel
+      .findByIdAndUpdate(id, updateUserDto, {
+        new: true, // trả về user sau khi update
+        runValidators: true, // validate theo schema
+      })
+      .exec();
+  }
+
+  async removeUser(id: string): Promise<User | null> {
+    return this.userModel.findByIdAndDelete({ _id: id }).exec();
+  }
 }
