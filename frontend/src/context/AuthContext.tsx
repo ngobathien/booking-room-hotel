@@ -6,22 +6,30 @@ type User = {
   fullName?: string;
   email?: string;
 };
-
-const AuthContext = createContext<any>(null);
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [role, setRole] = useState(ROLES.USER); // role mặc định là USER
 
   // =========================== lấy thông tin user ===========================
+  // const [user, setUser] = useState(() => {
+  //   // lấy infoUser từ localStorage
+  //   const infoUser = localStorage.getItem("infoUser");
+
+  //   // parse infoUser từ chuỗi JSON sang đối tượng
+  //   const parsedInfoUser = JSON.parse(infoUser);
+
+  //   // nếu infoUser tồn tại thì trả về đối tượng đã parse, nếu không thì trả về null
+  //   return infoUser ? parsedInfoUser : null;
+  // });
+
+  // =========================== lấy thông tin user ===========================
+  // nhớ đọc lại để hiểu logic này
+  // load thông tin user từ localStorage khi component được mount
   const [user, setUser] = useState(null);
-  //=========================== trạng thái đăng nhập ===========================
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  //=========================== check localStorage MỘT LẦN ===========================
+  // chỉ check localStorage MỘT LẦN
   useEffect(() => {
-    // lấy infoUser từ localStorage
-    // const infoUser = localStorage.getItem("infoUser");
-
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("infoUser");
 
@@ -33,6 +41,9 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
     }
   }, []);
+
+  //=========================== trạng thái đăng nhập ===========================
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   //=========================== Hàm đăng nhập, cập nhật trạng thái và lưu thông tin user ===========================
   const login = (loginUser: User, token: string) => {
