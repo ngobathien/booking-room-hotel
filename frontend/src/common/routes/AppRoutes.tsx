@@ -6,8 +6,9 @@ import ProfilePage from "../components/ProfilePage";
 import DashboardPage from "../../admin/pages/DashboardPage";
 import ManageUsersPage from "../../admin/pages/ManageUsersPage";
 import ProtectedRoute from "../ProtectedRoute";
-import { ROLES } from "../constants";
+import { ROLES } from "../constants/roleConstant";
 import ManageRoomPage from "../../admin/pages/ManageRoomPage";
+import { UserProvider } from "../../context/UserContext";
 
 const AppRoutes = () => (
   <Routes>
@@ -35,7 +36,9 @@ const AppRoutes = () => (
       path="dashboard"
       element={
         <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
-          <DashboardPage />
+          <UserProvider>
+            <DashboardPage />
+          </UserProvider>
         </ProtectedRoute>
       }
     >
