@@ -7,15 +7,19 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
+import { UsersService } from 'src/users/users.service';
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private usersService: UsersService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
 
-    console.log(token);
+    console.log('token: ', token);
     if (!token) {
       throw new UnauthorizedException();
     }
@@ -24,13 +28,24 @@ export class AuthGuard implements CanActivate {
       // 💡 Here the JWT secret key that's used for verifying the payload
       // is the key that was passsed in the JwtModule
       const payload = await this.jwtService.verifyAsync(token);
+      console.log('payload decode: ', payload);
+
+      // tìm dữ liệu nhờ vào sub: _id từ payload decode từ token mà tìm dữ liệu
+      const user = await this.usersService.findById(payload.sub);
+      console.log(user);
+
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
 
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
-      request['user'] = payload;
+      request['user'] = user;
     } catch {
       throw new UnauthorizedException();
     }
+
+    // request.user = user;
     return true;
   }
 

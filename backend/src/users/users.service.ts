@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './schemas/user.schema';
+import { User, UserDocument } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -9,48 +9,43 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  // constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name)
+    private userModel: Model<UserDocument>,
+  ) {}
 
-  // chèn model User vào service
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
-
-  // thêm user mới
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const createdUser = await this.userModel.create(createUserDto);
-
-    return createdUser;
+  // ✅ tạo user
+  async create(dto: CreateUserDto): Promise<UserDocument> {
+    return this.userModel.create(dto);
   }
 
-  // lấy tất cả danh sách user
-  getAllUsers(): Promise<User[]> {
-    return this.userModel.find().exec();
-  }
-
-  // lấy thông tin user theo email
-  async findByEmail(email: string): Promise<User | null> {
-    console.log(this.userModel);
-    return this.userModel.findOne({ email: email }).exec();
-  }
-
-  // lấy thông tin user theo id
-  async findById(id: string): Promise<User | null> {
-    console.log(this.userModel);
-    return this.userModel.findById({ _id: id }).exec();
-  }
-
-  async updateUser(
-    id: string,
-    updateUserDto: UpdateUserDto,
-  ): Promise<User | null> {
+  // ✅ admin list user (KHÔNG trả password)
+  async getAllUsers(): Promise<User[]> {
     return this.userModel
-      .findByIdAndUpdate(id, updateUserDto, {
-        new: true, // trả về user sau khi update
-        runValidators: true, // validate theo schema
-      })
+      .find()
+      .select('-password')
+      .sort({ createdAt: -1 })
+      .exec();
+  }
+
+  // dùng cho AUTH (cần password)
+  async findByEmail(email: string): Promise<UserDocument | null> {
+    return this.userModel.findOne({ email }).exec();
+  }
+
+  // dùng cho profile / API public
+  async findById(id: string): Promise<User | null> {
+    return this.userModel.findById(id).select('-password').exec();
+  }
+
+  async updateUser(id: string, dto: UpdateUserDto): Promise<User | null> {
+    return this.userModel
+      .findByIdAndUpdate(id, dto, { new: true })
+      .select('-password')
       .exec();
   }
 
   async removeUser(id: string): Promise<User | null> {
-    return this.userModel.findByIdAndDelete({ _id: id }).exec();
+    return this.userModel.findByIdAndDelete(id).exec();
   }
 }

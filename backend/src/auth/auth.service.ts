@@ -38,8 +38,10 @@ export class AuthService {
     // cho password vào hàm bcryp.hash để mã hóa
     // salt là chuỗi ngẫu nhiên được thêm vào trước khi mã hóa để tăng cường bảo mật
 
-    const payload = { email: user.email, role: user.role };
-    // console.log(payload);
+    const payload = {
+      sub: user._id.toString(), // dùng để tìm dữ liệu khi decode payload dựa vào cái _id này
+    };
+    console.log(payload);
 
     const userResponse = { email: user.email, role: user.role };
 
