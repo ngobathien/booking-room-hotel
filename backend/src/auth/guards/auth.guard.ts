@@ -31,16 +31,19 @@ export class AuthGuard implements CanActivate {
       console.log('payload decode: ', payload);
 
       // tìm dữ liệu nhờ vào sub: _id từ payload decode từ token mà tìm dữ liệu
-      const user = await this.usersService.findById(payload.sub);
-      console.log(user);
+      const infoUser = await this.usersService.findByIdPublic(payload.sub);
+      console.log('infoUser', infoUser);
 
-      if (!user) {
+      if (!infoUser) {
         throw new UnauthorizedException('User not found');
       }
 
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
-      request['user'] = user;
+      // request['infoUser'] = infoUser;
+      request.user = {
+        userId: payload.sub,
+      };
     } catch {
       throw new UnauthorizedException();
     }

@@ -10,12 +10,15 @@ import {
   HttpStatus,
   UseGuards,
   Request,
+  Put,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in-auth.dto';
 import { SignUpDto } from './dto/sign-up-auth.dto';
 import { AuthGuard } from './guards/auth.guard';
 import { UsersService } from 'src/users/users.service';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 // import { CreateAuthDto } from './dto/create-auth.dto';
 // import { UpdateAuthDto } from './dto/update-auth.dto';
 
@@ -30,24 +33,42 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   signIn(@Body() signInDto: SignInDto) {
-    return this.authService.singIn(signInDto);
+    return this.authService.signIn(signInDto);
   }
 
   // đăng ký
   @Post('register')
   signUp(@Body() signUpDto: SignUpDto) {
-    return this.authService.singUp(signUpDto);
+    return this.authService.signUp(signUpDto);
   }
 
   // xác định xem đã đăng nhập hay chưa, và là ai
   @UseGuards(AuthGuard)
   @Get('profile')
   async getProfile(@Request() req) {
-    console.log('payload', req.user);
-
     // const data = await this.usersService.findById(req.user.sub);
     // console.log('data từ database', data);
-    return req.user;
+    // console.log('data từ database', req.infoUser);
+    // return req.infoUser;
+
+    console.log('data từ database', req.user.userId);
+    return this.usersService.findByIdPublic(req.user.userId);
     // return this.usersService.findById(req.user.sub);
+  }
+
+  @Post('refresh-token')
+  refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authService.refreshTokens(refreshTokenDto);
+  }
+
+  @UseGuards(AuthGuard)
+  @Put('change-password')
+  changePassword(@Body() changePasswordDto: ChangePasswordDto, @Request() req) {
+    const { oldPassword, newPassword } = changePasswordDto;
+    return this.authService.changePassword(
+      req.user.userId,
+      oldPassword,
+      newPassword,
+    );
   }
 }
