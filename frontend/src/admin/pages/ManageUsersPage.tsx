@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { useUsers, type User } from "../../context/UserContext";
+import { useUsers, type User } from "../../context/UserContext cp";
 import { ROLES } from "../../common/constants/roleConstant";
-import { STATUS } from "../../common/constants/statusConstant";
 import { STATUS_STYLE } from "../../common/constants/statusStyle";
+import { useUserActions } from "../../hooks/useUserActions";
 
 const ManageUsersPage = () => {
-  const { users, fetchUsers, handleDeleteUser, handleUpdateUser } = useUsers();
-
+  const { fetchUsers, handleDeleteUser, handleUpdateUser } = useUserActions();
+  const { users } = useUsers();
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [editData, setEditData] = useState<Partial<User>>({});
 
@@ -21,9 +21,12 @@ const ManageUsersPage = () => {
       <table className="w-full bg-white rounded-lg shadow overflow-hidden">
         <thead className="bg-gray-100">
           <tr>
+            <th className="px-4 py-3 text-left text-sm font-semibold">Xóa</th>
+
             <th className="px-4 py-3 text-left text-sm font-semibold">
               Họ và tên
             </th>
+
             <th className="px-4 py-3 text-left text-sm font-semibold">Email</th>
             <th className="px-4 py-3 text-left text-sm font-semibold">SĐT</th>
             <th className="px-4 py-3 text-left text-sm font-semibold">Role</th>
@@ -38,6 +41,7 @@ const ManageUsersPage = () => {
 
         {/* ========================== render UI user =================================== */}
 
+        {/* ================== new: basic edit, old ===================== */}
         {/* <tbody>
           {users?.map((user) => (
             <tr key={user._id} className="border-b hover:bg-gray-50">
@@ -94,8 +98,10 @@ const ManageUsersPage = () => {
         <tbody>
           {users?.map((user) => (
             <tr key={user._id} className="border-b hover:bg-gray-50">
+              {/* checkbox chưa triển khai */}
+              <input type="checkbox" id="" name="" value=""></input>
+
               {/* fullName */}
-              {/* <td className="px-4 py-3">{user.fullName}</td> */}
               <td className="px-4 py-3">
                 {editingUserId === user._id ? (
                   <input
@@ -109,9 +115,7 @@ const ManageUsersPage = () => {
                   user.fullName
                 )}
               </td>
-
               {/* email */}
-              {/* <td className="px-4 py-3">{user.email}</td> */}
               <td className="px-4 py-3">
                 {editingUserId === user._id ? (
                   <input
@@ -125,9 +129,7 @@ const ManageUsersPage = () => {
                   user.email
                 )}
               </td>
-
               {/* phone_number */}
-              {/* <td className="px-4 py-3">{user.phone_number || ""}</td> */}
               <td className="px-4 py-3">
                 {editingUserId === user._id ? (
                   <input
@@ -141,22 +143,6 @@ const ManageUsersPage = () => {
                   user.phone_number || ""
                 )}
               </td>
-
-              {/* role */}
-              {/* <td className="px-4 py-3">
-                <select
-                  value={user.role}
-                  onChange={(e) =>
-                    handleUpdateUser(user._id, { role: e.target.value })
-                  }
-                  className="px-2 py-1 text-sm rounded border border-gray-300
-               focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option value={ROLES.ADMIN}>{ROLES.ADMIN}</option>
-                  <option value={ROLES.USER}>{ROLES.USER}</option>
-                </select>
-              </td> */}
-
               <td className="px-4 py-3">
                 {editingUserId === user._id ? (
                   <select
@@ -173,7 +159,6 @@ const ManageUsersPage = () => {
                   user.role
                 )}
               </td>
-
               {/* status */}
               <td className="px-4 py-3">
                 <span
@@ -184,7 +169,6 @@ const ManageUsersPage = () => {
                   {user.status || "UNKNOWN"}
                 </span>
               </td>
-
               {/* hành động */}
               {/* <td className="px-4 py-3 flex gap-2">
                 <button
@@ -201,7 +185,6 @@ const ManageUsersPage = () => {
                   Xóa
                 </button>
               </td> */}
-
               {/*  */}
               <td className="px-4 py-3 flex gap-2">
                 {editingUserId === user._id ? (

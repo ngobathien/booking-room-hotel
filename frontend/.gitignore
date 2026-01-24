@@ -1,3 +1,5 @@
+backend/src/services
+
 # Logs
 logs
 *.log

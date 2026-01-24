@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 import { toast, ToastContainer } from "react-toastify";
-import { register } from "../services/authService";
+import { register } from "../../services/authService";
 import { BeatLoader } from "react-spinners";
 
 const Register = () => {
@@ -31,6 +31,7 @@ const Register = () => {
     } catch (error) {
       console.error("Registration failed:", error);
       setMessage("Đăng ký thất bại. Vui lòng thử lại.");
+
       toast.error("Đăng ký thất bại. Vui lòng thử lại.");
     }
     setLoading(false); // 2. Kết thúc loading
@@ -99,22 +100,16 @@ const Register = () => {
 
             {/* nút đăng ký */}
             <button
-              id="registerBtn"
               type="submit"
+              disabled={loading}
               className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-colors cursor-pointer
-                  // nút khi đang loading
-                  ${loading ? "bg-gray-600 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"}`}
-              disabled={loading} // Vô hiệu hóa nút khi đang loading
+                ${
+                  loading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-blue-500 hover:bg-blue-600"
+                }`}
             >
-              {loading ? (
-                // Hiển thị hiệu ứng loading xoay tròn
-                <div className="flex items-center justify-center">
-                  <BeatLoader size={8} color={"#ffffff"} loading={loading} />
-                </div>
-              ) : (
-                // Nội dung nút bình thường
-                "Đăng ký"
-              )}
+              {loading ? <BeatLoader size={8} color="#ffffff" /> : "Đăng ký"}
             </button>
           </form>
 

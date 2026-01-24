@@ -8,6 +8,11 @@ import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
 import { UsersService } from 'src/users/users.service';
+import { UserRole } from 'src/users/schemas/user.schema';
+
+interface AuthenticatedRequest extends Request {
+  user?: { userId: string; role: UserRole };
+}
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
@@ -16,7 +21,7 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const token = this.extractTokenFromHeader(request);
 
     console.log('token: ', token);
@@ -27,12 +32,12 @@ export class AuthGuard implements CanActivate {
     try {
       // 💡 Here the JWT secret key that's used for verifying the payload
       // is the key that was passsed in the JwtModule
-      const payload = await this.jwtService.verifyAsync(token);
+      const payload = await this.jwtService.verifyAsync<{ sub: string }>(token);
       console.log('payload decode: ', payload);
 
       // tìm dữ liệu nhờ vào sub: _id từ payload decode từ token mà tìm dữ liệu
       const infoUser = await this.usersService.findByIdPublic(payload.sub);
-      console.log('infoUser', infoUser);
+      console.log('infoUser auth guard', infoUser);
 
       if (!infoUser) {
         throw new UnauthorizedException('User not found');
@@ -43,6 +48,7 @@ export class AuthGuard implements CanActivate {
       // request['infoUser'] = infoUser;
       request.user = {
         userId: payload.sub,
+        role: infoUser.role,
       };
     } catch {
       throw new UnauthorizedException();
@@ -58,3 +64,5 @@ export class AuthGuard implements CanActivate {
     return type === 'Bearer' ? token : undefined;
   }
 }
+
+// nhớ đọc review lại cho mà hiểu logic nhé

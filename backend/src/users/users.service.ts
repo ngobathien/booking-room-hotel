@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/user.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 // import { CreateUserDto } from './dto/create-user.dto';
@@ -14,12 +14,12 @@ export class UsersService {
     private userModel: Model<UserDocument>,
   ) {}
 
-  // ✅ tạo user
+  // tạo user
   async create(dto: CreateUserDto): Promise<UserDocument> {
     return this.userModel.create(dto);
   }
 
-  // ✅ admin list user (KHÔNG trả password)
+  // admin lấy tất cả list user (KHÔNG trả password)
   async getAllUsers(): Promise<User[]> {
     return this.userModel
       .find()
@@ -34,8 +34,16 @@ export class UsersService {
   }
 
   // dùng cho profile / API public
-  async findById(id: string): Promise<User | null> {
+  async findByIdPublic(id: string): Promise<User | null> {
     return this.userModel.findById(id).select('-password').exec();
+  }
+
+  // users.service.ts
+  // cho việc đổi mật khẩu
+  async findByIdWithPassword(
+    id: string | Types.ObjectId,
+  ): Promise<UserDocument | null> {
+    return this.userModel.findById(id);
   }
 
   async updateUser(id: string, dto: UpdateUserDto): Promise<User | null> {

@@ -24,7 +24,7 @@ export const createUser = async (userData) => {
 };
 
 // Cập nhật người dùng
-export const updateUser = async (userId, userData) => {
+export const updateUser = async (userId: string, userData) => {
   try {
     if (!userId) {
       throw new Error("ID người dùng không được xác định");

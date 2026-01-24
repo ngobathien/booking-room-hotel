@@ -20,6 +20,12 @@ import { UpdateUserDto } from './dto/update-user.dto';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+  // test
+  // @Get('test')
+  // test() {
+  //   return `hiii`;
+  // }
+
   // tạo user mới
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
@@ -34,14 +40,9 @@ export class UsersController {
     return this.usersService.getAllUsers();
   }
 
-  // @Get(':email')
-  // findByEmail(@Param('email') email: string) {
-  //   return this.usersService.findByEmail(email);
-  // }
-
   @Get(':id')
   getUserById(@Param('id') id: string) {
-    return this.usersService.findById(id);
+    return this.usersService.findByIdPublic(id);
   }
 
   @Patch(':id')

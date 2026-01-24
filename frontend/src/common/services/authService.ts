@@ -85,3 +85,21 @@ export const resetPasswordApi = async (
     throw error;
   }
 };
+
+export const changePasswordApi = async (
+  oldPassword: string,
+  newPassword: string,
+) => {
+  try {
+    const response = await api.put("/auth/change-password", {
+      oldPassword,
+      newPassword,
+    });
+    // console.log("response", response);
+    // console.log("response data", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};

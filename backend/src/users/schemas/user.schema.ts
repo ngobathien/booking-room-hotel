@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-
+// backend/src/users/schemas/user.schema.ts
 export type UserDocument = HydratedDocument<User>;
 
 // role
@@ -52,6 +52,9 @@ export class User {
     required: true,
   })
   status: UserStatus;
+
+  @Prop()
+  refreshToken: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

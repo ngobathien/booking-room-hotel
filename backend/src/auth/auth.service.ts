@@ -107,6 +107,9 @@ export class AuthService {
       message: 'Đăng nhập thành công',
       access_token,
       refreshToken,
+      user: {
+        role: user.role,
+      },
     };
   }
 
