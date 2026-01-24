@@ -19,6 +19,8 @@ import { AuthGuard } from './guards/auth.guard';
 import { UsersService } from 'src/users/users.service';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { ForgotPassworDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 // import { CreateAuthDto } from './dto/create-auth.dto';
 // import { UpdateAuthDto } from './dto/update-auth.dto';
 
@@ -45,7 +47,7 @@ export class AuthController {
   // xác định xem đã đăng nhập hay chưa, và là ai
   @UseGuards(AuthGuard)
   @Get('profile')
-  async getProfile(@Request() req) {
+  async getProfile(@Request() req: any) {
     // const data = await this.usersService.findById(req.user.sub);
     // console.log('data từ database', data);
     // console.log('data từ database', req.infoUser);
@@ -69,6 +71,19 @@ export class AuthController {
       req.user.userId,
       oldPassword,
       newPassword,
+    );
+  }
+
+  @Post('forgot-password')
+  forgotPassword(@Body() forgotPassworDto: ForgotPassworDto) {
+    return this.authService.forgotPassword(forgotPassworDto.email);
+  }
+
+  @Post('reset-password')
+  resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.authService.resetPassword(
+      resetPasswordDto.resetToken,
+      resetPasswordDto.newPassword,
     );
   }
 }

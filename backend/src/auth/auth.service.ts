@@ -1,5 +1,7 @@
 import {
+  BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -17,12 +19,20 @@ import { Model } from 'mongoose';
 import { RefreshToken } from './schemas/refresh-token.schema';
 import { randomUUID } from 'crypto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { ResetToken } from './schemas/reset-token.schema';
+import { MailService } from 'src/services/mail.service';
 
 @Injectable()
 export class AuthService {
   constructor(
+    // thêm UsersService từ user service
     private usersService: UsersService,
+    //
     private jwtService: JwtService,
+
+    // thêm MailService
+    private mailService: MailService,
+
     // thêm model User
     @InjectModel(User.name)
     private userModel: Model<UserDocument>,
@@ -30,9 +40,13 @@ export class AuthService {
     // thêm model RefreshToken
     @InjectModel(RefreshToken.name)
     private refreshTokenModel: Model<RefreshToken>,
+
+    // thêm model ResetToken
+    @InjectModel(ResetToken.name)
+    private resetTokenModel: Model<ResetToken>,
   ) {}
 
-  // đăng nhập
+  // ============================= đăng nhập =============================
   // signInDto: CreateAuthDto là để check dữ liệu từ client gửi lên có hợp lệ dữ liệu không
   async signIn(signInDto: SignInDto) {
     console.log('signInDto:', signInDto);
@@ -96,7 +110,7 @@ export class AuthService {
     };
   }
 
-  // đăng ký
+  //  ============================= đăng ký =============================
   async signUp(signUpDto: SignUpDto) {
     console.log('signUpDto:', signUpDto);
 
@@ -116,7 +130,7 @@ export class AuthService {
     return { message: 'Đăng ký thành công', user };
   }
 
-  // refresh token
+  // ============================= refresh token  =============================
   // lấy refresh token mới, đây là dùng để lưu refresh toke
   async refreshTokens(refreshTokenDto: RefreshTokenDto) {
     // Nhận refresh token từ client
@@ -148,9 +162,8 @@ export class AuthService {
   //   // logic đăng xuất (nếu cần thiết, ví dụ: thu hồi token)
   //   return { message: 'Đăng xuất thành công' };
   // }
-  // quên mật khẩu
 
-  // đổi mật khẩu
+  //  ============================= đổi mật khẩu  =============================
   async changePassword(
     userId: string,
     oldPassword: string,
@@ -167,7 +180,18 @@ export class AuthService {
     const comparePassword = await bcrypt.compare(oldPassword, user.password);
 
     if (!comparePassword) {
-      throw new UnauthorizedException('Mật khẩu không đúng');
+      throw new UnauthorizedException('Mật khẩu hiện tại không đúng');
+    }
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+
+    if (isSamePassword) {
+      throw new BadRequestException(
+        'Mật khẩu mới không được trùng mật khẩu cũ',
+      );
+    }
+
+    if (newPassword.length < 6) {
+      throw new BadRequestException('Mật khẩu phải ít nhất 6 ký tự');
     }
 
     // thay đổi mật khẩu
@@ -181,5 +205,70 @@ export class AuthService {
   }
   // xác thực email
 
-  //
+  // ============================= quên mật khẩu =============================
+  async forgotPassword(email: string) {
+    // nhận email từ client gửi lên
+
+    // check email này có tồn tại hay chưa
+    const userExisting = await this.usersService.findByEmail(email);
+
+    if (!userExisting) {
+      throw new NotFoundException();
+    }
+
+    // nếu email tồn tại tạo token, thời gian hết hạn token
+    if (userExisting) {
+      // tạo token, mã sẽ random
+      const resetToken = randomUUID();
+
+      // thời gian hết hạn của reset token
+      const expiresAt = new Date();
+      expiresAt.setHours(expiresAt.getHours() + 1);
+
+      await this.resetTokenModel.create({
+        resetPasswordToken: resetToken,
+        userId: userExisting._id,
+        resetPasswordExpires: expiresAt,
+      });
+
+      // gủi cho email này một link chứa token, gọi từ dịch vụ mail
+      await this.mailService.sendPasswordResetEmail(email, resetToken);
+    }
+    // console.log(email);
+    // return { email };
+  }
+
+  // ============================= reset mật khẩu =============================
+  async resetPassword(resetToken: string, newPassword: string) {
+    //  tìm giá trị reset token document trong database
+    const token = await this.resetTokenModel.findOneAndDelete({
+      resetPasswordToken: resetToken,
+      // Kiểm tra token còn hiệu lực:
+      // expiresAt phải lớn hơn hoặc bằng thời điểm hiện tại
+      resetPasswordExpires: { $gte: new Date() },
+    });
+    console.log(token);
+    if (!token) {
+      throw new UnauthorizedException('Invalid link');
+    }
+
+    // thay đổi bằng mật khẩu mới
+    // const user = await this.userModel.findById(token?.userId);
+
+    // dùng qua usersService
+    const user = await this.usersService.findByIdWithPassword(token.userId);
+    console.log(user);
+    if (!user) {
+      throw new InternalServerErrorException();
+    }
+
+    // hash, mã hóa mật khẩu mới để lưu vào database
+    user.password = await bcrypt.hash(newPassword, 10);
+
+    // lưu mật khẩu mới vào document
+
+    await user.save();
+    // console.log(email);
+    // return { email };
+  }
 }
