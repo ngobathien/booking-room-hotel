@@ -4,8 +4,7 @@ import * as nodemailer from 'nodemailer';
 @Injectable()
 export class MailService {
   // dịch vụ gửi mail
-  // EMAIL_USER=ngobathien04@gmail.com
-  // EMAIL_PASS=qcfk ixyz sdyf rnox
+
   private transporter: nodemailer.Transporter;
 
   constructor() {
@@ -16,11 +15,8 @@ export class MailService {
       port: 587,
       secure: false, // Use true for port 465, false for port 587
       auth: {
-        // user: 'cordell.gibson@ethereal.email',
-        // pass: 'qvxXfsJGQnAWBqE6a7',
-
-        user: 'ngobathien04@gmail.com',
-        pass: 'qcfk ixyz sdyf rnox',
+        user: 'cordell.gibson@ethereal.email',
+        pass: 'qvxXfsJGQnAWBqE6a7',
       },
     });
   }
