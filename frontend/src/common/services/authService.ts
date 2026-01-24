@@ -25,7 +25,7 @@ export const register = async (userData: RegisterData) => {
     console.log("response", response);
     return response.data;
   } catch (error) {
-    console.error("Error during registration:", error);
+    console.error("Error khi register:", error);
     throw error;
   }
 };
@@ -39,7 +39,49 @@ export const loginApi = async (userData: LoginData) => {
     // console.log("response data", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error during login:", error);
+    console.error("Error khi login:", error);
+    throw error;
+  }
+};
+
+export const getProfile = async () => {
+  try {
+    const response = await api.get("/auth/profile");
+    // console.log("response", response);
+    // console.log("response data", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error khi getProfile:", error);
+    throw error;
+  }
+};
+
+export const forgotPasswordApi = async (email: string) => {
+  try {
+    const response = await api.post("/auth/forgot-password", { email });
+    console.log("response", response);
+    // console.log("response data", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
+export const resetPasswordApi = async (
+  resetToken: string,
+  newPassword: string,
+) => {
+  try {
+    const response = await api.post("/auth/reset-password", {
+      resetToken,
+      newPassword,
+    });
+    // console.log("response", response);
+    // console.log("response data", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
     throw error;
   }
 };
