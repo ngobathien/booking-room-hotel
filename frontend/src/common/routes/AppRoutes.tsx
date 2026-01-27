@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router";
-import HomePage from "../../user/pages/HomePage";
+import HomePage from "../../user/pages/Home/HomePage";
 import Register from "../pages/auth/Register";
 import Login from "../pages/auth/Login";
 import ProfilePage from "../pages/ProfilePage";
@@ -12,44 +12,40 @@ import { UserProvider } from "../../context/UserContext cp";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import ChangePassword from "../pages/auth/ChangePassword";
+import MainLayout from "../../user/components/layouts/MainLayout";
 
 const AppRoutes = () => (
   <Routes>
-    <Route
-      index
-      element={
-        <ProtectedRoute allowedRoles={[ROLES.USER]}>
-          <HomePage />
-        </ProtectedRoute>
-      }
-    />
-    <Route path="/login" element={<Login />} />
-    <Route path="/register" element={<Register />} />
-    <Route path="/forgot-password" element={<ForgotPassword />} />
+    {/* user ========================================*/}
+    <Route element={<MainLayout />}>
+      {/* ===== PUBLIC (CÓ NAVBAR) ===== */}
+      {/*  ================ trang chủ ========================*/}
+      <Route index element={<HomePage />} />
 
-    <Route path="/reset-password" element={<ResetPassword />} />
-    <Route path="/change-password" element={<ChangePassword />} />
-    <Route
-      path="/profile"
-      element={
-        <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.USER]}>
-          <ProfilePage />
-        </ProtectedRoute>
-      }
-    />
-    {/* admin */}
-    <Route
-      path="dashboard"
-      element={
-        <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
-          <DashboardPage />
-        </ProtectedRoute>
-      }
-    >
+      {/* ================= USER (LOGIN REQUIRED) ================= */}
+      <Route element={<ProtectedRoute allowedRoles={[ROLES.USER]} />}>
+        {/* trang cá nhân ========================================*/}
+        <Route path="/profile" element={<ProfilePage />} />
+
+        {/* ==================== trang đặt phòng của tôi =============================*/}
+        <Route path="/my-bookings" element={<ProfilePage />} />
+      </Route>
+    </Route>
+
+    {/*  ================== admin ======================*/}
+    <Route path="" element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]} />}>
+      <Route path="dashboard" element={<DashboardPage />} />
       <Route path="users" element={<ManageUsersPage />} />
       <Route path="rooms" element={<ManageRoomPage />} />
     </Route>
-    {/* admin */}
+
+    {/* auth ========================================*/}
+    <Route path="/login" element={<Login />} />
+    <Route path="/register" element={<Register />} />
+    <Route path="/forgot-password" element={<ForgotPassword />} />
+    <Route path="/reset-password" element={<ResetPassword />} />
+    <Route path="/change-password" element={<ChangePassword />} />
+
     {/* <Route path="/dashboard" element={<DashboardPage />}>
       <Route path="users" element={<ManageUsersPage />} />
       <Route path="posts" element={<ManagePostsPage />} />

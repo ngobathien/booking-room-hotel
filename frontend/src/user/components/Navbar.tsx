@@ -17,49 +17,11 @@ const Navbar = () => {
     navigate("/login", { replace: true });
   };
 
-  // return (
-  //   <>
-  //     <div className=" flex justify-between items-center p-4 bg-gray-200">
-  //       <Link to="/">Trang chủ</Link>
-
-  //       <div className="space-x-4">
-  //         {/*nếu người dùng đã đăng nhập: true*/}
-  //         {isLoggedIn ? (
-  //           // hiển thị nút đăng xuất và trang cá nhân
-  //           <>
-  //             {/* Chỉ hiện lời chào khi đã đăng nhập thành công */}
-  //             <span className="ml-4 font-bold">
-  //               Xin chào {user?.role} {user?.fullName}
-  //             </span>
-
-  //             {/* link đến trang cá nhân */}
-  //             <Link to="/profile">Trang cá nhân</Link>
-
-  //             {/* nút đăng xuất */}
-  //             <button
-  //               className="text-indigo-600 hover:text-indigo-500 font-medium cursor-pointer"
-  //               onClick={handleLogout}
-  //             >
-  //               Đăng xuất
-  //             </button>
-  //           </>
-  //         ) : (
-  //           // hiển thị nút đăng nhập và đăng ký
-  //           <>
-  //             <Link to="/login">Đăng nhập</Link>
-  //             <Link to="/register">Đăng ký</Link>
-  //           </>
-  //         )}
-  //       </div>
-  //     </div>
-  //   </>
-  // );
-
   return (
     // <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
-    <header className="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-solid border-[#e7f0f3] dark:border-gray-800">
-      <div className="max-w-[1280px] mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Logo */}
+    <header className="sticky top-0 z-50 w-full border-b border-solid border-[#e7ebf3] bg-white/80 backdrop-blur-md">
+      <div className="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
+        {/*  ============================= Logo ===============================*/}
         <Link to="/">
           {/* Trang chủ */}
           <div className="flex items-center gap-3">
@@ -89,32 +51,56 @@ const Navbar = () => {
         </Link>
 
         {/* Navigation */}
-        <nav className="hidden md:flex items-center gap-10">
+        <nav className="hidden md:flex items-center gap-8">
           {/* ======================== Khi ĐÃ ĐĂNG NHẬP  ======================== */}
-          {/*nếu người dùng đã đăng nhập: true*/}
+          {/*nếu người dùng đã đăng nhập: true thì hiển thị như sau:*/}
           {isLoggedIn && (
-            // hiển thị nút đăng xuất và trang cá nhân
             <>
-              {/* Chỉ hiện lời chào khi đã đăng nhập thành công */}
-              <span className="ml-4 font-bold">
-                Xin chào {user?.role} {user?.fullName}
-              </span>
+              {/* link đến trang chủ */}
+              <Link
+                className="text-sm font-semibold hover:text-primary transition-colors"
+                to="/"
+              >
+                Trang chủ
+              </Link>
 
-              {/* link đến trang cá nhân */}
+              {/* link đến trang danh sách phòng */}
+              <Link
+                className="text-sm font-semibold hover:text-primary transition-colors"
+                to="/rooms"
+              >
+                Danh sách phòng
+              </Link>
+
+              {/* link đến cá nhân */}
               <Link
                 className="text-sm font-semibold hover:text-primary transition-colors"
                 to="/profile"
               >
                 Trang cá nhân
               </Link>
+              {/* link đến trang đặt phòng của tôi */}
+              <Link
+                className="text-sm font-semibold hover:text-primary transition-colors"
+                to="/my-bookings"
+              >
+                Đặt phòng của tôi
+              </Link>
+
+              {/* Chỉ hiện lời chào khi đã đăng nhập thành công */}
+              <span className="ml-4 font-bold">
+                Xin chào {user?.role} {user?.fullName}
+              </span>
 
               {/* nút đăng xuất */}
-              <button
-                className="text-indigo-600 hover:text-indigo-500 font-medium cursor-pointer"
-                onClick={handleLogout}
-              >
-                Đăng xuất
-              </button>
+              <div className="flex items-center gap-3 ">
+                <button
+                  className="cursor-pointer flex h-10 px-5 items-center justify-center rounded-lg bg-primary text-white text-sm font-bold bg-blue-700 transition-shadow shadow-lg shadow-primary/20"
+                  onClick={handleLogout}
+                >
+                  Đăng xuất
+                </button>
+              </div>
             </>
           )}
 
@@ -123,11 +109,11 @@ const Navbar = () => {
             <>
               {/* Actions */}
               <div className="flex items-center gap-4">
-                <button className="bg-primary hover:bg-primary/90 text-[#0d181b] px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-all">
+                <button className="hidden sm:flex h-10 px-5 items-center justify-center rounded-lg bg-gray-100 text-sm font-bold hover:bg-gray-200 transition-colors">
                   {/* Đăng nhập */}
                   <Link to="/login">Đăng nhập</Link>
                 </button>
-                <button className="bg-primary hover:bg-primary/90 text-[#0d181b] px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-all">
+                <button className="hidden sm:flex h-10 px-5 items-center justify-center rounded-lg bg-gray-100 text-sm font-bold hover:bg-gray-200 transition-colors">
                   <Link to="/register">Đăng ký</Link>
                 </button>
               </div>

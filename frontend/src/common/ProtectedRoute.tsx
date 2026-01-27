@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { useAuth } from "../context/AuthContext";
-import { Navigate, useNavigate } from "react-router";
+import { Navigate, Outlet, useNavigate } from "react-router";
 import LoadingSkeleton from "./LoadingSkeleton";
 
-const ProtectedRoute = ({ allowedRoles, children }) => {
+const ProtectedRoute = ({ allowedRoles }) => {
   const { user, isLoggedIn, isAdmin, loading } = useAuth();
 
   // ⛔ CHỜ load profile xong
@@ -30,7 +30,7 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
     );
   }
 
-  return children;
+  return <Outlet />;
 };
 
 export default ProtectedRoute;
