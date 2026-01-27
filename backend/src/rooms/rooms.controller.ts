@@ -24,18 +24,21 @@ export class RoomsController {
   @UseGuards(AuthGuard)
   @Roles(UserRole.ADMIN)
   @Post()
-  create(@Body() createRoomDto: CreateRoomDto) {
+  createNewRoom(@Body() createRoomDto: CreateRoomDto) {
     return this.roomsService.createNewRoom(createRoomDto);
   }
 
+  // lấy tất cả danh sách room hiện có
   @Get()
-  findAll() {
+  findAllRooms() {
     return this.roomsService.findAllRooms();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.roomsService.findRoomById(id);
+  // tìm room theo id của riêng room đó từ database
+  @Get(':roomId')
+  findRoomById(@Param('roomId') roomId: string) {
+    console.log(roomId);
+    return this.roomsService.findRoomById(roomId);
   }
 
   @Patch(':id')
@@ -43,8 +46,15 @@ export class RoomsController {
     return this.roomsService.update(+id, updateRoomDto);
   }
 
+  // xóa 1 phòng theo id
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.roomsService.remove(+id);
+  removeRoomsById(@Param('id') id: string) {
+    return this.roomsService.removeRoomsById(id);
   }
+
+  // xóa tất cả phòng
+  // @Delete(':id')
+  // removeAllRooms(@Param('id') id: string) {
+  //   return this.roomsService.removeAllRooms(+id);
+  // }
 }

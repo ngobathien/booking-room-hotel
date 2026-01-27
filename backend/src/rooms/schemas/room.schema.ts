@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { RoomType } from './room-type.schema';
+
 import { RoomStatus } from '../enums/room-status.enum';
+import { RoomType } from 'src/room-types/schemas/room-type.schema';
 
 export type RoomDocument = HydratedDocument<Room>;
 
@@ -14,14 +15,13 @@ export class Room {
   @Prop({ type: Types.ObjectId, required: true })
   hotelId: Types.ObjectId;
 
-  // room_type_id  ref sang RoomType schema
+  // room_type_id  ref sang RoomType schema tham chiếu đến room_types
   @Prop({
     type: Types.ObjectId,
-    // ref: RoomType.name,
-    ref: 'RoomType',
+    ref: RoomType.name,
     required: true,
   })
-  roomType: RoomType;
+  roomType: Types.ObjectId;
 
   @Prop({
     type: String,

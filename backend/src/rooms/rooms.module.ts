@@ -4,13 +4,17 @@ import { RoomsController } from './rooms.controller';
 import { ConfigModule } from '@nestjs/config';
 import { Room, RoomSchema } from './schemas/room.schema';
 import { MongooseModule } from '@nestjs/mongoose';
-import { RoomType, RoomTypeSchema } from './schemas/room-type.schema';
+
 import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from 'src/auth/constants';
+import { RoomTypesModule } from 'src/room-types/room-types.module';
+import { RoomType } from 'src/room-types/entities/room-type.entity';
+import { RoomTypeSchema } from 'src/room-types/schemas/room-type.schema';
 
 @Module({
   imports: [
+    RoomTypesModule,
     UsersModule,
     ConfigModule,
 
