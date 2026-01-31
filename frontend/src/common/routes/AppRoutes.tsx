@@ -8,11 +8,20 @@ import ManageUsersPage from "../../admin/pages/ManageUsersPage";
 import ProtectedRoute from "../ProtectedRoute";
 import { ROLES } from "../constants/roleConstant";
 import ManageRoomPage from "../../admin/pages/ManageRoomPage";
-import { UserProvider } from "../../context/UserContext cp";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import ChangePassword from "../pages/auth/ChangePassword";
 import MainLayout from "../../user/components/layouts/MainLayout";
+import RoomDetailPage from "../../user/pages/Room/RoomDetailPage";
+import RoomList from "../../user/pages/Room/RoomList";
+import RoomLayout from "../../user/components/layouts/RoomLayout";
+import { RoomProvider } from "../../context/RoomContext";
+import AdminLayout from "../../admin/components/layouts/AdminLayout";
+import AdminRoomLayout from "../../admin/components/layouts/AdminRoomLayout";
+import AddRoomPage from "../../admin/components/rooms/AddRoomPage";
+import ManageRoomTypesPage from "../../admin/pages/ManageRoomTypesPage";
+import AddRoomTypesPage from "../../admin/components/room-types/AddRoomTypesPage";
+import AdminRoomTypesLayout from "../../admin/components/layouts/AdminRoomTypesLayout";
 
 const AppRoutes = () => (
   <Routes>
@@ -22,21 +31,57 @@ const AppRoutes = () => (
       {/*  ================ trang chủ ========================*/}
       <Route index element={<HomePage />} />
 
+      {/*  ================ trang danh sách rooms ========================*/}
+      <Route path="rooms" element={<RoomLayout />}>
+        {/*  ================ trang chi tiết room ========================*/}
+        <Route path=":roomId/:slug" element={<RoomDetailPage />} />
+      </Route>
+
+      {/* <Route path="/rooms" element={<RoomList />} />
+
+      <Route path="/rooms/:roomId" element={<RoomDetailPage />} /> */}
+
       {/* ================= USER (LOGIN REQUIRED) ================= */}
-      <Route element={<ProtectedRoute allowedRoles={[ROLES.USER]} />}>
+      <Route
+        element={<ProtectedRoute allowedRoles={[ROLES.USER, ROLES.ADMIN]} />}
+      >
         {/* trang cá nhân ========================================*/}
         <Route path="/profile" element={<ProfilePage />} />
 
         {/* ==================== trang đặt phòng của tôi =============================*/}
-        <Route path="/my-bookings" element={<ProfilePage />} />
+        {/* <Route path="/my-bookings" element={<ProfilePage />} /> */}
       </Route>
     </Route>
 
     {/*  ================== admin ======================*/}
-    <Route path="" element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]} />}>
-      <Route path="dashboard" element={<DashboardPage />} />
-      <Route path="users" element={<ManageUsersPage />} />
-      <Route path="rooms" element={<ManageRoomPage />} />
+    <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]} />}>
+      <Route path="dashboard" element={<AdminLayout />}>
+        <Route index element={<DashboardPage />} />
+
+        <Route path="users" element={<ManageUsersPage />} />
+
+        <Route path="rooms" element={<AdminRoomLayout />}>
+          <Route index element={<ManageRoomPage />} />
+          <Route path="create" element={<AddRoomPage />} />
+        </Route>
+
+        <Route path="room-types" element={<AdminRoomTypesLayout />}>
+          <Route index element={<ManageRoomTypesPage />} />
+          <Route path="create" element={<AddRoomTypesPage />} />
+        </Route>
+      </Route>
+
+      {/* <Route path="dashboard" element={<DashboardPage />}>
+        <Route path="users" element={<ManageUsersPage />} />
+        <Route
+          path="rooms"
+          element={
+            <RoomProvider>
+              <ManageRoomPage />
+            </RoomProvider>
+          }
+        />
+      </Route> */}
     </Route>
 
     {/* auth ========================================*/}
