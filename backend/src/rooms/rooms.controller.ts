@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
@@ -14,6 +16,8 @@ import { UpdateRoomDto } from './dto/update-room.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/users/schemas/user.schema';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('rooms')
 export class RoomsController {
@@ -21,11 +25,15 @@ export class RoomsController {
 
   // tạo room mới
   // admin mới được tạo
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @Post()
-  createNewRoom(@Body() createRoomDto: CreateRoomDto) {
-    return this.roomsService.createNewRoom(createRoomDto);
+  @UseInterceptors(FilesInterceptor('files', 10))
+  createNewRoomWithImages(
+    @Body() createRoomDto: CreateRoomDto,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    return this.roomsService.createNewRoomWithImages(createRoomDto, files);
   }
 
   // lấy tất cả danh sách room hiện có
@@ -42,14 +50,14 @@ export class RoomsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
-    return this.roomsService.update(+id, updateRoomDto);
+  updateRoom(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
+    return this.roomsService.updateRoom(id, updateRoomDto);
   }
 
   // xóa 1 phòng theo id
   @Delete(':id')
   removeRoomsById(@Param('id') id: string) {
-    return this.roomsService.removeRoomsById(id);
+    return this.roomsService.removeRoomById(id);
   }
 
   // xóa tất cả phòng
