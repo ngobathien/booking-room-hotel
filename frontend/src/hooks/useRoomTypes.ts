@@ -4,6 +4,7 @@ import {
   createNewRoomType,
   deleteRoomTypeById,
   getAllRoomTypes,
+  updateRoomTypeById,
 } from "../common/services/roomTypeService";
 import type { RoomType } from "../types/room-types.types";
 
@@ -22,6 +23,17 @@ export const useRoomTypes = () => {
     await createNewRoomType(data);
     toast.success("Thêm loại phòng thành công");
     fetchRoomTypes();
+  };
+
+  const updateRoomType = async (id: string, data: Partial<RoomType>) => {
+    try {
+      await updateRoomTypeById(id, data);
+      toast.success("Cập nhật loại phòng thành công");
+      fetchRoomTypes();
+    } catch (error) {
+      console.log(error);
+      toast.error(`Cập nhật loại phòng ${id} thất bại`);
+    }
   };
 
   const deleteRoomType = async (id: string) => {
@@ -43,5 +55,6 @@ export const useRoomTypes = () => {
     loading,
     createRoomType,
     deleteRoomType,
+    updateRoomType,
   };
 };

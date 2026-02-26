@@ -1,4 +1,4 @@
-export const STATUS = {
+export const STATUS_USER = {
   ACTIVE: "ACTIVE",
   INACTIVE: "INACTIVE",
   BLOCKED: "BLOCKED",

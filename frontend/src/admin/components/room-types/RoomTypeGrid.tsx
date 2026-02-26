@@ -10,43 +10,50 @@ const RoomTypeGrid: React.FC<Props> = ({ roomTypes }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {roomTypes.map((rt) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {roomTypes.map((type) => (
         <div
-          key={rt._id}
-          className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm group hover:shadow-xl transition-all relative"
+          key={type._id}
+          onClick={() => navigate(`edit/${type._id}`)}
+          className="bg-white rounded-[2rem] border border-slate-200 p-6 shadow-sm hover:shadow-xl transition-all relative group flex flex-col justify-between min-h-[220px]"
         >
-          <div className="relative h-48 overflow-hidden">
-            <img
-              src={rt.image}
-              alt={rt.typeName}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-              <div className="flex gap-2 w-full">
-                <button
-                  onClick={() => navigate(`edit/${rt._id}`)}
-                  className="flex-1 bg-white/20 backdrop-blur text-white font-bold py-2 rounded-lg hover:bg-white/40 transition-all text-xs text-center"
-                >
-                  Chỉnh sửa
-                </button>
+          <div className="space-y-4">
+            <div className="flex justify-between items-start">
+              <div className="p-3 bg-primary/10 text-primary rounded-2xl">
+                <span className="material-symbols-outlined text-2xl">
+                  king_bed
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-black text-slate-900 mb-1 group-hover:text-primary transition-colors">
+                {type.typeName}
+              </h3>
+              <div className="flex items-center gap-2 text-slate-400">
+                <span className="material-symbols-outlined text-sm">group</span>
+                <span className="text-xs font-bold uppercase tracking-widest">
+                  {type.capacity}
+                </span>
               </div>
             </div>
           </div>
-          <div className="p-5">
-            <h3 className="text-lg font-bold mb-1 truncate text-slate-900">
-              {rt.typeName}
-            </h3>
-            <p className="text-primary font-black text-xl mb-4">
-              {rt.pricePerNight} ₫{" "}
-              <span className="text-xs text-slate-400 font-normal">/ đêm</span>
-            </p>
-            <div className="flex gap-2">
-              <div className="flex items-center gap-1 text-[10px] font-bold bg-slate-50 px-2 py-1 rounded text-slate-500 uppercase">
-                <span className="material-symbols-outlined text-xs">group</span>{" "}
-                {rt.capacity}
-              </div>
+
+          <div className="mt-6 flex items-center justify-between pt-6 border-t border-slate-50">
+            <div>
+              <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] leading-none mb-1">
+                Giá từ
+              </p>
+              <p className="text-xl font-black text-primary leading-none">
+                {type.pricePerNight} ₫
+              </p>
             </div>
+            <button
+              onClick={() => navigate(`edit/${type._id}`)}
+              className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:bg-primary hover:text-white transition-all flex items-center justify-center active:scale-90"
+            >
+              <span className="material-symbols-outlined text-xl">edit</span>
+            </button>
           </div>
         </div>
       ))}

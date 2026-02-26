@@ -7,7 +7,7 @@ import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Room, RoomDocument } from './schemas/room.schema';
-import { isValidObjectId, Model } from 'mongoose';
+import { isValidObjectId, Model, Types } from 'mongoose';
 import { SupabaseService } from 'src/config/supabase.config';
 import { sanitizeFileName } from 'src/common/utils/sanitizeFileName.utils';
 
@@ -105,9 +105,96 @@ export class RoomsService {
   }
 
   // tìm all dữ liệu phòng
-  async findAllRooms(): Promise<RoomDocument[]> {
-    return this.roomModel.find().populate('roomType');
+  async findAllRooms(query: any) {
+    const {
+      keyword,
+      status,
+      roomType,
+      capacity,
+      minPrice,
+      maxPrice,
+      page = 1,
+      limit = 10,
+      sort,
+    } = query;
+
+    const filter: any = {};
+
+    /* ======================
+     1️⃣ SEARCH
+  ====================== */
+    if (keyword) {
+      filter.roomNumber = { $regex: keyword, $options: 'i' };
+    }
+
+    /* ======================
+     2️⃣ FILTER
+  ====================== */
+
+    if (status) {
+      filter.status = status;
+    }
+
+    if (roomType) {
+      if (!isValidObjectId(roomType)) {
+        throw new BadRequestException('Room type id không hợp lệ');
+      }
+      filter.roomType = roomType;
+    }
+
+    /* ======================
+     3️⃣ QUERY BUILDER
+  ====================== */
+
+    let queryBuilder = this.roomModel.find(filter).populate({
+      path: 'roomType',
+      match: {
+        ...(capacity && { capacity: Number(capacity) }),
+        ...(minPrice && { pricePerNight: { $gte: Number(minPrice) } }),
+        ...(maxPrice && { pricePerNight: { $lte: Number(maxPrice) } }),
+      },
+    });
+
+    /* ======================
+     4️⃣ SORT
+  ====================== */
+
+    if (sort) {
+      switch (sort) {
+        case 'price_asc':
+          queryBuilder = queryBuilder.sort({ 'roomType.pricePerNight': 1 });
+          break;
+
+        case 'price_desc':
+          queryBuilder = queryBuilder.sort({ 'roomType.pricePerNight': -1 });
+          break;
+      }
+    }
+
+    /* ======================
+     5️⃣ PAGINATION
+  ====================== */
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    queryBuilder = queryBuilder.skip(skip).limit(Number(limit));
+
+    const rooms = await queryBuilder.exec();
+
+    // Loại những room bị null do match populate
+    const filteredRooms = rooms.filter((room) => room.roomType !== null);
+
+    const total = await this.roomModel.countDocuments(filter);
+
+    return {
+      total,
+      page: Number(page),
+      limit: Number(limit),
+      data: filteredRooms,
+    };
   }
+
+  // new thử nghiệm tìm all dữ liệu phòng
 
   // tìm dữ liệu phòng theo một _id cụ thể
   async findRoomById(roomId: string): Promise<RoomDocument> {

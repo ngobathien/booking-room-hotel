@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { RoomTypesService } from './room-types.service';
 import { RoomTypesController } from './room-types.controller';
-import { RoomType } from './entities/room-type.entity';
-import { RoomTypeSchema } from './schemas/room-type.schema';
+
+import { RoomType, RoomTypeSchema } from './schemas/room-type.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({

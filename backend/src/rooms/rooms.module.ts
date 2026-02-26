@@ -9,8 +9,12 @@ import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from 'src/auth/constants';
 import { RoomTypesModule } from 'src/room-types/room-types.module';
-import { RoomType } from 'src/room-types/entities/room-type.entity';
-import { RoomTypeSchema } from 'src/room-types/schemas/room-type.schema';
+
+import {
+  RoomType,
+  RoomTypeSchema,
+} from 'src/room-types/schemas/room-type.schema';
+import { SupabaseService } from 'src/config/supabase.config';
 
 @Module({
   imports: [
@@ -31,6 +35,6 @@ import { RoomTypeSchema } from 'src/room-types/schemas/room-type.schema';
     // }),
   ],
   controllers: [RoomsController],
-  providers: [RoomsService],
+  providers: [RoomsService, SupabaseService],
 })
 export class RoomsModule {}

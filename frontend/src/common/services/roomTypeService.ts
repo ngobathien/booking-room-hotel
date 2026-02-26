@@ -43,6 +43,17 @@ export const deleteRoomTypeById = async (id: string) => {
   }
 };
 
-export const updateRoomType = () => {};
+export const updateRoomTypeById = async (
+  id: string,
+  data: Partial<RoomType>,
+) => {
+  try {
+    const response = await api.patch(`/room-types/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating room type:", error);
+    throw error;
+  }
+};
 
 export const deleteAllRooms = () => {};

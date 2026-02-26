@@ -1,29 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { getAllRooms } from "../../common/services/roomService";
-import { STATUS_ROOM_STYLE } from "../../common/constants/rooms/statusRoomStyle";
-type RoomStatus = "AVAILABLE" | "BOOKED" | "MAINTENANCE";
 
-interface RoomType {
-  typeName: string;
-  capacity: number;
-  basePrice: number;
-}
-
-interface Room {
-  _id: string;
-  roomNumber: string;
-  thumbnail: string;
-  roomType: RoomType;
-  status: RoomStatus;
-}
+import { useNavigate } from "react-router";
+import { STATUS_ROOM_STYLE, type Room } from "../../../types/room.types";
 
 interface RoomCardProps {
   room: Room;
 }
 
 const RoomCard: React.FC<RoomCardProps> = ({ room }) => {
+  const navigate = useNavigate();
+
+  // hiển thị đúng thông tin trên thanh địa chỉ
+  const handleClickNextRoomDetail = () => {
+    navigate(`/rooms/${room._id}/room-${room.roomNumber}`);
+  };
+
   return (
-    <div className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 flex flex-col h-full">
+    <div
+      onClick={handleClickNextRoomDetail}
+      className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 flex flex-col h-full"
+    >
       <div className="relative h-64 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
@@ -67,7 +63,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room }) => {
         {/* Footer */}
         <div className="mt-4 flex justify-between items-center">
           <p className="text-lg font-bold text-blue-600">
-            {room.roomType.basePrice.toLocaleString()} ₫ / đêm
+            {room.roomType.pricePerNight.toLocaleString()} ₫ / đêm
           </p>
 
           <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">

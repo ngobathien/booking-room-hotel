@@ -1,10 +1,13 @@
 import { toast } from "react-toastify";
 import {
+  createNewRoom,
   deleteRoomById,
   getAllRooms,
   getDetailRoomById,
+  updateRoom,
 } from "../common/services/roomService";
 import { useRoomContext } from "../context/RoomContext";
+import type { CreateRoomPayload } from "../types/room.types";
 
 const useRoomAction = () => {
   const { setCurrentRoom, setLoading, setRooms } = useRoomContext();
@@ -22,19 +25,54 @@ const useRoomAction = () => {
     }
   };
 
+  // thêm một phòng mới
+  const handleCreateNewRoom = async (data: CreateRoomPayload) => {
+    try {
+      const newRoom = await createNewRoom(data);
+      toast.success("Thêm phòng thành công");
+
+      setRooms((prev) => [...prev, newRoom]); // add vào list
+    } catch (error) {
+      console.error("Thêm phòng thất bại", error);
+      throw error;
+    }
+  };
+
+  // cập nhật phòng
+  const handleUpdateRoom = async (
+    roomId: string,
+    data: Partial<CreateRoomPayload>,
+  ) => {
+    try {
+      const updatedRoom = await updateRoom(roomId, data);
+      toast.success("Cập nhật phòng thành công");
+
+      setRooms((prev) =>
+        prev.map((room) => (room._id === roomId ? updatedRoom : room)),
+      );
+
+      return updatedRoom;
+    } catch (error) {
+      toast.error("Cập nhật phòng thất bại");
+      throw error;
+    }
+  };
   // Lấy chi tiết một phòng
-  const fetchRoomDetail = async (roomId: string) => {
+  const getRoomById = async (roomId: string) => {
     try {
       setLoading(true);
       const room = await getDetailRoomById(roomId);
       setCurrentRoom(room);
+      return room; // ✅ QUAN TRỌNG
     } catch (error) {
       console.error("Fetch room detail failed", error);
+      throw error;
     } finally {
       setLoading(false);
     }
   };
 
+  // xóa một phòng
   const handleDeleteRoom = async (id: string) => {
     const confirmDelete = window.confirm(
       "Bạn có chắc chắn muốn xóa phòng này?",
@@ -48,9 +86,12 @@ const useRoomAction = () => {
       console.error("Xóa thất bại", error);
     }
   };
+
+  //
   return {
-    fetchRoomDetail,
-    fetchRooms,
+    getRoomById,
+    handleCreateNewRoom,
+    handleUpdateRoom,
     handleDeleteRoom,
   };
 };

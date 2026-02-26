@@ -21,25 +21,25 @@ export class RoomTypesController {
   }
 
   @Get()
-  findAllRoomType() {
-    return this.roomTypesService.findAll();
+  findAllRoomTypes() {
+    return this.roomTypesService.findAllRoomTypes();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.roomTypesService.findOne(+id);
+  findRoomTypeById(@Param('id') id: string) {
+    return this.roomTypesService.findRoomTypeById(id);
   }
 
   @Patch(':id')
-  update(
+  updateRoomType(
     @Param('id') id: string,
     @Body() updateRoomTypeDto: UpdateRoomTypeDto,
   ) {
-    return this.roomTypesService.update(+id, updateRoomTypeDto);
+    return this.roomTypesService.updateRoomType(id, updateRoomTypeDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.roomTypesService.remove(+id);
+  removeRoomType(@Param('id') id: string) {
+    return this.roomTypesService.removeRoomType(id);
   }
 }

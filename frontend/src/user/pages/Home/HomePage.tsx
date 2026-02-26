@@ -1,7 +1,8 @@
 import React from "react";
-import Footer from "../../../common/components/Footer";
-import FeaturedRooms from "../../components/FeaturedRooms";
-import Navbar from "../../components/Navbar";
+import Footer from "../../components/layouts/Footer";
+import FeaturedRooms from "../../components/rooms/FeaturedRooms";
+import BookingBar from "../../components/BookingBar";
+import Hero from "../../components/Hero";
 
 const HomePage = () => {
   return (
@@ -11,11 +12,11 @@ const HomePage = () => {
         {/* <Navbar /> */}
 
         <main className="flex-grow">
-          {/* <Hero /> */}
+          <Hero />
 
-          {/* <div id="booking">
+          <div id="booking">
             <BookingBar />
-          </div> */}
+          </div>
 
           <div id="rooms">
             <FeaturedRooms />
@@ -29,8 +30,6 @@ const HomePage = () => {
             <CTA />
           </div> */}
         </main>
-
-        <Footer />
 
         {/* Floating Action Button for AI Concierge (Mockup UI) */}
         <button className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-primary text-white shadow-2xl shadow-primary/40 flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40 group overflow-hidden">

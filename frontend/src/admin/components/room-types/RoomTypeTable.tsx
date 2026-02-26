@@ -20,7 +20,6 @@ const RoomTypeTable: React.FC<Props> = ({ roomTypes, loading, onDelete }) => {
       <table className="w-full text-left">
         <thead className="bg-slate-50 border-b border-slate-200">
           <tr className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-            <th className="px-6 py-4">Hình ảnh</th>
             <th className="px-6 py-4">Tên loại phòng</th>
             <th className="px-6 py-4">Sức chứa</th>
             <th className="px-6 py-4">Đơn giá</th>
@@ -34,21 +33,22 @@ const RoomTypeTable: React.FC<Props> = ({ roomTypes, loading, onDelete }) => {
               key={rt._id}
               className="hover:bg-slate-50 transition-colors group"
             >
-              <td className="px-6 py-3">
-                <img
-                  src={rt.image}
-                  className="w-16 h-10 object-cover rounded-lg border border-slate-200"
-                />
-              </td>
+              {/* typeName */}
               <td className="px-6 py-3 font-bold text-slate-900">
                 {rt.typeName}
               </td>
+
+              {/* capacity */}
               <td className="px-6 py-3 text-sm text-slate-500 font-medium">
                 {rt.capacity}
               </td>
+
+              {/*  */}
               <td className="px-6 py-3 font-black text-primary">
                 {rt.pricePerNight} ₫
               </td>
+
+              {/*  */}
               <td className="px-6 py-3">
                 <span className="text-xs font-bold text-slate-400">
                   {rt.available} trống / {rt.total} tổng

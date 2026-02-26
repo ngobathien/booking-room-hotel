@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllRooms } from "../../common/services/roomService";
+import { getAllRooms } from "../../../common/services/roomService";
 import RoomCard from "./RoomCard";
 
 type RoomStatus = "AVAILABLE" | "BOOKED" | "MAINTENANCE";

@@ -12,7 +12,8 @@ export class RoomType {
   capacity: number;
 
   @Prop({ required: true, min: 0 })
-  basePrice: number;
+  // basePrice: number;
+  pricePerNight: number;
 }
 
 export const RoomTypeSchema = SchemaFactory.createForClass(RoomType);

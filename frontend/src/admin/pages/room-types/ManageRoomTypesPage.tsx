@@ -1,16 +1,16 @@
 import { Outlet, useNavigate } from "react-router";
-import RoomTypesListTable from "../components/room-types/RoomTypeTable";
+import RoomTypesListTable from "../../components/room-types/RoomTypeTable";
 import { useEffect, useState } from "react";
-import type { RoomType } from "../../types/room-types.types";
+import type { RoomType } from "../../../types/room-types.types";
 import {
   createNewRoomType,
   deleteRoomTypeById,
   getAllRoomTypes,
-} from "../../common/services/roomTypeService";
+} from "../../../common/services/roomTypeService";
 
-import RoomTypeGrid from "../components/room-types/RoomTypeGrid";
-import RoomTypeTable from "../components/room-types/RoomTypeTable";
-import { useRoomTypes } from "../../hooks/useRoomTypes";
+import RoomTypeGrid from "../../components/room-types/RoomTypeGrid";
+import RoomTypeTable from "../../components/room-types/RoomTypeTable";
+import { useRoomTypes } from "../../../hooks/useRoomTypes";
 
 const ManageRoomTypesPage = () => {
   const navigate = useNavigate();
@@ -58,6 +58,7 @@ const ManageRoomTypesPage = () => {
             >
               <span className="material-symbols-outlined block">grid_view</span>
             </button>
+
             <button
               onClick={() => setViewMode("list")}
               className={`p-2 rounded-lg transition-all ${viewMode === "list" ? "bg-white  text-primary shadow-sm" : "text-slate-400"}`}
@@ -82,7 +83,7 @@ const ManageRoomTypesPage = () => {
       {/* Content */}
 
       {/* truyền props cho file RoomTypesListTable  */}
-      {viewMode === "list" ? (
+      {viewMode === "grid" ? (
         <RoomTypeGrid roomTypes={roomTypes} />
       ) : (
         <RoomTypeTable

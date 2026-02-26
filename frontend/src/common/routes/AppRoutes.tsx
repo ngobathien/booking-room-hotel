@@ -13,15 +13,17 @@ import ResetPassword from "../pages/auth/ResetPassword";
 import ChangePassword from "../pages/auth/ChangePassword";
 import MainLayout from "../../user/components/layouts/MainLayout";
 import RoomDetailPage from "../../user/pages/Room/RoomDetailPage";
-import RoomList from "../../user/pages/Room/RoomList";
 import RoomLayout from "../../user/components/layouts/RoomLayout";
-import { RoomProvider } from "../../context/RoomContext";
 import AdminLayout from "../../admin/components/layouts/AdminLayout";
 import AdminRoomLayout from "../../admin/components/layouts/AdminRoomLayout";
-import AddRoomPage from "../../admin/components/rooms/AddRoomPage";
-import ManageRoomTypesPage from "../../admin/pages/ManageRoomTypesPage";
-import AddRoomTypesPage from "../../admin/components/room-types/AddRoomTypesPage";
+import ManageRoomTypesPage from "../../admin/pages/room-types/ManageRoomTypesPage";
 import AdminRoomTypesLayout from "../../admin/components/layouts/AdminRoomTypesLayout";
+import AddRoomTypeForm from "../../admin/components/room-types/AddRoomTypeForm";
+import AddRoomForm from "../../admin/components/rooms/AddRoomForm";
+import EditRoomForm from "../../admin/components/rooms/EditRooForm";
+import EditRoomTypeForm from "../../admin/components/room-types/EditRoomTypeForm";
+import AddRoomTypePage from "../../admin/pages/room-types/AddRoomTypePage";
+import EditRoomTypePage from "../../admin/pages/room-types/EditRoomTypePage";
 
 const AppRoutes = () => (
   <Routes>
@@ -42,9 +44,7 @@ const AppRoutes = () => (
       <Route path="/rooms/:roomId" element={<RoomDetailPage />} /> */}
 
       {/* ================= USER (LOGIN REQUIRED) ================= */}
-      <Route
-        element={<ProtectedRoute allowedRoles={[ROLES.USER, ROLES.ADMIN]} />}
-      >
+      <Route element={<ProtectedRoute allowedRoles={[ROLES.USER]} />}>
         {/* trang cá nhân ========================================*/}
         <Route path="/profile" element={<ProfilePage />} />
 
@@ -62,12 +62,17 @@ const AppRoutes = () => (
 
         <Route path="rooms" element={<AdminRoomLayout />}>
           <Route index element={<ManageRoomPage />} />
-          <Route path="create" element={<AddRoomPage />} />
+          <Route path="create" element={<AddRoomForm />} />
+          <Route path="edit/:id" element={<EditRoomForm />} />
         </Route>
 
         <Route path="room-types" element={<AdminRoomTypesLayout />}>
           <Route index element={<ManageRoomTypesPage />} />
-          <Route path="create" element={<AddRoomTypesPage />} />
+          {/* <Route path="create" element={<AddRoomTypeForm />} />
+          <Route path="edit/:id" element={<EditRoomTypeForm />} /> */}
+          <Route path="create" element={<AddRoomTypePage />} />
+          <Route path="edit/:id" element={<EditRoomTypePage />} />
+          EditRoomTypesPage
         </Route>
       </Route>
 

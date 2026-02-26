@@ -9,6 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFiles,
+  Query,
 } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
@@ -38,8 +39,36 @@ export class RoomsController {
 
   // lấy tất cả danh sách room hiện có
   @Get()
-  findAllRooms() {
-    return this.roomsService.findAllRooms();
+  findAllRooms(
+    // lọc phòng
+
+    @Query('status') status?: string,
+    @Query('capacity') capacity?: number,
+
+    @Query('roomType') roomType?: string,
+    @Query('minPrice') minPrice?: number,
+    @Query('maxPrice') maxPrice?: number,
+
+    // phân trang
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+
+    //
+    @Query('sort') sort?: string,
+  ) {
+    return this.roomsService.findAllRooms({
+      status,
+      capacity,
+
+      roomType,
+
+      minPrice,
+      maxPrice,
+
+      page,
+      limit,
+      sort,
+    });
   }
 
   // tìm room theo id của riêng room đó từ database

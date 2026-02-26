@@ -11,5 +11,5 @@ export class CreateRoomTypeDto {
 
   @IsNumber()
   @Min(0)
-  basePrice: number; // giá cơ bản / đêm
+  pricePerNight: number; // giá cơ bản / đêm
 }
