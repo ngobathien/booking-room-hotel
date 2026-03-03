@@ -10,6 +10,8 @@ import { Room, RoomDocument } from './schemas/room.schema';
 import { isValidObjectId, Model, Types } from 'mongoose';
 import { SupabaseService } from 'src/config/supabase.config';
 import { sanitizeFileName } from 'src/common/utils/sanitizeFileName.utils';
+import { Booking, BookingDocument } from 'src/bookings/schemas/booking.schema';
+import { SearchRoomDto } from './dto/search-room.dto';
 
 @Injectable()
 export class RoomsService {
@@ -17,6 +19,10 @@ export class RoomsService {
   constructor(
     @InjectModel(Room.name) private roomModel: Model<RoomDocument>,
     private readonly supabaseService: SupabaseService,
+
+    //
+    @InjectModel(Booking.name)
+    private bookingModel: Model<BookingDocument>,
   ) {
     if (!process.env.BUCKET_NAME) {
       throw new Error('BUCKET_NAME is not defined');
@@ -36,72 +42,130 @@ export class RoomsService {
     createRoomDto: CreateRoomDto,
     files: Express.Multer.File[],
   ) {
-    // Kiểm tra có file upload hay không
-    if (!files || files.length === 0) {
-      throw new BadRequestException('Phải upload ít nhất 1 ảnh');
-    }
-
-    // Lấy client Supabase từ service
     const supabase = this.supabaseService.client;
-
-    // Mảng lưu public URL của các ảnh sau khi upload
     const uploadedUrls: string[] = [];
 
-    // Duyệt từng file được upload
-    for (const file of files) {
-      // Chỉ cho phép upload ảnh
-      if (!file.mimetype.startsWith('image/')) {
-        throw new BadRequestException(
-          `File ${file.originalname} không phải ảnh`,
-        );
+    // 🔥 Nếu có upload file → upload lên Supabase
+    if (files && files.length > 0) {
+      for (const file of files) {
+        if (!file.mimetype.startsWith('image/')) {
+          throw new BadRequestException(
+            `File ${file.originalname} không phải ảnh`,
+          );
+        }
+
+        const safeName = sanitizeFileName(file.originalname);
+
+        const path = `rooms/${createRoomDto.roomNumber}-room/${Date.now()}-${safeName}`;
+
+        const { error } = await supabase.storage
+          .from(this.bucketName)
+          .upload(path, file.buffer, {
+            contentType: file.mimetype,
+          });
+
+        if (error) {
+          throw new BadRequestException(error.message ?? 'Upload ảnh thất bại');
+        }
+
+        const { data } = supabase.storage
+          .from(this.bucketName)
+          .getPublicUrl(path);
+
+        uploadedUrls.push(data.publicUrl);
       }
-
-      // Làm sạch tên file (tránh ký tự đặc biệt)
-      const safeName = sanitizeFileName(file.originalname);
-
-      /**
-       * Tạo đường dẫn lưu ảnh trên Supabase
-       * Ví dụ:
-       * rooms/101/1707123456789-room.jpg
-       */
-      const path = `rooms/${createRoomDto.roomNumber}-room/${Date.now()}-${safeName}`;
-
-      // Upload file buffer lên Supabase Storage
-      const { error } = await supabase.storage
-        .from(this.bucketName)
-        .upload(path, file.buffer, {
-          contentType: file.mimetype,
-        });
-
-      // Nếu upload lỗi → dừng lại ngay
-      if (error) {
-        throw new BadRequestException(error.message ?? 'Upload ảnh thất bại');
-      }
-
-      // Lấy public URL của ảnh vừa upload, để lưu url này vào database
-      const { data } = supabase.storage
-        .from(this.bucketName)
-        .getPublicUrl(path);
-
-      // Không lấy được URL → báo lỗi
-      if (!data?.publicUrl) {
-        throw new BadRequestException('Không lấy được public URL');
-      }
-
-      // Lưu URL vào mảng images
-      uploadedUrls.push(data.publicUrl);
     }
 
-    /**
-     * Tạo room trong database
-     * - images: toàn bộ ảnh
-     * - thumbnail: ảnh đầu tiên (ảnh đại diện)
-     */
+    // 🔥 Nếu KHÔNG có file nhưng có thumbnail (link)
+    if ((!files || files.length === 0) && createRoomDto.thumbnail) {
+      uploadedUrls.push(createRoomDto.thumbnail);
+    }
+
+    if (uploadedUrls.length === 0) {
+      throw new BadRequestException('Phải có ít nhất 1 ảnh hoặc link ảnh');
+    }
+
     return this.roomModel.create({
       ...createRoomDto,
       images: uploadedUrls,
       thumbnail: uploadedUrls[0],
     });
+  }
+
+  // search room theo ngày check-in, check-out và số lượng khách
+  /*  Tìm booking trùng ngày
+      Lấy id phòng đã bị book
+      Loại chúng khỏi danh sách room
+      Lọc theo capacity
+      Trả về kết quả */
+  async searchAvailableRooms(query: SearchRoomDto) {
+    // nhận dữ liệu từ query params từ FE gửi lên, destructuring
+    const { checkInDate, checkOutDate, guests } = query;
+
+    // validate dữ liệu ngày tháng gửi lên
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+
+    if (checkOut <= checkIn) {
+      throw new BadRequestException('Ngày check-out phải sau ngày check-in');
+    }
+
+    // Tìm các room đã bị book trùng ngày
+    const bookedRoomIds = await this.bookingModel
+      .find({
+        // Lấy các booking KHÔNG bị huỷ
+        // $ne = not equal (không bằng)
+        status: { $ne: 'cancelled' },
+
+        // Điều kiện overlap (trùng ngày):
+        // booking cũ có checkIn < ngày checkOut mới
+        // $lt = less than (nhỏ hơn)
+        checkInDate: { $lt: checkOut },
+
+        // booking cũ có checkOut > ngày checkIn mới
+        // $gt = greater (lớn hơn)
+        checkOutDate: { $gt: checkIn },
+      })
+      // chỉ lấy danh sách roomId không trùng nhau
+      .distinct('room');
+
+    // console.log('Booked Room IDs:', bookedRoomIds);
+
+    /*  ================================
+    TÌM CÁC ROOM CHƯA BỊ BOOK
+    ================================ */
+    const availableRooms = await this.roomModel
+      .find({
+        /* $nin = not in (không nằm trong mảng)
+        nghĩa là: lấy các room KHÔNG nằm trong danh sách đã bị book */
+        _id: { $nin: bookedRoomIds },
+      })
+      .populate({
+        path: 'roomType',
+        // match = điều kiện lọc khi populate
+        // capacity phải >= số khách user nhập
+        // $gte = greater than or equal (>=)
+        match: { capacity: { $gte: Number(guests) } },
+      });
+
+    /*   ================================
+    LOẠI ROOM KHÔNG ĐỦ SỨC CHỨA
+    ================================
+ */
+    // Nếu roomType không đủ capacity
+    // thì populate sẽ trả về roomType = null
+    // nên ta phải filter lại
+    const filteredRooms = availableRooms.filter(
+      (room) => room.roomType !== null,
+    );
+
+    return {
+      // tổng số phòng còn trống và đủ sức chứa
+      total: filteredRooms.length,
+
+      // danh sách phòng
+      rooms: filteredRooms,
+    };
   }
 
   // tìm all dữ liệu phòng
@@ -211,23 +275,96 @@ export class RoomsService {
     return roomData;
   }
 
-  updateRoom(roomId: string, updateRoomDto: UpdateRoomDto) {
-    // check sai _id gửi lên
+  //
+  async updateRoomWithImages(
+    roomId: string,
+    updateRoomDto: UpdateRoomDto,
+    files?: Express.Multer.File[],
+  ) {
     if (!isValidObjectId(roomId)) {
       throw new BadRequestException('Room id không hợp lệ');
     }
-    const updatedRoom = this.roomModel.findByIdAndUpdate(
-      roomId,
-      updateRoomDto,
-      {
-        new: true,
-      },
-    );
 
-    if (!updateRoomDto) {
-      throw new NotFoundException('Không tìm thấy dữ liệu phòng để cập nhật');
+    const room = await this.roomModel.findById(roomId);
+
+    if (!room) {
+      throw new NotFoundException('Không tìm thấy phòng');
     }
-    return updatedRoom;
+
+    const supabase = this.supabaseService.client;
+    const newUploadedUrls: string[] = [];
+
+    /* ==============================
+     1️⃣ Upload ảnh mới nếu có
+  ============================== */
+
+    if (files && files.length > 0) {
+      for (const file of files) {
+        if (!file.mimetype.startsWith('image/')) {
+          throw new BadRequestException(
+            `File ${file.originalname} không phải ảnh`,
+          );
+        }
+
+        const safeName = sanitizeFileName(file.originalname);
+
+        const path = `rooms/${room.roomNumber}-room/${Date.now()}-${safeName}`;
+
+        const { error } = await supabase.storage
+          .from(this.bucketName)
+          .upload(path, file.buffer, {
+            contentType: file.mimetype,
+          });
+
+        if (error) {
+          throw new BadRequestException(error.message);
+        }
+
+        const { data } = supabase.storage
+          .from(this.bucketName)
+          .getPublicUrl(path);
+
+        newUploadedUrls.push(data.publicUrl);
+      }
+    }
+
+    /* ==============================
+     2️⃣ Merge ảnh cũ + ảnh mới
+  ============================== */
+
+    const finalImages = [
+      ...(updateRoomDto.images ?? []), // ảnh cũ còn lại
+      ...newUploadedUrls, // ảnh mới
+    ];
+
+    if (finalImages.length === 0) {
+      throw new BadRequestException('Phải có ít nhất 1 ảnh');
+    }
+
+    /* ==============================
+     3️⃣ Update dữ liệu
+  ============================== */
+
+    room.roomNumber = updateRoomDto.roomNumber ?? room.roomNumber;
+    room.status = updateRoomDto.status ?? room.status;
+    // room.roomType = updateRoomDto.roomType ?? room.roomType;
+    if (updateRoomDto.roomType) {
+      if (!isValidObjectId(updateRoomDto.roomType)) {
+        throw new BadRequestException('roomType không hợp lệ');
+      }
+
+      room.roomType = new Types.ObjectId(updateRoomDto.roomType);
+    }
+    room.description = updateRoomDto.description ?? room.description;
+
+    room.images = finalImages;
+
+    // nếu FE không chọn thumbnail → lấy ảnh đầu
+    room.thumbnail = updateRoomDto.thumbnail ?? finalImages[0];
+
+    await room.save();
+
+    return room;
   }
 
   // xóa 1 phòng theo id
