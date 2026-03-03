@@ -19,6 +19,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/users/schemas/user.schema';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { SearchRoomDto } from './dto/search-room.dto';
 
 @Controller('rooms')
 export class RoomsController {
@@ -35,6 +36,12 @@ export class RoomsController {
     @UploadedFiles() files: Express.Multer.File[],
   ) {
     return this.roomsService.createNewRoomWithImages(createRoomDto, files);
+  }
+
+  // search room theo ngày check-in, check-out và số lượng khách
+  @Get('search')
+  async searchAvailableRooms(@Query() query: SearchRoomDto) {
+    return this.roomsService.searchAvailableRooms(query);
   }
 
   // lấy tất cả danh sách room hiện có
@@ -79,8 +86,13 @@ export class RoomsController {
   }
 
   @Patch(':id')
-  updateRoom(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
-    return this.roomsService.updateRoom(id, updateRoomDto);
+  @UseInterceptors(FilesInterceptor('files', 10))
+  updateRoom(
+    @Param('id') id: string,
+    @Body() updateRoomDto: UpdateRoomDto,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    return this.roomsService.updateRoomWithImages(id, updateRoomDto, files);
   }
 
   // xóa 1 phòng theo id
