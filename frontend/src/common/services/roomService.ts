@@ -1,4 +1,8 @@
-import type { CreateRoomPayload } from "../../types/room.types";
+import type {
+  CreateRoomPayload,
+  SearchRoomParams,
+  SearchRoomResponse,
+} from "../../types/room.types";
 import api from "./apiClient";
 
 export const getAllRooms = async (params?: any) => {
@@ -23,14 +27,45 @@ export const getDetailRoomById = async (roomId: string) => {
   }
 };
 
-export const createNewRoom = async (newRoomData: CreateRoomPayload) => {
+// search room theo ngày check-in, check-out và số lượng khách
+export const searchAvailableRooms = async (
+  params: SearchRoomParams,
+): Promise<SearchRoomResponse> => {
   try {
-    const response = await api.post(`/rooms`, newRoomData);
+    const response = await api.get(`/rooms/search`, { params });
     return response.data;
   } catch (error) {
-    console.error("Error creating room :", error);
+    console.error("Error searching available rooms:", error);
     throw error;
   }
+};
+
+// tạo room mới với ảnh
+export const createNewRoom = async (
+  newRoomData: CreateRoomPayload,
+  files?: File[],
+) => {
+  const formData = new FormData();
+
+  // append text fields
+  Object.entries(newRoomData).forEach(([key, value]) => {
+    if (value) formData.append(key, value as any);
+  });
+
+  // append file nếu có
+  if (files && files.length > 0) {
+    files.forEach((file) => {
+      formData.append("files", file);
+    });
+  }
+
+  const response = await api.post(`/rooms`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return response.data;
 };
 
 export const deleteRoomById = async (roomId: string) => {
