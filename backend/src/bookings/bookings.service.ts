@@ -191,4 +191,121 @@ export class BookingsService {
       data: booking,
     };
   }
+
+  update(id: number, updateBookingDto: UpdateBookingDto) {
+    return `This action updates a #${id} booking`;
+  }
+
+  // Hủy booking của user
+  async cancelBooking(id: string, userId: string) {
+    // Tìm booking theo id
+    const booking = await this.bookingModel.findById(id);
+
+    // Nếu không tồn tại booking → báo lỗi
+    if (!booking) {
+      throw new NotFoundException('Booking not found');
+    }
+
+    // Kiểm tra user hiện tại có phải chủ booking không
+    // Chỉ người tạo booking mới có quyền hủy
+    if (booking.user.toString() !== userId) {
+      throw new BadRequestException('Bạn không thể hủy booking này');
+    }
+
+    // Nếu booking đã bị hủy trước đó → không cho hủy nữa
+    if (booking.bookingStatus === BookingStatus.CANCELLED) {
+      throw new BadRequestException('Booking đã bị hủy trước đó');
+    }
+
+    // Nếu khách đã check-in rồi thì không thể hủy
+    // Vì khách đã nhận phòng
+    if (booking.stayStatus === BookingStayStatus.CHECKED_IN) {
+      throw new BadRequestException('Không thể hủy khi đã check-in');
+    }
+
+    // Cập nhật trạng thái booking thành CANCELLED
+    booking.bookingStatus = BookingStatus.CANCELLED;
+
+    // Lưu thay đổi vào database
+    await booking.save();
+
+    // Trả response cho client
+    return {
+      message: 'Booking cancelled successfully',
+      data: booking,
+    };
+  }
+
+  // lấy danh sách booking của user hiện tại
+  async getMyBookings(userId: string) {
+    const bookings = await this.bookingModel
+      .find({ user: userId })
+      .populate('room')
+      .sort({ createdAt: -1 });
+
+    const total = await this.bookingModel.countDocuments({ user: userId });
+    return {
+      message: 'Get my bookings successfully',
+      countMyBookings: total,
+      data: bookings,
+    };
+  }
+  // Check-in khách (thường do admin / lễ tân thực hiện)
+  async checkInBooking(id: string) {
+    // Tìm booking theo id
+    const booking = await this.bookingModel.findById(id);
+
+    // Nếu booking không tồn tại
+    if (!booking) {
+      throw new NotFoundException('Booking not found');
+    }
+
+    // Chỉ cho check-in nếu booking đã được xác nhận (CONFIRMED)
+    // Flow đúng: PENDING → CONFIRMED → CHECKED_IN
+    if (booking.bookingStatus !== BookingStatus.CONFIRMED) {
+      throw new BadRequestException('Booking chưa được xác nhận');
+    }
+
+    // Cập nhật trạng thái sang CHECKED_IN (khách đã nhận phòng)
+    booking.stayStatus = BookingStayStatus.CHECKED_IN;
+
+    // Lưu lại database
+    await booking.save();
+
+    // Trả kết quả
+    return {
+      message: 'Check-in successful',
+      data: booking,
+    };
+  }
+
+  // Check-out khách (khách trả phòng)
+  async checkOutBooking(id: string) {
+    // Tìm booking theo id
+    const booking = await this.bookingModel.findById(id);
+
+    // Nếu không tồn tại booking
+    if (!booking) {
+      throw new NotFoundException('Booking not found');
+    }
+
+    // Chỉ cho check-out khi khách đã check-in
+    // Flow đúng: CONFIRMED → CHECKED_IN → CHECKED_OUT
+    if (booking.stayStatus !== BookingStayStatus.CHECKED_IN) {
+      throw new BadRequestException('Khách chưa check-in');
+    }
+
+    // Cập nhật trạng thái sang CHECKED_OUT (khách đã trả phòng)
+    booking.stayStatus = BookingStayStatus.CHECKED_OUT;
+    //
+    booking.bookingStatus = BookingStatus.COMPLETED;
+    // Lưu vào database
+    await booking.save();
+
+    // Trả kết quả
+    return {
+      message: 'Check-out successful',
+      data: booking,
+    };
+  }
 }
