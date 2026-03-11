@@ -10,6 +10,7 @@ import {
   Booking,
   BookingDocument,
   BookingStatus,
+  BookingStayStatus,
 } from './schemas/booking.schema';
 import { Model } from 'mongoose';
 import { Room, RoomDocument } from 'src/rooms/schemas/room.schema';
@@ -17,6 +18,7 @@ import {
   RoomType,
   RoomTypeDocument,
 } from 'src/room-types/schemas/room-type.schema';
+import { User, UserDocument } from 'src/users/schemas/user.schema';
 
 @Injectable()
 export class BookingsService {
@@ -26,7 +28,10 @@ export class BookingsService {
 
     @InjectModel(Room.name) private roomModel: Model<RoomDocument>,
     @InjectModel(RoomType.name) private roomTypeModel: Model<RoomTypeDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
+
+ 
 
   // Kiểm tra phòng có sẵn trong khoảng thời gian hay không
   async checkRoomAvailability(
@@ -44,7 +49,7 @@ export class BookingsService {
 
     const conflict = await this.bookingModel.findOne({
       room: roomId,
-      status: { $ne: 'cancelled' },
+      bookingStatus: { $ne: BookingStatus.CANCELLED },
       checkInDate: { $lt: checkOutDate },
       checkOutDate: { $gt: checkInDate },
     });
@@ -52,23 +57,5 @@ export class BookingsService {
     return {
       available: !conflict,
     };
-  }
-
-  // lấy tất cả booking
-  findAll() {
-    return this.bookingModel.find().populate('room').populate('user');
-  }
-
-  // lấy booking theo id
-  findOne(id: string) {
-    return this.bookingModel.findById(id).populate('room').populate('user');
-  }
-
-  update(id: number, updateBookingDto: UpdateBookingDto) {
-    return `This action updates a #${id} booking`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} booking`;
   }
 }
