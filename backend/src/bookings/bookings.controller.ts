@@ -43,4 +43,12 @@ export class BookingsController {
       new Date(checkOutDate),
     );
   }
+
+  // tạo booking mới
+  @UseGuards(AuthGuard)
+  @Roles(UserRole.ADMIN)
+  @Post()
+  createBooking(@Body() dto: CreateBookingDto, @Req() req) {
+    return this.bookingsService.createBooking(dto, req.user.userId);
+  }
 }
