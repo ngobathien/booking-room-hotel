@@ -153,6 +153,9 @@ export class AuthService {
     // tạo mã OTP
     const otp = this.generateOtp();
 
+    // hash mã OTP
+    const hashedOtp = await bcrypt.hash(otp, 10);
+
     // tạo thời gian hết hạn của otp
     const expiresAt = new Date();
     expiresAt.setMinutes(expiresAt.getMinutes() + 5);
@@ -160,14 +163,14 @@ export class AuthService {
     // tạo để lưu vào db
     await this.otpModel.create({
       email,
-      otp,
+      otp: hashedOtp,
       expiresAt,
     });
 
     // gửi mã otp về mail
     await this.mailService.sendOtpEmail(email, otp);
 
-    return { message: 'OTP sent to email', user };
+    return { message: 'OTP đã gửi tới email', email: user.email };
   }
 
   // ============================= verify OTP  =============================
@@ -179,9 +182,17 @@ export class AuthService {
     const record = await this.otpModel.findOne({ email, otp });
 
     if (!record) {
+      throw new BadRequestException('OTP không hợp lệ hoặc đã hết hạn');
+    }
+
+    // mã hóa otp từ db
+    const isOtpValid = await bcrypt.compare(otp, record.otp);
+
+    if (!isOtpValid) {
       throw new BadRequestException('OTP không đúng');
     }
 
+    // check OTP hết hạn
     if (record.expiresAt < new Date()) {
       throw new BadRequestException('OTP đã hết hạn');
     }
@@ -194,6 +205,7 @@ export class AuthService {
       message: 'Xác thực email thành công',
     };
   }
+
   // ============================= resendOTP =============================
   async resendOtp(email: string) {
     const user = await this.usersService.findByEmail(email);
@@ -215,12 +227,13 @@ export class AuthService {
     const expiresAt = new Date();
     expiresAt.setMinutes(expiresAt.getMinutes() + 5);
 
+    const hashedOtp = await bcrypt.hash(otp, 10);
+
     await this.otpModel.create({
       email,
-      otp,
+      otp: hashedOtp,
       expiresAt,
     });
-
     await this.mailService.sendOtpEmail(email, otp);
 
     return {
@@ -325,7 +338,7 @@ export class AuthService {
       await this.mailService.sendPasswordResetEmail(email, resetToken);
 
       return {
-        message: 'If email exists, reset link sent',
+        message: 'Nếu email hợp lệ, link đặt lại mật khẩu đã được gửi.',
       };
     }
   }
@@ -366,7 +379,9 @@ export class AuthService {
     // lưu mật khẩu mới vào document
 
     await user.save();
-    // console.log(email);
-    // return { email };
+
+    return {
+      message: 'Đặt lại mật khẩu thành công',
+    };
   }
 }
