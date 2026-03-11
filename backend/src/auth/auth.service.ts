@@ -7,20 +7,20 @@ import {
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { SignInDto } from './dto/sign-in-auth.dto';
 import { SignUpDto } from './dto/sign-up-auth.dto';
 
 import * as bcrypt from 'bcrypt';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { User, UserDocument } from 'src/users/schemas/user.schema';
+import { User, UserDocument, UserStatus } from 'src/users/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RefreshToken } from './schemas/refresh-token.schema';
 import { randomUUID } from 'crypto';
-import { ChangePasswordDto } from './dto/change-password.dto';
 import { ResetToken } from './schemas/reset-token.schema';
 import { MailService } from 'src/services/mail.service';
+import { Otp, OtpDocument } from './schemas/email-otp.schema';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 
 @Injectable()
 export class AuthService {
@@ -36,6 +36,9 @@ export class AuthService {
     // thêm model User
     @InjectModel(User.name)
     private userModel: Model<UserDocument>,
+
+    @InjectModel(Otp.name)
+    private otpModel: Model<OtpDocument>,
 
     // thêm model RefreshToken
     @InjectModel(RefreshToken.name)
@@ -61,6 +64,12 @@ export class AuthService {
     // nếu không có user hoặc mật khẩu không đúng thì báo lỗi
     if (!user) {
       throw new UnauthorizedException('Email không đúng hoặc không tồn tại');
+    }
+    if (user.status === UserStatus.BLOCKED) {
+      throw new UnauthorizedException('Tài khoản đã bị khóa');
+    }
+    if (!user.isVerified) {
+      throw new UnauthorizedException('Email chưa được xác thực');
     }
 
     /* so sánh password từ client gửi lên với password của hệ thống lưu ở database 
@@ -113,11 +122,21 @@ export class AuthService {
     };
   }
 
+  private generateOtp(): string {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  }
   //  ============================= đăng ký =============================
   async signUp(signUpDto: SignUpDto) {
     console.log('signUpDto:', signUpDto);
 
-    const { password } = signUpDto;
+    const { email, password } = signUpDto;
+
+    const existedUser = await this.usersService.findByEmail(email);
+
+    if (existedUser) {
+      throw new BadRequestException('Email của bạn đã tồn tại');
+    }
+
     // =============================bcrypt mật khẩu==================================
     const saltOrRounds = 10;
     // cho password vào hàm bcryp.hash để mã hóa
@@ -125,16 +144,103 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, saltOrRounds);
     // console.log(`Hash: ${hashedPassword}`);
 
-    const user = await this.usersService.create({
+    const user = await this.userModel.create({
       ...signUpDto,
       password: hashedPassword,
+      isVerified: false,
     });
 
-    return { message: 'Đăng ký thành công', user };
+    // tạo mã OTP
+    const otp = this.generateOtp();
+
+    // hash mã OTP
+    const hashedOtp = await bcrypt.hash(otp, 10);
+
+    // tạo thời gian hết hạn của otp
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 5);
+
+    // tạo để lưu vào db
+    await this.otpModel.create({
+      email,
+      otp: hashedOtp,
+      expiresAt,
+    });
+
+    // gửi mã otp về mail
+    await this.mailService.sendOtpEmail(email, otp);
+
+    return { message: 'OTP đã gửi tới email', email: user.email };
   }
 
-  // ============================= refresh token  =============================
-  // lấy refresh token mới, đây là dùng để lưu refresh toke
+  // ============================= verify OTP  =============================
+  async verifyOtp(verifyOtpDto: VerifyOtpDto) {
+    // nhận email và otp từ client
+    const { email, otp } = verifyOtpDto;
+
+    // tìm và xóa toàn bộ OTP của email đó
+    const record = await this.otpModel.findOne({ email, otp });
+
+    if (!record) {
+      throw new BadRequestException('OTP không hợp lệ hoặc đã hết hạn');
+    }
+
+    // mã hóa otp từ db
+    const isOtpValid = await bcrypt.compare(otp, record.otp);
+
+    if (!isOtpValid) {
+      throw new BadRequestException('OTP không đúng');
+    }
+
+    // check OTP hết hạn
+    if (record.expiresAt < new Date()) {
+      throw new BadRequestException('OTP đã hết hạn');
+    }
+
+    await this.userModel.updateOne({ email }, { isVerified: true });
+
+    await this.otpModel.deleteMany({ email });
+
+    return {
+      message: 'Xác thực email thành công',
+    };
+  }
+
+  // ============================= resendOTP =============================
+  async resendOtp(email: string) {
+    const user = await this.usersService.findByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException('User không tồn tại');
+    }
+
+    if (user.isVerified) {
+      throw new BadRequestException('Email đã được xác thực');
+    }
+
+    // xoá OTP cũ
+    await this.otpModel.deleteMany({ email });
+
+    // tạo OTP mới
+    const otp = this.generateOtp();
+
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 5);
+
+    const hashedOtp = await bcrypt.hash(otp, 10);
+
+    await this.otpModel.create({
+      email,
+      otp: hashedOtp,
+      expiresAt,
+    });
+    await this.mailService.sendOtpEmail(email, otp);
+
+    return {
+      message: 'OTP mới đã được gửi',
+    };
+  }
+
   async refreshTokens(refreshTokenDto: RefreshTokenDto) {
     // Nhận refresh token từ client
     const { token } = refreshTokenDto;
@@ -210,14 +316,8 @@ export class AuthService {
 
   // ============================= quên mật khẩu =============================
   async forgotPassword(email: string) {
-    // nhận email từ client gửi lên
-
     // check email này có tồn tại hay chưa
     const userExisting = await this.usersService.findByEmail(email);
-
-    if (!userExisting) {
-      throw new NotFoundException();
-    }
 
     // nếu email tồn tại tạo token, thời gian hết hạn token
     if (userExisting) {
@@ -236,13 +336,19 @@ export class AuthService {
 
       // gủi cho email này một link chứa token, gọi từ dịch vụ mail
       await this.mailService.sendPasswordResetEmail(email, resetToken);
+
+      return {
+        message: 'Nếu email hợp lệ, link đặt lại mật khẩu đã được gửi.',
+      };
     }
-    // console.log(email);
-    // return { email };
   }
 
   // ============================= reset mật khẩu =============================
   async resetPassword(resetToken: string, newPassword: string) {
+    if (newPassword.length < 6) {
+      throw new BadRequestException('Password too short');
+    }
+
     //  tìm giá trị reset token document trong database
     const token = await this.resetTokenModel.findOneAndDelete({
       resetPasswordToken: resetToken,
@@ -250,7 +356,9 @@ export class AuthService {
       // expiresAt phải lớn hơn hoặc bằng thời điểm hiện tại
       resetPasswordExpires: { $gte: new Date() },
     });
+
     console.log(token);
+
     if (!token) {
       throw new UnauthorizedException('Invalid link');
     }
@@ -271,7 +379,9 @@ export class AuthService {
     // lưu mật khẩu mới vào document
 
     await user.save();
-    // console.log(email);
-    // return { email };
+
+    return {
+      message: 'Đặt lại mật khẩu thành công',
+    };
   }
 }

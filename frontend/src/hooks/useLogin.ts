@@ -42,9 +42,11 @@ export const useLogin = () => {
       if (error.code === "ERR_NETWORK") {
         toast.error("Lỗi do server mất kết nối");
       } else {
-        toast.error(
-          error?.response?.data?.message || "Email hoặc mật khẩu không đúng",
-        );
+        const message =
+          error?.response?.data?.message ||
+          "Email đã tồn tại hoặc mật khẩu không đúng";
+
+        toast.error(message);
       }
     } finally {
       setLoading(false);

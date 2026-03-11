@@ -1,21 +1,16 @@
 import axios from "axios";
 import api from "./apiClient.ts";
+import type {
+  LoginData,
+  RegisterData,
+  VerifyOtp,
+} from "../../types/auth.types.ts";
 
 const auth = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 100000,
   headers: { "Content-Type": "application/json" },
 });
-
-interface RegisterData {
-  email: string;
-  password: string;
-}
-
-interface LoginData {
-  email: string;
-  password: string;
-}
 
 // Đăng ký
 
@@ -76,8 +71,7 @@ export const resetPasswordApi = async (
       resetToken,
       newPassword,
     });
-    // console.log("response", response);
-    // console.log("response data", response.data);
+
     return response.data;
   } catch (error) {
     console.error("Error:", error);
@@ -96,6 +90,30 @@ export const changePasswordApi = async (
     });
     // console.log("response", response);
     // console.log("response data", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
+export const verifyOtp = async (data: VerifyOtp) => {
+  try {
+    const response = await api.post("/auth/verify-otp", data);
+    // console.log("response", response);
+    // console.log("response data", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
+// gửi lại mã otp
+export const resendOtp = async (email: VerifyOtp["email"]) => {
+  try {
+    const response = await api.post("/auth/resend-otp", { email });
+
     return response.data;
   } catch (error) {
     console.error("Error:", error);

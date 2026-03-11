@@ -24,6 +24,7 @@ import EditRoomForm from "../../admin/components/rooms/EditRooForm";
 import EditRoomTypeForm from "../../admin/components/room-types/EditRoomTypeForm";
 import AddRoomTypePage from "../../admin/pages/room-types/AddRoomTypePage";
 import EditRoomTypePage from "../../admin/pages/room-types/EditRoomTypePage";
+import VerifyOtpEmail from "../pages/auth/VerifyOtpEmail";
 
 const AppRoutes = () => (
   <Routes>
@@ -95,6 +96,7 @@ const AppRoutes = () => (
     <Route path="/forgot-password" element={<ForgotPassword />} />
     <Route path="/reset-password" element={<ResetPassword />} />
     <Route path="/change-password" element={<ChangePassword />} />
+    <Route path="verify-otp" element={<VerifyOtpEmail />} />
 
     {/* <Route path="/dashboard" element={<DashboardPage />}>
       <Route path="users" element={<ManageUsersPage />} />
