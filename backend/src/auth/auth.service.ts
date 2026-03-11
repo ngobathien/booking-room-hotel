@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { SignInDto } from './dto/sign-in-auth.dto';
 import { SignUpDto } from './dto/sign-up-auth.dto';
 
@@ -18,7 +17,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RefreshToken } from './schemas/refresh-token.schema';
 import { randomUUID } from 'crypto';
-import { ChangePasswordDto } from './dto/change-password.dto';
 import { ResetToken } from './schemas/reset-token.schema';
 import { MailService } from 'src/services/mail.service';
 import { Otp, OtpDocument } from './schemas/email-otp.schema';
@@ -136,7 +134,7 @@ export class AuthService {
     const existedUser = await this.usersService.findByEmail(email);
 
     if (existedUser) {
-      throw new BadRequestException('Email already exists');
+      throw new BadRequestException('Email của bạn đã tồn tại');
     }
 
     // =============================bcrypt mật khẩu==================================
@@ -178,7 +176,7 @@ export class AuthService {
     const { email, otp } = verifyOtpDto;
 
     // tìm và xóa toàn bộ OTP của email đó
-    const record = await this.otpModel.findOneAndDelete({ email, otp });
+    const record = await this.otpModel.findOne({ email, otp });
 
     if (!record) {
       throw new BadRequestException('OTP không đúng');
@@ -190,14 +188,46 @@ export class AuthService {
 
     await this.userModel.updateOne({ email }, { isVerified: true });
 
-    // await this.otpModel.deleteMany({ email });
+    await this.otpModel.deleteMany({ email });
+
     return {
       message: 'Xác thực email thành công',
     };
   }
+  // ============================= resendOTP =============================
+  async resendOtp(email: string) {
+    const user = await this.usersService.findByEmail(email);
 
-  // ============================= refresh token  =============================
-  // lấy refresh token mới, đây là dùng để lưu refresh toke
+    if (!user) {
+      throw new NotFoundException('User không tồn tại');
+    }
+
+    if (user.isVerified) {
+      throw new BadRequestException('Email đã được xác thực');
+    }
+
+    // xoá OTP cũ
+    await this.otpModel.deleteMany({ email });
+
+    // tạo OTP mới
+    const otp = this.generateOtp();
+
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 5);
+
+    await this.otpModel.create({
+      email,
+      otp,
+      expiresAt,
+    });
+
+    await this.mailService.sendOtpEmail(email, otp);
+
+    return {
+      message: 'OTP mới đã được gửi',
+    };
+  }
+
   async refreshTokens(refreshTokenDto: RefreshTokenDto) {
     // Nhận refresh token từ client
     const { token } = refreshTokenDto;
