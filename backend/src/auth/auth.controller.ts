@@ -3,9 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
   HttpCode,
   HttpStatus,
   UseGuards,
@@ -48,7 +45,7 @@ export class AuthController {
   // xác định xem đã đăng nhập hay chưa, và là ai
   @UseGuards(AuthGuard)
   @Get('profile')
-  async getProfile(@Request() req: any) {
+  async getProfile(@Request() req: Request & { user: { userId: string } }) {
     // const data = await this.usersService.findById(req.user.sub);
     // console.log('data từ database', data);
     // console.log('data từ database', req.infoUser);
@@ -66,7 +63,10 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Put('change-password')
-  changePassword(@Body() changePasswordDto: ChangePasswordDto, @Request() req) {
+  changePassword(
+    @Body() changePasswordDto: ChangePasswordDto,
+    @Request() req: Request & { user: { userId: string } },
+  ) {
     const { oldPassword, newPassword } = changePasswordDto;
     return this.authService.changePassword(
       req.user.userId,
@@ -91,5 +91,10 @@ export class AuthController {
   @Post('verify-otp')
   verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
     return this.authService.verifyOtp(verifyOtpDto);
+  }
+
+  @Post('resend-otp')
+  resendOtp(@Body('email') email: string) {
+    return this.authService.resendOtp(email);
   }
 }
