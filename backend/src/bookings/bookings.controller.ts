@@ -75,4 +75,21 @@ export class BookingsController {
   ) {
     return this.bookingsService.cancelBooking(id, req.user.userId);
   }
+
+  // user xem lịch sử đặt phòng của mình
+  @UseGuards(AuthGuard)
+  @Get('my-bookings')
+  async getMyBookings(@Req() req) {
+    return this.bookingsService.getMyBookings(req.user.userId);
+  }
+
+  @Patch(':id/check-in')
+  checkIn(@Param('id') id: string) {
+    return this.bookingsService.checkInBooking(id);
+  }
+
+  @Patch(':id/check-out')
+  checkOut(@Param('id') id: string) {
+    return this.bookingsService.checkOutBooking(id);
+  }
 }
