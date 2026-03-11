@@ -1,8 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Connection } from 'mongoose';
+
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 

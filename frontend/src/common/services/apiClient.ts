@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -28,6 +29,9 @@ apiClient.interceptors.response.use(
       // Redirect về login
       // window.location.href = "/login";
     }
+    const message = error.response?.data?.message || "Có lỗi xảy ra";
+
+    toast.error(message);
 
     return Promise.reject(error);
   },
