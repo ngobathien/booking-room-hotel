@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import type { Room } from "../../../types/room.types";
+import { ROOM_TYPE_VI } from "../../../common/constants/roomType/roomType";
 
 interface Props {
   rooms: Room[];
@@ -49,8 +50,12 @@ const RoomGrid: React.FC<Props> = ({ rooms }) => {
             {/*  */}
             <div className="flex gap-2">
               <div className="flex items-center gap-1 text-[10px] font-bold bg-slate-50 px-2 py-1 rounded text-slate-500 uppercase">
-                <span className="material-symbols-outlined text-xs">group</span>{" "}
+                <span className="material-symbols-outlined text-xs">group</span>
                 {room.roomType?.capacity}
+                {/* loại phòng */}
+                <span className="material-symbols-outlined text-xs">group</span>
+                {room.roomType?.typeName} (
+                {ROOM_TYPE_VI[room.roomType?.typeName || ""]})
               </div>
             </div>
           </div>
