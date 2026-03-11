@@ -3,9 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
   HttpCode,
   HttpStatus,
   UseGuards,
@@ -21,6 +18,7 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ForgotPassworDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 // import { CreateAuthDto } from './dto/create-auth.dto';
 // import { UpdateAuthDto } from './dto/update-auth.dto';
 
@@ -47,7 +45,7 @@ export class AuthController {
   // xác định xem đã đăng nhập hay chưa, và là ai
   @UseGuards(AuthGuard)
   @Get('profile')
-  async getProfile(@Request() req: any) {
+  async getProfile(@Request() req: Request & { user: { userId: string } }) {
     // const data = await this.usersService.findById(req.user.sub);
     // console.log('data từ database', data);
     // console.log('data từ database', req.infoUser);
@@ -65,7 +63,10 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Put('change-password')
-  changePassword(@Body() changePasswordDto: ChangePasswordDto, @Request() req) {
+  changePassword(
+    @Body() changePasswordDto: ChangePasswordDto,
+    @Request() req: Request & { user: { userId: string } },
+  ) {
     const { oldPassword, newPassword } = changePasswordDto;
     return this.authService.changePassword(
       req.user.userId,
@@ -85,5 +86,15 @@ export class AuthController {
       resetPasswordDto.resetToken,
       resetPasswordDto.newPassword,
     );
+  }
+
+  @Post('verify-otp')
+  verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
+    return this.authService.verifyOtp(verifyOtpDto);
+  }
+
+  @Post('resend-otp')
+  resendOtp(@Body('email') email: string) {
+    return this.authService.resendOtp(email);
   }
 }

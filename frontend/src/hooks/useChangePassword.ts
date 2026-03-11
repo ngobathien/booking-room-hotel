@@ -21,7 +21,7 @@ export const useChangePassword = () => {
     try {
       await changePasswordApi(oldPassword, newPassword);
 
-      toast.success("Đổi mật khẩu thành công, vui lòng đăng nhập lại 🔐");
+      toast.success("Đổi mật khẩu thành công, vui lòng đăng nhập lại");
 
       logout();
       navigate("/login", { replace: true });
