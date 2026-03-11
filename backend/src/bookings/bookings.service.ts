@@ -164,4 +164,31 @@ export class BookingsService {
       bookingStatus: BookingStatus.PENDING,
     });
   }
+
+  // lấy tất cả booking
+  async findAll() {
+    const bookings = await this.bookingModel
+      .find()
+      .populate('room')
+      .populate('user');
+    // return bookings
+    return { message: 'Get all bookings successfully', data: bookings };
+  }
+
+  // lấy booking theo id
+  async findOne(id: string) {
+    const booking = await this.bookingModel
+      .findById(id)
+      .populate('room')
+      .populate('user');
+
+    if (!booking) {
+      throw new NotFoundException('Booking not found');
+    }
+
+    return {
+      message: 'Get booking successfully',
+      data: booking,
+    };
+  }
 }

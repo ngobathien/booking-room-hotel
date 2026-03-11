@@ -51,4 +51,18 @@ export class BookingsController {
   createBooking(@Body() dto: CreateBookingDto, @Req() req) {
     return this.bookingsService.createBooking(dto, req.user.userId);
   }
+
+  // lấy danh sách tất cả booking
+  @UseGuards(AuthGuard)
+  @Roles(UserRole.ADMIN)
+  @Get()
+  findAll() {
+    return this.bookingsService.findAll();
+  }
+
+  // lấy chi tiết một booking
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.bookingsService.findOne(id);
+  }
 }
