@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import type { RoomType } from "../../../types/room-types.types";
+import type { RoomType } from "../../../types/roomType.types";
 import { useRoomTypes } from "../../../hooks/useRoomTypes";
 
 interface Props {
