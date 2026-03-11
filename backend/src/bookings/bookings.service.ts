@@ -236,20 +236,6 @@ export class BookingsService {
     };
   }
 
-  // lấy danh sách booking của user hiện tại
-  async getMyBookings(userId: string) {
-    const bookings = await this.bookingModel
-      .find({ user: userId })
-      .populate('room')
-      .sort({ createdAt: -1 });
-
-    const total = await this.bookingModel.countDocuments({ user: userId });
-    return {
-      message: 'Get my bookings successfully',
-      countMyBookings: total,
-      data: bookings,
-    };
-  }
   // Check-in khách (thường do admin / lễ tân thực hiện)
   async checkInBooking(id: string) {
     // Tìm booking theo id
@@ -306,6 +292,21 @@ export class BookingsService {
     return {
       message: 'Check-out successful',
       data: booking,
+    };
+  }
+
+  // lấy danh sách booking của user hiện tại
+  async getMyBookings(userId: string) {
+    const bookings = await this.bookingModel
+      .find({ user: userId })
+      .populate('room')
+      .sort({ createdAt: -1 });
+
+    const total = await this.bookingModel.countDocuments({ user: userId });
+    return {
+      message: 'Get my bookings successfully',
+      countMyBookings: total,
+      data: bookings,
     };
   }
 }
