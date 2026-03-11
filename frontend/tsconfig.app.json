@@ -24,5 +24,9 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "src/common/pages/auth/Register/.tsx",
+    "src/admin/pages/room-types/ManageRoomTypesPage.tsx"
+  ]
 }
