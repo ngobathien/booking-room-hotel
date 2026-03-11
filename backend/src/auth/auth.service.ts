@@ -179,7 +179,8 @@ export class AuthService {
     const { email, otp } = verifyOtpDto;
 
     // tìm và xóa toàn bộ OTP của email đó
-    const record = await this.otpModel.findOne({ email, otp });
+    const record = await this.otpModel.findOne({ email })
+      .sort({ createdAt: -1 });
 
     if (!record) {
       throw new BadRequestException('OTP không hợp lệ hoặc đã hết hạn');
