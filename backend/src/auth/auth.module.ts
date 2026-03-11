@@ -12,6 +12,7 @@ import {
 import { User, UserSchema } from 'src/users/schemas/user.schema';
 import { ResetToken, ResetTokenSchema } from './schemas/reset-token.schema';
 import { MailService } from 'src/services/mail.service';
+import { Otp, OtpSchema } from './schemas/email-otp.schema';
 
 @Module({
   // import UsersModule để sử dụng UsersService trong AuthService
@@ -21,6 +22,7 @@ import { MailService } from 'src/services/mail.service';
       { name: RefreshToken.name, schema: RefreshTokenSchema },
       { name: User.name, schema: UserSchema },
       { name: ResetToken.name, schema: ResetTokenSchema },
+      { name: Otp.name, schema: OtpSchema },
     ]),
     JwtModule.register({
       global: true,
