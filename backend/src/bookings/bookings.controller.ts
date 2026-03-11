@@ -65,4 +65,14 @@ export class BookingsController {
   findOne(@Param('id') id: string) {
     return this.bookingsService.findOne(id);
   }
+
+  // hủy booking
+  @UseGuards(AuthGuard)
+  @Patch(':id/cancel')
+  cancelBooking(
+    @Param('id') id: string,
+    @Req() req: Request & { user: { userId: string } },
+  ) {
+    return this.bookingsService.cancelBooking(id, req.user.userId);
+  }
 }
