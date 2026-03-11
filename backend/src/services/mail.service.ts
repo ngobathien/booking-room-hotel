@@ -48,6 +48,11 @@ export class MailService {
   }
 
   async sendOtpEmail(to: string, otp: string) {
+    const urlClient = process.env.URL_CLIENT;
+    const verifyPath = process.env.URL_VERIFY_OTP;
+
+    const verifyLink = `${urlClient}${verifyPath}?email=${to}`;
+
     const otpMail = {
       from: `Khách sạn NBT ${this.adminSystem}`,
       to: to,
@@ -78,6 +83,12 @@ export class MailService {
             ${otp}
           </h1>
 
+          <p>Hoặc nhấn link sau để nhập OTP:</p>
+
+          <a href="${verifyLink}">
+            Xác thực tài khoản
+          </a>
+          
           <p>Mã OTP này sẽ hết hạn sau <b>5 phút</b>.</p>
 
           <p>Nếu bạn không thực hiện yêu cầu này, hãy bỏ qua email.</p>
