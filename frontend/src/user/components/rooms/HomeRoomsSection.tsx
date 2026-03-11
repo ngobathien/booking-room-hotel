@@ -1,23 +1,13 @@
 import { useEffect, useState } from "react";
 import { getAllRooms } from "../../../common/services/roomService";
-import RoomCard from "./RoomCard";
+import RoomCard from "./view/RoomCard";
+import type { Room } from "../../../types/room.types";
 
-type RoomStatus = "AVAILABLE" | "BOOKED" | "MAINTENANCE";
-
-interface RoomType {
-  typeName: string;
-  capacity: number;
-  basePrice: number;
+interface HomeRoomsSectionProps {
+  limit: number;
 }
 
-interface Room {
-  _id: string;
-  roomNumber: string;
-  roomType: RoomType;
-  status: RoomStatus;
-}
-
-const FeaturedRooms: React.FC = () => {
+const HomeRoomsSection: React.FC<HomeRoomsSectionProps> = ({ limit }) => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,7 +15,11 @@ const FeaturedRooms: React.FC = () => {
     const fetchRooms = async () => {
       try {
         const data = await getAllRooms();
-        setRooms(data);
+
+        const limitedRooms = limit ? data.slice(0, limit) : data;
+
+        setRooms(limitedRooms);
+        // setRooms(data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -76,4 +70,4 @@ const FeaturedRooms: React.FC = () => {
   );
 };
 
-export default FeaturedRooms;
+export default HomeRoomsSection;
