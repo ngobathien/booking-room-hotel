@@ -2,10 +2,10 @@ import React from "react";
 import { Outlet, Link, useSearchParams } from "react-router-dom";
 import { Filter, Search, Grid, List } from "lucide-react";
 import { useRoomContext } from "../../../context/RoomContext";
-import { RoomListView } from "../rooms/RoomListView";
-import { RoomGridView } from "../rooms/RoomGridView";
 import { cn } from "../../../lib/utils";
 import RoomSort from "../rooms/RoomSort";
+import { RoomGridView } from "../rooms/view/RoomGridView";
+import { RoomListView } from "../rooms/view/RoomListView";
 
 const RoomLayout = () => {
   const { rooms, loading } = useRoomContext();

@@ -1,8 +1,6 @@
-import React from "react";
-import Footer from "../../components/layouts/Footer";
-import FeaturedRooms from "../../components/rooms/FeaturedRooms";
 import BookingBar from "../../components/BookingBar";
 import Hero from "../../components/Hero";
+import HomeRoomsSection from "../../components/rooms/HomeRoomsSection";
 
 const HomePage = () => {
   return (
@@ -19,7 +17,7 @@ const HomePage = () => {
           </div>
 
           <div id="rooms">
-            <FeaturedRooms />
+            <HomeRoomsSection limit={4} />
           </div>
 
           {/* <div id="attractions">

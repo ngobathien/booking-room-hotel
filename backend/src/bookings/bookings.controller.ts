@@ -12,10 +12,9 @@ import {
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
-import { UpdateBookingDto } from './dto/update-booking.dto';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { UserRole } from 'src/users/schemas/user.schema';
+import { AuthGuard } from '@/auth/guards/auth.guard';
+import { Roles } from '@/auth/decorators/roles.decorator';
+import { UserRole } from '@/users/schemas/user.schema';
 /* 
 GET    /bookings/check-availability x
 POST   /bookings x

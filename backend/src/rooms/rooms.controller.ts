@@ -14,10 +14,10 @@ import {
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { UserRole } from 'src/users/schemas/user.schema';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { AuthGuard } from '@/auth/guards/auth.guard';
+import { Roles } from '@/auth/decorators/roles.decorator';
+import { UserRole } from '@/users/schemas/user.schema';
+import { RolesGuard } from '@/auth/guards/roles.guard';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { SearchRoomDto } from './dto/search-room.dto';
 
