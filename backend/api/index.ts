@@ -1,6 +1,6 @@
+import 'tsconfig-paths/register';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../src/app.module';
-
 import { ValidationPipe, INestApplication } from '@nestjs/common';
 import { Request, Response, Express } from 'express';
 import cookieParser from 'cookie-parser';
@@ -30,5 +30,5 @@ export default async function handler(req: Request, res: Response) {
 
   const server = appInstance.getHttpAdapter().getInstance() as Express;
 
-  void server(req, res);
+  server(req, res);
 }
