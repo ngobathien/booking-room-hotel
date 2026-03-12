@@ -47,7 +47,10 @@ export class BookingsController {
   @UseGuards(AuthGuard)
   @Roles(UserRole.ADMIN)
   @Post()
-  createBooking(@Body() dto: CreateBookingDto, @Req() req) {
+  createBooking(
+    @Body() dto: CreateBookingDto,
+    @Req() req: Request & { user: { userId: string } },
+  ) {
     return this.bookingsService.createBooking(dto, req.user.userId);
   }
 
