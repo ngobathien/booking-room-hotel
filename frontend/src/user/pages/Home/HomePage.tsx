@@ -1,4 +1,5 @@
-import BookingBar from "../../components/BookingBar";
+
+import BookingBar from "../../components/bookings/BookingBar";
 import Hero from "../../components/Hero";
 import HomeRoomsSection from "../../components/rooms/HomeRoomsSection";
 

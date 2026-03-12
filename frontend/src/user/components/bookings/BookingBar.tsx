@@ -1,22 +1,11 @@
 import React, { useState } from "react";
 import { useBooking } from "../../../context/BookingContext";
-import { toast } from "react-toastify";
+
 import { useRoomTypes } from "../../../hooks/useRoomTypes";
 import { useNavigate } from "react-router";
 
 const BookingBar: React.FC<BookingBarProps> = () => {
-  const {
-    checkInDate,
-    checkOutDate,
-    guests,
-    setCheckInDate,
-    setCheckOutDate,
-    setGuests,
-    checkAvailability,
-    available,
-    remainingRooms,
-    loading,
-  } = useBooking();
+  const { available, remainingRooms, loading } = useBooking();
 
   const navigate = useNavigate();
   const { roomTypes } = useRoomTypes();
@@ -26,14 +15,14 @@ const BookingBar: React.FC<BookingBarProps> = () => {
   const today = new Date().toISOString().split("T")[0];
   console.log("available, remainingRooms:", available, remainingRooms);
 
-  // 
+  //
   const [searchParams, setSearchParams] = useState({
     checkIn: "",
     checkOut: "",
     guests: "",
   });
 
-  //  
+  //
   const handleSearch = () => {
     const params = new URLSearchParams({
       checkInDate: searchParams.checkIn,

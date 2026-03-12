@@ -6,6 +6,12 @@ import {
 } from "../common/services/bookingService";
 import { toast } from "react-toastify";
 
+type CustomerInfo = {
+  fullName: string;
+  email: string;
+  phone_number: string;
+};
+
 export const useBookingAction = () => {
   const { checkInDate, checkOutDate, setAvailable, setLoading, available } =
     useBooking();
@@ -41,8 +47,11 @@ export const useBookingAction = () => {
     }
   };
 
-  //   tạo booking mới
-  const handleCreateBooking = async (roomId: string) => {
+  /* ================= CREATE BOOKING ================= */
+  const handleCreateBooking = async (
+    roomId: string,
+    customerInfo: CustomerInfo,
+  ) => {
     if (!checkInDate || !checkOutDate) return;
 
     if (available === false) {
@@ -53,15 +62,23 @@ export const useBookingAction = () => {
     setLoading(true);
 
     try {
-      await createBooking({
+      const booking = await createBooking({
         room: roomId,
         checkInDate,
         checkOutDate,
+        fullName: customerInfo.email,
+        email: customerInfo.email,
+        phone_number: customerInfo.phone_number,
       });
 
-      toast.success("Đặt phòng thành công 🎉");
+      toast.success("Đặt phòng thành công");
+
+      return booking;
     } catch (error: any) {
-      alert(error.response?.data?.message || "Lỗi đặt phòng");
+      const message = error.response?.data?.message;
+      console.log(error.response?.data);
+
+      toast.error(message || "Lỗi đặt phòng");
     } finally {
       setLoading(false);
     }
