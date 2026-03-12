@@ -25,12 +25,14 @@ import EditRoomTypeForm from "../../admin/components/room-types/EditRoomTypeForm
 import AddRoomTypePage from "../../admin/pages/room-types/AddRoomTypePage";
 import EditRoomTypePage from "../../admin/pages/room-types/EditRoomTypePage";
 import VerifyOtpEmail from "../pages/auth/VerifyOtpEmail";
+import { CheckoutPage } from "../../user/pages/Booking/CheckOutPage";
 
 const AppRoutes = () => (
   <Routes>
     {/* user ========================================*/}
     <Route element={<MainLayout />}>
       {/* ===== PUBLIC (CÓ NAVBAR) ===== */}
+
       {/*  ================ trang chủ ========================*/}
       <Route index element={<HomePage />} />
 
@@ -43,6 +45,9 @@ const AppRoutes = () => (
       {/* <Route path="/rooms" element={<RoomList />} />
 
       <Route path="/rooms/:roomId" element={<RoomDetailPage />} /> */}
+
+      {/* checkout */}
+      <Route path="checkout/:roomId" element={<CheckoutPage />} />
 
       {/* ================= USER (LOGIN REQUIRED) ================= */}
       <Route element={<ProtectedRoute allowedRoles={[ROLES.USER]} />}>
@@ -98,7 +103,8 @@ const AppRoutes = () => (
     <Route path="/change-password" element={<ChangePassword />} />
     <Route path="verify-otp" element={<VerifyOtpEmail />} />
 
-    {/* <Route path="/dashboard" element={<DashboardPage />}>
+    {/*
+     <Route path="/dashboard" element={<DashboardPage />}>
       <Route path="users" element={<ManageUsersPage />} />
       <Route path="posts" element={<ManagePostsPage />} />
       <Route path="class" element={<ManageClassesPage />} />

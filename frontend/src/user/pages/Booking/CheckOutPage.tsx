@@ -1,13 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Link,
   useNavigate,
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import { Check, ShieldCheck } from "lucide-react";
+import { Check } from "lucide-react";
 
-import type { Room } from "../../../types/room.types";
 import { cn } from "../../../lib/utils";
 import { useRoomContext } from "../../../context/RoomContext";
 import CustomerInfoStep from "../../components/bookings/step/CustomerInfoStep";
@@ -15,14 +14,15 @@ import ConfirmationStep from "../../components/bookings/step/ConfirmationStep";
 import { useBooking } from "../../../context/BookingContext";
 import useRoomAction from "../../../hooks/useRoomAction";
 import BookingSummary from "../../components/bookings/BookingSummary";
-import PaymentStep from "../../components/bookings/step/PaymentStep";
+import PaymentStep from "../../components/bookings/step/PaymentBookingStep";
+import { useAuth } from "../../../context/AuthContext";
 
 export const CheckoutPage = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [step, setStep] = React.useState(1);
   const { getRoomById } = useRoomAction();
   const { filterParams, rooms, currentRoom } = useRoomContext();
+  console.log("currentRoom", currentRoom);
 
   const [searchParams] = useSearchParams();
 
@@ -38,8 +38,16 @@ export const CheckoutPage = () => {
     available,
     loading,
   } = useBooking();
+  const { user } = useAuth();
+
+  const [customerInfo, setCustomerInfo] = useState({
+    fullName: user?.fullName || "",
+    email: user?.email || "",
+    phone_number: user?.phone_number || "",
+  });
 
   const { setRooms } = useRoomContext();
+
   const calculateNights = (start: string | null, end: string | null) => {
     if (!start || !end) return 0;
     const s = new Date(start);
@@ -133,7 +141,13 @@ export const CheckoutPage = () => {
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
         {/* Main Content */}
         <div className="lg:col-span-2">
-          {step === 1 && <CustomerInfoStep onNext={nextStep} />}
+          {step === 1 && (
+            <CustomerInfoStep
+              onNext={nextStep}
+              customerInfo={customerInfo}
+              setCustomerInfo={setCustomerInfo}
+            />
+          )}
 
           {step === 2 && (
             <ConfirmationStep
@@ -142,6 +156,7 @@ export const CheckoutPage = () => {
               room={currentRoom}
               checkInDate={checkInDate}
               checkOutDate={checkOutDate}
+              customerInfo={customerInfo}
             />
           )}
 
@@ -152,6 +167,7 @@ export const CheckoutPage = () => {
               checkInDate={checkInDate}
               checkOutDate={checkOutDate}
               nights={nights}
+              customerInfo={customerInfo}
             />
           )}
         </div>

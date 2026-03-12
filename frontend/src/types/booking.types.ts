@@ -1,8 +1,8 @@
-export interface CheckRoomAvailabilityParams {
+export type CheckRoomAvailabilityParams = {
   roomId: string;
   checkInDate: string;
   checkOutDate: string;
-}
+};
 
 export interface BookingContextType {
   checkInDate: string;
@@ -18,9 +18,11 @@ export interface BookingContextType {
   setLoading: (value: boolean) => void;
 }
 
-export interface CreateBooking {
-  id: string;
-  roomId: string;
+export type CreateBookingPayload = {
+  room: string;
   checkInDate: string;
   checkOutDate: string;
-}
+  fullName?: string;
+  email?: string;
+  phone_number?: string;
+};
