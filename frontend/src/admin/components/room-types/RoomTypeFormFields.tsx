@@ -92,7 +92,10 @@ const RoomTypeFormFields = ({ mode, initialData, onSubmit }: Props) => {
             <label className="block text-xs font-black text-slate-400 uppercase mb-2">
               Sức chứa
             </label>
-            <select
+
+            <input
+              type="number"
+              min={1}
               value={formData.capacity}
               onChange={(e) =>
                 handleChange(
@@ -100,14 +103,12 @@ const RoomTypeFormFields = ({ mode, initialData, onSubmit }: Props) => {
                   e.target.value ? Number(e.target.value) : "",
                 )
               }
-              className="w-full h-12 px-4 rounded-xl bg-slate-50 font-semibold"
-            >
-              <option value="">-- Chọn --</option>
-              <option value={1}>1 Người</option>
-              <option value={2}>2 Người</option>
-              <option value={4}>4 Người</option>
-              <option value={10}>Phòng tập thể</option>
-            </select>
+              placeholder="Nhập số người"
+              className="w-full h-12 px-4 rounded-xl bg-slate-50
+               focus:bg-white focus:border-primary transition-all
+               font-semibold"
+              required
+            />
           </div>
 
           {/* Giá */}

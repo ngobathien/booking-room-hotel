@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import type { Room, RoomContextType } from "../types/room.types";
-import { getAllRooms } from "../common/services/roomService";
+import {
+  getAllRooms,
+  searchAvailableRooms,
+} from "../common/services/roomService";
 import { useSearchParams } from "react-router";
 
 const RoomContext = createContext<RoomContextType | null>(null);
@@ -19,10 +22,27 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
         setLoading(true);
 
         const params = Object.fromEntries([...searchParams]);
-        const roomsData = await getAllRooms(params);
-        console.log("roomsData:", roomsData);
 
-        setRooms(roomsData);
+        const checkInDate = searchParams.get("checkInDate");
+        const checkOutDate = searchParams.get("checkOutDate");
+        const guests = searchParams.get("guests");
+
+        // nếu có query params thì search
+        if (checkInDate && checkOutDate && guests) {
+          const data = await searchAvailableRooms({
+            checkInDate,
+            checkOutDate,
+            guests: parseInt(guests),
+          });
+
+          //
+          setRooms(data.rooms);
+          // nếu không có thì lấy tất cả room
+        } else {
+          const roomsData = await getAllRooms(params);
+          console.log("roomsData:", roomsData);
+          setRooms(roomsData);
+        }
       } catch (error) {
         console.error("Fetch rooms failed", error);
       } finally {

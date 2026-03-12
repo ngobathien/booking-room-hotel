@@ -3,6 +3,7 @@ import * as ReactRouterDom from "react-router-dom";
 import { toast } from "react-toastify";
 import { useRoomTypes } from "../../../hooks/useRoomTypes";
 import useRoomAction from "../../../hooks/useRoomAction";
+import EditUploadImages from "./EditUploadImages";
 
 const { useParams, useNavigate } = ReactRouterDom;
 
@@ -20,7 +21,11 @@ const EditRoomForm: React.FC = () => {
   const { roomTypes } = useRoomTypes();
   const { getRoomById, handleUpdateRoom } = useRoomAction();
 
-  const [loading, setLoading] = useState(false);
+  const [loadingPage, setLoadingPage] = useState(false); // load dữ liệu
+  const [loadingSubmit, setLoadingSubmit] = useState(false); // submit update
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
+
   const [formData, setFormData] = useState<RoomFormData>({
     roomNumber: "",
     roomTypeId: "",
@@ -35,9 +40,12 @@ const EditRoomForm: React.FC = () => {
 
     const fetchRoom = async () => {
       try {
-        setLoading(true);
+        setLoadingPage(true);
+
         const room = await getRoomById(id);
         console.log("room:", room);
+
+        // nap dữ liệu cũ vào form
         setFormData({
           roomNumber: room.roomNumber ?? "",
           roomTypeId:
@@ -48,10 +56,12 @@ const EditRoomForm: React.FC = () => {
           thumbnail: room.thumbnail ?? "",
           description: room.description ?? "",
         });
+
+        setExistingImages(room.images ?? []);
       } catch {
         toast.error("Không tải được dữ liệu phòng");
       } finally {
-        setLoading(false);
+        setLoadingPage(false);
       }
     };
 
@@ -61,25 +71,33 @@ const EditRoomForm: React.FC = () => {
   // 🔁 UPDATE
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!id) return;
+    if (!id || loadingSubmit) return; // tránh double click
 
     try {
-      await handleUpdateRoom(id, {
-        roomNumber: formData.roomNumber,
-        roomType: formData.roomTypeId,
-        status: formData.status,
-        thumbnail: formData.thumbnail,
-        description: formData.description,
-      });
+      setLoadingSubmit(true);
+      await handleUpdateRoom(
+        id,
+        {
+          roomNumber: formData.roomNumber,
+          roomType: formData.roomTypeId,
+          status: formData.status,
+          thumbnail: formData.thumbnail,
+          description: formData.description,
+          images: existingImages, // ảnh cũ còn lại
+        },
+        selectedFiles, // ảnh mới
+      );
 
       toast.success("Cập nhật phòng thành công");
       navigate("/dashboard/rooms");
     } catch {
       toast.error("Cập nhật phòng thất bại");
+    } finally {
+      setLoadingSubmit(false);
     }
   };
 
-  if (loading) {
+  if (loadingPage) {
     return (
       <div className="flex flex-col items-center justify-center p-20 gap-4">
         <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
@@ -152,26 +170,7 @@ const EditRoomForm: React.FC = () => {
               <option value="MAINTENANCE">Bảo trì</option>
             </select>
           </div>
-          {/*
-           <div className="group">
-            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-blue-600 transition-colors">
-              Vị trí tầng
-            </label>
-            <select
-              className="w-full px-5 h-14 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-600/20 focus:bg-white focus:ring-4 focus:ring-blue-600/5 transition-all font-bold text-slate-900 appearance-none"
-              value={formData.floor}
-              onChange={(e) =>
-                setFormData({ ...formData, floor: e.target.value })
-              }
-            >
-              <option>Tầng 1</option>
-              <option>Tầng 2</option>
-              <option>Tầng 3</option>
-              <option>Tầng 4</option>
-              <option>Tầng thượng</option>
-            </select>
-          </div> 
-          */}
+
           {/* Loại phòng */}
           <div className="md:col-span-2 group">
             <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-blue-600 transition-colors">
@@ -193,22 +192,6 @@ const EditRoomForm: React.FC = () => {
               ))}
             </select>
           </div>
-
-          {/* Mô tả chi tiết: chưa làm */}
-          {/* <div className="md:col-span-2 group">
-            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-blue-600 transition-colors">
-              Mô tả chi tiết
-            </label>
-            <textarea
-              className="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-600/20 focus:bg-white focus:ring-4 focus:ring-blue-600/5 transition-all font-bold text-slate-900 placeholder:text-slate-300 text-sm"
-              placeholder="Nhập mô tả về tiện nghi, hướng nhìn..."
-              rows={4}
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-            />
-          </div> */}
 
           {/* Thumbnail, Ảnh đại diện phòng (URL) */}
           <div className="md:col-span-2 group">
@@ -258,6 +241,39 @@ const EditRoomForm: React.FC = () => {
             </div>
           </div>
 
+          {/*  */}
+          {/* Ảnh chi tiết phòng */}
+          <div className="md:col-span-2 group">
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">
+              Ảnh chi tiết phòng
+            </label>
+
+            {/* Hiển thị ảnh cũ */}
+            <EditUploadImages
+              existingImages={existingImages}
+              setExistingImages={setExistingImages}
+              selectedFiles={selectedFiles}
+              setSelectedFiles={setSelectedFiles}
+              max={4}
+            />
+
+            {/* Upload ảnh mới */}
+            <input
+              type="file"
+              multiple
+              onChange={(e) =>
+                setSelectedFiles(Array.from(e.target.files || []))
+              }
+              className="block w-full text-sm"
+            />
+
+            {selectedFiles.length > 0 && (
+              <p className="text-xs text-slate-400 mt-2">
+                Đã chọn {selectedFiles.length} ảnh mới
+              </p>
+            )}
+          </div>
+
           {/* Mô tả */}
           <div className="md:col-span-2 group">
             <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-primary transition-colors">
@@ -274,7 +290,8 @@ const EditRoomForm: React.FC = () => {
             />
           </div>
         </div>
-        {/* nút */}
+
+        {/* nút hủy bỏ và nút cập nhật phòng */}
         <div className="pt-10 border-t border-slate-100 flex justify-end gap-4">
           <button
             type="button"
@@ -284,12 +301,31 @@ const EditRoomForm: React.FC = () => {
             Hủy bỏ
           </button>
 
+          {/*  */}
           <button
             type="submit"
-            className="px-10 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-widest shadow-xl flex items-center gap-2"
+            disabled={loadingSubmit}
+            className={`px-10 h-12 rounded-2xl 
+    ${
+      loadingSubmit
+        ? "bg-blue-400 cursor-not-allowed"
+        : "bg-blue-600 hover:bg-blue-700"
+    }
+    text-white font-black text-xs uppercase tracking-widest 
+    shadow-xl shadow-blue-600/20 transition-all 
+    active:scale-95 flex items-center justify-center gap-2`}
           >
-            <span className="material-symbols-outlined text-lg">save</span>
-            Cập nhật phòng
+            {loadingSubmit ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Đang cập nhật...
+              </>
+            ) : (
+              <>
+                <span className="material-symbols-outlined text-lg">save</span>
+                Cập nhật phòng
+              </>
+            )}
           </button>
         </div>
       </form>

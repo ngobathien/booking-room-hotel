@@ -3,6 +3,7 @@ import * as ReactRouterDom from "react-router-dom";
 import { toast } from "react-toastify";
 import { useRoomTypes } from "../../../hooks/useRoomTypes";
 import useRoomAction from "../../../hooks/useRoomAction";
+import AddUploadImages from "./AddUploadImages";
 
 const { useParams, useNavigate } = ReactRouterDom;
 
@@ -18,6 +19,8 @@ const AddRoomForm: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+
   const [formData, setFormData] = useState<RoomFormData>({
     roomNumber: "",
     roomTypeId: "",
@@ -30,21 +33,27 @@ const AddRoomForm: React.FC = () => {
   //
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    if (loading) return; // tránh double click
     try {
-      await handleCreateNewRoom({
-        roomNumber: formData.roomNumber,
-        hotelId: "65b8f300a1d9c8e1a9999999", // ⚠️ tạm hard-code
-        roomType: formData.roomTypeId,
-        status: formData.status,
-        thumbnail: formData.thumbnail,
-        images: [],
-        description: formData.description,
-      });
+      setLoading(true);
+      await handleCreateNewRoom(
+        {
+          roomNumber: formData.roomNumber,
+          hotelId: "65b8f300a1d9c8e1a9999999",
+          roomType: formData.roomTypeId,
+          status: formData.status,
+          thumbnail: formData.thumbnail,
+          description: formData.description,
+          // images: [],
+        },
+        selectedFiles, // 🔥 truyền file vào đây
+      );
 
       navigate("/dashboard/rooms");
     } catch (error) {
       toast.error("Thêm phòng thất bại");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -122,26 +131,7 @@ const AddRoomForm: React.FC = () => {
               <option value="MAINTENANCE">Bảo trì</option>
             </select>
           </div>
-          {/*
-           <div className="group">
-            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-blue-600 transition-colors">
-              Vị trí tầng
-            </label>
-            <select
-              className="w-full px-5 h-14 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-600/20 focus:bg-white focus:ring-4 focus:ring-blue-600/5 transition-all font-bold text-slate-900 appearance-none"
-              value={formData.floor}
-              onChange={(e) =>
-                setFormData({ ...formData, floor: e.target.value })
-              }
-            >
-              <option>Tầng 1</option>
-              <option>Tầng 2</option>
-              <option>Tầng 3</option>
-              <option>Tầng 4</option>
-              <option>Tầng thượng</option>
-            </select>
-          </div> 
-          */}
+
           {/* Loại phòng */}
           <div className="md:col-span-2 group">
             <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-blue-600 transition-colors">
@@ -163,22 +153,6 @@ const AddRoomForm: React.FC = () => {
               ))}
             </select>
           </div>
-
-          {/* Mô tả chi tiết: chưa làm */}
-          {/* <div className="md:col-span-2 group">
-            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-blue-600 transition-colors">
-              Mô tả chi tiết
-            </label>
-            <textarea
-              className="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-600/20 focus:bg-white focus:ring-4 focus:ring-blue-600/5 transition-all font-bold text-slate-900 placeholder:text-slate-300 text-sm"
-              placeholder="Nhập mô tả về tiện nghi, hướng nhìn..."
-              rows={4}
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-            />
-          </div> */}
 
           {/* Thumbnail, Ảnh đại diện phòng (URL) */}
           <div className="md:col-span-2 group">
@@ -228,6 +202,15 @@ const AddRoomForm: React.FC = () => {
             </div>
           </div>
 
+          {/* upload ảnh từ file */}
+          <div className="md:col-span-2">
+            <AddUploadImages
+              files={selectedFiles}
+              setFiles={setSelectedFiles}
+              max={4}
+            />
+          </div>
+
           {/* Mô tả */}
           <div className="md:col-span-2 group">
             <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-primary transition-colors">
@@ -245,7 +228,7 @@ const AddRoomForm: React.FC = () => {
           </div>
         </div>
 
-        {/* nút */}
+        {/* nút Hủy bỏ*/}
         <div className="pt-10 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-4">
           <button
             type="button"
@@ -258,12 +241,30 @@ const AddRoomForm: React.FC = () => {
           {/* nút submit thêm phòng mới  */}
           <button
             type="submit"
-            className="px-10 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-600/20 transition-all active:scale-95 flex items-center justify-center gap-2"
+            disabled={loading}
+            className={`px-10 h-12 rounded-2xl 
+    ${
+      loading
+        ? "bg-blue-400 cursor-not-allowed"
+        : "bg-blue-600 hover:bg-blue-700"
+    }
+    text-white font-black text-xs uppercase tracking-widest 
+    shadow-xl shadow-blue-600/20 transition-all 
+    active:scale-95 flex items-center justify-center gap-2`}
           >
-            <span className="material-symbols-outlined text-lg">
-              check_circle
-            </span>
-            Thêm phòng vào hệ thống
+            {loading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Đang thêm...
+              </>
+            ) : (
+              <>
+                <span className="material-symbols-outlined text-lg">
+                  check_circle
+                </span>
+                Thêm phòng vào hệ thống
+              </>
+            )}
           </button>
         </div>
       </form>

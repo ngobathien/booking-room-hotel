@@ -1,26 +1,18 @@
 import React from "react";
-import { Link } from "react-router-dom";
-
-interface RoomType {
-  _id: string;
-  typeName: string;
-  capacity: number;
-  pricePerNight: number;
-}
-
-interface Room {
-  _id: string;
-  roomNumber: string;
-  thumbnail: string;
-  description: string;
-  roomType: RoomType;
-}
+import { Link, useLocation } from "react-router-dom";
+import type { Room } from "../../../../types/room.types";
+import { useRoomContext } from "../../../../context/RoomContext";
 
 interface RoomListViewProps {
   rooms: Room[];
 }
 
 export const RoomListView: React.FC<RoomListViewProps> = ({ rooms }) => {
+  const location = useLocation();
+
+  const { filterParams } = useRoomContext();
+  const hasValidDates = filterParams.checkInDate && filterParams.checkOutDate;
+
   if (!Array.isArray(rooms)) return null;
 
   return (
@@ -77,17 +69,23 @@ export const RoomListView: React.FC<RoomListViewProps> = ({ rooms }) => {
 
             <div className="mt-8 flex gap-3">
               <Link
-                to={`/rooms/${room._id}/room-${room.roomNumber}`}
+                to={`/rooms/${room._id}/room-${room.roomNumber}${location.search}`}
                 className="flex-1 rounded-xl border border-slate-200 py-3 text-center text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all"
               >
                 Chi tiết
               </Link>
 
               <Link
-                to={`/checkout/${room._id}`}
+                to={
+                  hasValidDates
+                    ? //
+                      `/checkout/${room._id}`
+                    : //
+                      `/rooms/${room._id}/room-${room.roomNumber}${location.search}`
+                }
                 className="flex-1 rounded-xl bg-primary py-3 text-center text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all"
               >
-                Đặt ngay
+                {hasValidDates ? "Đặt phòng ngay" : "Chọn ngày để đặt"}
               </Link>
             </div>
           </div>

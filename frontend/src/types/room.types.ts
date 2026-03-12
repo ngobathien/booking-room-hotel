@@ -31,7 +31,7 @@ export interface CreateRoomPayload {
   roomNumber: string;
   hotelId: string;
   roomType: string; // ObjectId
-  status: "AVAILABLE" | "OCCUPIED" | "BOOKED" | "MAINTENANCE";
+  status: RoomStatusType;
   thumbnail?: string;
   images?: string[];
   description: string;
@@ -55,6 +55,17 @@ export interface RoomContextType {
   setRooms: React.Dispatch<React.SetStateAction<Room[]>>;
   setCurrentRoom: React.Dispatch<React.SetStateAction<Room | null>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+// dùng cho search phòng
+export interface SearchRoomParams {
+  checkInDate: string;
+  checkOutDate: string;
+  guests: number;
+}
+export interface SearchRoomResponse {
+  total: number;
+  rooms: Room[];
 }
 
 export const STATUS_ROOM_STYLE = {

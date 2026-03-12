@@ -1,12 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import type { Room } from "../../types/room.types";
+import { Link, useLocation } from "react-router-dom";
+import type { Room } from "../../../../types/room.types";
 
 interface RoomGridViewProps {
   rooms: Room[];
 }
 
 export const RoomGridView: React.FC<RoomGridViewProps> = ({ rooms }) => {
+  const location = useLocation();
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {rooms.map((room) => (
@@ -61,7 +63,7 @@ export const RoomGridView: React.FC<RoomGridViewProps> = ({ rooms }) => {
 
               <div className="mt-6 flex gap-3">
                 <Link
-                  to={`/rooms/${room._id}`}
+                  to={`/rooms/${room._id}/room-${room.roomNumber}${location.search}`}
                   className="flex-1 rounded-xl border border-slate-200 py-3 text-center text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all"
                 >
                   Chi tiết
