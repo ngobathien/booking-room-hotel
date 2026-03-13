@@ -62,6 +62,13 @@ export class BookingsController {
     return this.bookingsService.findAll();
   }
 
+  // user xem lịch sử đặt phòng của mình
+  @UseGuards(AuthGuard)
+  @Get('me')
+  async getMyBookings(@Req() req: Request & { user: { userId: string } }) {
+    return this.bookingsService.getMyBookings(req.user.userId);
+  }
+
   // lấy chi tiết một booking
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -86,11 +93,5 @@ export class BookingsController {
   @Patch(':id/check-out')
   checkOut(@Param('id') id: string) {
     return this.bookingsService.checkOutBooking(id);
-  }
-  // user xem lịch sử đặt phòng của mình
-  @UseGuards(AuthGuard)
-  @Get('my-bookings')
-  async getMyBookings(@Req() req) {
-    return this.bookingsService.getMyBookings(req.user.userId);
   }
 }
