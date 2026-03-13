@@ -8,14 +8,17 @@ import {
 import { Check } from "lucide-react";
 
 import { cn } from "../../../lib/utils";
-import { useRoomContext } from "../../../context/RoomContext";
+
 import CustomerInfoStep from "../../components/bookings/step/CustomerInfoStep";
 import ConfirmationStep from "../../components/bookings/step/ConfirmationStep";
-import { useBooking } from "../../../context/BookingContext";
-import useRoomAction from "../../../hooks/useRoomAction";
+
+import useRoomAction from "../../../hooks/room/useRoomAction";
 import BookingSummary from "../../components/bookings/BookingSummary";
-import { useAuth } from "../../../context/AuthContext";
+
 import { PaymentBookingPage } from "../Payments/PaymentBookingPage";
+import { useAuth } from "../../../hooks/auth/useAuth";
+import { useBooking } from "../../../hooks/booking/useBooking";
+import { useRoomContext } from "../../../hooks/room/useRoom";
 
 export const CheckoutPage = () => {
   const { id } = useParams();

@@ -1,6 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import React from "react";
-import { useBookingAction } from "../../../../hooks/useBookingAction";
+import { useBookingAction } from "../../../../hooks/booking/useBookingAction";
 import type { Room } from "../../../../types/room.types";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";

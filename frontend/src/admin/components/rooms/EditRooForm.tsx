@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import * as ReactRouterDom from "react-router-dom";
 import { toast } from "react-toastify";
 import { useRoomTypes } from "../../../hooks/useRoomTypes";
-import useRoomAction from "../../../hooks/useRoomAction";
+import useRoomAction from "../../../hooks/room/useRoomAction";
 import EditUploadImages from "./EditUploadImages";
 
 const { useParams, useNavigate } = ReactRouterDom;

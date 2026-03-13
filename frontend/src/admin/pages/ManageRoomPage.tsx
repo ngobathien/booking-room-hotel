@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import RoomListTable from "../components/rooms/RoomListTable";
 import { useNavigate } from "react-router";
 import RoomGrid from "../components/rooms/RoomGrid";
-import useRoomAction from "../../hooks/useRoomAction";
-import { useRoomContext } from "../../context/RoomContext";
+import useRoomAction from "../../hooks/room/useRoomAction";
+import { useRoomContext } from "../../hooks/room/useRoom";
 
 const ManageRoomPage = () => {
   const navigate = useNavigate();

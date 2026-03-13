@@ -1,31 +1,8 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
-import { ROLES } from "../common/constants/roleConstant";
-import { forgotPasswordApi, getProfile } from "../common/services/authService";
-
-type User = {
-  role: string;
-  fullName: string;
-  email: string;
-  phone_number: string;
-};
-
-type AuthContextType = {
-  user: User | null;
-  isLoggedIn: boolean;
-  loading: boolean;
-  isAdmin: boolean;
-  isUser: boolean;
-  login: (token: string) => void;
-  logout: () => void;
-};
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { useEffect, useState, type ReactNode } from "react";
+import { ROLES } from "../../common/constants/roleConstant";
+import { getProfile } from "../../common/services/authService";
+import type { User } from "../../types/user.types";
+import { AuthContext } from "./auth.context";
 
 type AuthProviderProps = {
   children: ReactNode;
@@ -123,13 +100,4 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-// Custom hook để sử dụng AuthContext dễ dàng hơn
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within AuthProvider");
-  }
-  return context;
 };

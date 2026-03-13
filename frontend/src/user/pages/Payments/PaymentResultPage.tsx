@@ -2,8 +2,9 @@ import React from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 
 import { CheckCircle2, ArrowRight, Home, User, Download } from "lucide-react";
-import { useBooking } from "../../../context/BookingContext";
+
 import { getBookingById } from "../../../common/services/bookingService";
+import { useBooking } from "../../../hooks/booking/useBooking";
 
 export const PaymentResultPage = () => {
   const location = useLocation();

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useBooking } from "../../../context/BookingContext";
 
 import { useRoomTypes } from "../../../hooks/useRoomTypes";
 import { useNavigate } from "react-router";
+import { useBooking } from "../../../hooks/booking/useBooking";
 
-const BookingBar: React.FC<BookingBarProps> = () => {
+const BookingBar: React.FC = () => {
   const { available, remainingRooms, loading } = useBooking();
 
   const navigate = useNavigate();
@@ -13,7 +13,6 @@ const BookingBar: React.FC<BookingBarProps> = () => {
   console.log("roomTypes", roomTypes);
 
   const today = new Date().toISOString().split("T")[0];
-  console.log("available, remainingRooms:", available, remainingRooms);
 
   //
   const [searchParams, setSearchParams] = useState({

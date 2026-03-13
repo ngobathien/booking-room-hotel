@@ -1,5 +1,4 @@
 import { toast } from "react-toastify";
-import { useBooking } from "../context/BookingContext";
 
 import {
   checkRoomAvailability,
@@ -10,7 +9,8 @@ import {
   getBookingById,
   checkInBooking,
   checkOutBooking,
-} from "../common/services/bookingService";
+} from "../../common/services/bookingService";
+import { useBooking } from "./useBooking";
 
 type CustomerInfo = {
   fullName: string;

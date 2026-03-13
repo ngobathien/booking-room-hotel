@@ -5,7 +5,7 @@ import {
   BookingStayStatus,
   type Booking,
 } from "../../../../types/booking.types";
-import { useBookingAction } from "../../../../hooks/useBookingAction";
+import { useBookingAction } from "../../../../hooks/booking/useBookingAction";
 
 type Props = {
   booking: Booking;

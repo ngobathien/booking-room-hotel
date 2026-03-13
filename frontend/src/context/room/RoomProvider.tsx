@@ -1,12 +1,11 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import type { Room, RoomContextType } from "../types/room.types";
+import React, { useEffect, useState } from "react";
+import type { Room } from "../../types/room.types";
 import {
   getAllRooms,
   searchAvailableRooms,
-} from "../common/services/roomService";
+} from "../../common/services/roomService";
 import { useSearchParams } from "react-router";
-
-const RoomContext = createContext<RoomContextType | null>(null);
+import { RoomContext } from "./room.context";
 
 export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -17,10 +16,11 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
   const [searchParams] = useSearchParams();
 
   const filterParams = {
-    checkInDate: searchParams.get("checkInDate"),
-    checkOutDate: searchParams.get("checkOutDate"),
-    guests: searchParams.get("guests"),
+    checkInDate: searchParams.get("checkInDate") || "",
+    checkOutDate: searchParams.get("checkOutDate") || "",
+    guests: Number(searchParams.get("guests") || 1),
   };
+
   //
   useEffect(() => {
     const fetchRooms = async () => {
@@ -73,12 +73,4 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
     </RoomContext.Provider>
   );
-};
-
-export const useRoomContext = () => {
-  const context = useContext(RoomContext);
-  if (!context) {
-    throw new Error("useRoomContext must be used within RoomProvider");
-  }
-  return context;
 };

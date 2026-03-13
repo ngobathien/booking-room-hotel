@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { BeatLoader } from "react-spinners";
 
-import { useAuth } from "../../../context/AuthContext";
-
-import { useAuthAction } from "../../../hooks/useAuthAction";
+import { useAuthAction } from "../../../hooks/auth/useAuthAction";
 import { toast } from "react-toastify";
+import { useAuth } from "../../../hooks/auth/useAuth";
 
 const Login = () => {
   const [email, setEmail] = React.useState<string>("");

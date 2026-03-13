@@ -3,10 +3,11 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ShieldCheck, Users, ArrowRight } from "lucide-react";
 import type { Room } from "../../../../types/room.types";
 
-import { useBooking } from "../../../../context/BookingContext";
-import { useBookingAction } from "../../../../hooks/useBookingAction";
-import { useRoomContext } from "../../../../context/RoomContext";
-import { useAuth } from "../../../../context/AuthContext";
+import { useBookingAction } from "../../../../hooks/booking/useBookingAction";
+
+import { useAuth } from "../../../../hooks/auth/useAuth";
+import { useBooking } from "../../../../hooks/booking/useBooking";
+import { useRoomContext } from "../../../../hooks/room/useRoom";
 
 interface Props {
   room: Room;

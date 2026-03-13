@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useBookingAction } from "../../../hooks/useBookingAction";
+import { useBookingAction } from "../../../hooks/booking/useBookingAction";
 import BookingTable from "../../components/bookings/BookingTable";
-import { useBooking } from "../../../context/BookingContext";
+import { useBooking } from "../../../hooks/booking/useBooking";
 
 export default function BookingManagement() {
   const { bookings, loading } = useBooking();
