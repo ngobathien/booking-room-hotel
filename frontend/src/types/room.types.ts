@@ -47,6 +47,12 @@ export interface Room {
   description: string;
 }
 
+export interface FilterParams {
+  checkInDate: string | null;
+  checkOutDate: string | null;
+  guests: string | null;
+}
+
 export interface RoomContextType {
   rooms: Room[];
   currentRoom: Room | null;
@@ -55,6 +61,8 @@ export interface RoomContextType {
   setRooms: React.Dispatch<React.SetStateAction<Room[]>>;
   setCurrentRoom: React.Dispatch<React.SetStateAction<Room | null>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+
+  filterParams: FilterParams;
 }
 
 // dùng cho search phòng

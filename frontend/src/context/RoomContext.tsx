@@ -15,6 +15,12 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Lấy search params để sync với filter UI
   const [searchParams] = useSearchParams();
+
+  const filterParams = {
+    checkInDate: searchParams.get("checkInDate"),
+    checkOutDate: searchParams.get("checkOutDate"),
+    guests: searchParams.get("guests"),
+  };
   //
   useEffect(() => {
     const fetchRooms = async () => {
@@ -61,6 +67,7 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
         setRooms,
         setCurrentRoom,
         setLoading,
+        filterParams,
       }}
     >
       {children}

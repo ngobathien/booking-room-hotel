@@ -5,11 +5,12 @@ import { loginApi } from "../common/services/authService";
 import { useAuth } from "../context/AuthContext";
 import { ROLES } from "../common/constants/roleConstant";
 
-export const useLogin = () => {
+export const useAuthAction = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  // login
   const handleLogin = async (email: string, password: string) => {
     if (!email || !password) {
       toast.error("Vui lòng nhập email và mật khẩu!");
@@ -53,5 +54,6 @@ export const useLogin = () => {
     }
   };
 
+  
   return { handleLogin, loading };
 };

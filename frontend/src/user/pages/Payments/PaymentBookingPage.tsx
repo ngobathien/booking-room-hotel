@@ -1,59 +1,59 @@
 import React from "react";
-import type { Room } from "../../../../types/room.types";
-import { useNavigate } from "react-router";
-import { createBooking } from "../../../../common/services/bookingService";
-import { ArrowLeft, CreditCard, MapPin, ShieldCheck } from "lucide-react";
-import { cn } from "../../../../lib/utils";
 
-const PaymentStep = ({
-  onBack,
-  room,
-  checkInDate,
-  checkOutDate,
-  nights,
-}: {
-  onBack: () => void;
-  room: Room;
-  checkInDate: string;
-  checkOutDate: string;
-  nights: number;
-}) => {
-  const [method, setMethod] = React.useState("card");
+import { useNavigate, useParams } from "react-router";
+import { ArrowLeft, CreditCard, MapPin, ShieldCheck } from "lucide-react";
+import { cn } from "../../../lib/utils";
+import { usePaymentAction } from "../../../hooks/usePaymentAction";
+import { toast } from "react-toastify";
+import { useBooking } from "../../../context/BookingContext";
+
+export const PaymentBookingPage = () => {
+  const [method, setMethod] = React.useState("vnpay");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const { currentBooking } = useBooking();
+
+  const { handleCreatePayment } = usePaymentAction();
+  const { bookingId } = useParams();
   const navigate = useNavigate();
 
   const handlePayment = async () => {
+    if (!bookingId) return;
     setIsSubmitting(true);
+
     try {
-      await createBooking({
-        roomId: room._id,
-        roomName: room.roomNumber,
-        checkIn: checkInDate,
-        checkOut: checkOutDate,
-        totalPrice: room.roomType.pricePerNight * nights,
-        status: "upcoming",
-        image: room.images[0],
-      });
-      alert("Đặt phòng thành công!");
-      navigate("/profile");
-    } catch (error) {
-      console.error(error);
-      alert("Có lỗi xảy ra khi đặt phòng.");
+      const res = await handleCreatePayment(bookingId, method);
+
+      // VNPAY / MOMO
+      if (res?.paymentUrl) {
+        window.location.href = res.paymentUrl;
+        return;
+      }
+
+      // COD
+      navigate("/payment/result?status=success");
+    } catch (error: any) {
+      const message = error.response?.data?.message;
+      console.log(error.response?.data);
+
+      toast.error(message || "Có lỗi xảy ra khi thanh toán");
     } finally {
       setIsSubmitting(false);
     }
   };
-
+  const methods = [
+    { id: "vnpay", label: "Thanh toán VNPay", icon: CreditCard },
+    { id: "momo", label: "Ví MoMo", icon: ShieldCheck },
+    { id: "cod", label: "Thanh toán tại khách sạn", icon: MapPin },
+  ];
   return (
     <div className="space-y-8">
       <div className="rounded-3xl bg-white p-8 shadow-sm border border-slate-100">
         <h3 className="text-xl font-bold mb-8">Phương thức thanh toán</h3>
+
+        {/* chọn phương thức */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-          {[
-            { id: "card", label: "Thẻ tín dụng", icon: CreditCard },
-            { id: "wallet", label: "Ví điện tử", icon: ShieldCheck },
-            { id: "bank", label: "Chuyển khoản", icon: MapPin },
-          ].map((m) => (
+          {methods.map((m) => (
             <button
               key={m.id}
               onClick={() => setMethod(m.id)}
@@ -120,7 +120,7 @@ const PaymentStep = ({
 
       <div className="flex flex-col md:flex-row gap-4">
         <button
-          onClick={onBack}
+          onClick={() => navigate(-1)}
           disabled={isSubmitting}
           className="flex items-center justify-center gap-2 rounded-2xl border border-slate-200 px-8 py-4 font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-50"
         >
@@ -133,11 +133,10 @@ const PaymentStep = ({
         >
           {isSubmitting
             ? "Đang xử lý..."
-            : `Thanh toán ngay ${(room.roomType.pricePerNight * nights).toLocaleString()} VNĐ`}
+            : `Thanh toán ngay ${currentBooking?.totalPrice.toLocaleString()} VNĐ`}
+          $
         </button>
       </div>
     </div>
   );
 };
-
-export default PaymentStep;
