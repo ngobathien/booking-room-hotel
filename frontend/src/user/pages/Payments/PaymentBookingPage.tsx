@@ -3,9 +3,9 @@ import React from "react";
 import { useNavigate, useParams } from "react-router";
 import { ArrowLeft, CreditCard, MapPin, ShieldCheck } from "lucide-react";
 import { cn } from "../../../lib/utils";
-import { usePaymentAction } from "../../../hooks/usePaymentAction";
+import { usePaymentAction } from "../../../hooks/payment/usePaymentAction";
 import { toast } from "react-toastify";
-import { useBooking } from "../../../context/BookingContext";
+import { useBooking } from "../../../hooks/booking/useBooking";
 
 export const PaymentBookingPage = () => {
   const [method, setMethod] = React.useState("vnpay");

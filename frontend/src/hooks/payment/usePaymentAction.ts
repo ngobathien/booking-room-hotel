@@ -1,9 +1,9 @@
 // useBookingAction.ts
 
 import { toast } from "react-toastify";
-import { createPayment } from "../common/services/paymentService";
-import type { MethodPayments } from "../types/payment.types";
-import { usePayment } from "../context/PaymentContext";
+import { createPayment } from "../../common/services/paymentService";
+import type { MethodPayments } from "../../types/payment.types";
+import { usePayment } from "./usePayment";
 
 export const usePaymentAction = () => {
   const { setLoading } = usePayment();

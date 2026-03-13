@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import LoadingSkeleton from "../../../common/LoadingSkeleton";
-import { useAuth } from "../../../context/AuthContext";
-
+import { useAuth } from "../../../hooks/auth/useAuth";
 const Navbar = () => {
   const navigate = useNavigate();
 

@@ -1,13 +1,13 @@
 import { BrowserRouter, Link, Route, Routes } from "react-router";
 import AppRoutes from "./common/routes/AppRoutes";
 
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./context/auth/AuthProvider";
 import { ToastContainer } from "react-toastify";
 
-import { UserProvider } from "./context/UserContext";
-import { RoomProvider } from "./context/RoomContext";
-import { BookingProvider } from "./context/BookingContext";
-import { PaymentProvider } from "./context/PaymentContext";
+import { UserProvider } from "./context/user/UserProvider";
+import { RoomProvider } from "./context/room/RoomProvider";
+import { BookingProvider } from "./context/booking/BookingProvider";
+import { PaymentProvider } from "./context/payment/PaymentProvider";
 
 function App() {
   return (

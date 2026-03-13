@@ -1,7 +1,8 @@
 import React from "react";
-import { useRoomContext } from "../../../context/RoomContext";
+
 import { Search } from "lucide-react";
 import { Link } from "react-router";
+import { useRoomContext } from "../../../hooks/room/useRoom";
 
 const RoomHeader = () => {
   const { filterParams } = useRoomContext();

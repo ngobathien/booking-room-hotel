@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
-import { useAuth } from "../context/AuthContext";
+
 import { Navigate, Outlet, useNavigate } from "react-router";
 import LoadingSkeleton from "./LoadingSkeleton";
+import { useAuth } from "../hooks/auth/useAuth";
 
 const ProtectedRoute = ({ allowedRoles }) => {
   const { user, isLoggedIn, isAdmin, loading } = useAuth();

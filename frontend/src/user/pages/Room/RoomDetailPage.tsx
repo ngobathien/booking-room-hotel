@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import useRoomAction from "../../../hooks/useRoomAction";
-import { useRoomContext } from "../../../context/RoomContext";
+import useRoomAction from "../../../hooks/room/useRoomAction";
+
 import RoomBookingCard from "../../components/rooms/detail/RoomBookingCard";
+import { useRoomContext } from "../../../hooks/room/useRoom";
 
 const RoomDetailPage = () => {
   const { roomId } = useParams<{ roomId: string }>();

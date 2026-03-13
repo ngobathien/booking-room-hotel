@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import { RoomProvider } from "../../../context/RoomContext";
+import { RoomProvider } from "../../../context/room/RoomProvider";
 
 const AdminRoomLayout = () => {
   return (

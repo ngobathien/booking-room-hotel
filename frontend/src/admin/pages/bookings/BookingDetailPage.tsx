@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { useBooking } from "../../../context/BookingContext";
-import { useBookingAction } from "../../../hooks/useBookingAction";
+
+import { useBookingAction } from "../../../hooks/booking/useBookingAction";
 import BookingHeader from "../../components/bookings/bookingdetails/BookingHeader";
 import CustomerInfoCard from "../../components/bookings/bookingdetails/CustomerInfoCard";
 import RoomDetailCard from "../../components/bookings/bookingdetails/RoomDetailCard";
 import BookingSummaryCard from "../../components/bookings/bookingdetails/BookingSummaryCard";
 import BookingStatusTimeline from "../../components/bookings/bookingdetails/BookingStatusTimeline";
+import { useBooking } from "../../../hooks/booking/useBooking";
 
 export default function BookingDetailPage() {
   const { id } = useParams();

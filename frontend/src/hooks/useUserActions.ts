@@ -4,7 +4,7 @@ import {
   updateUser,
   deleteUser,
 } from "../common/services/userService";
-import { useUsers } from "../context/UserContext";
+import { useUsers } from "./user/useUser";
 
 export const useUserActions = () => {
   const { users, setUsers, currentUser, setCurrentUser } = useUsers();

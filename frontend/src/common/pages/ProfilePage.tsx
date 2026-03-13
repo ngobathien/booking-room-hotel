@@ -1,6 +1,7 @@
 import { Link } from "react-router";
-import { useAuth } from "../../context/AuthContext";
+
 import LoadingSkeleton from "../LoadingSkeleton";
+import { useAuth } from "../../hooks/auth/useAuth";
 
 const ProfilePage = () => {
   const { user, loading } = useAuth();

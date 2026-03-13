@@ -1,6 +1,7 @@
 import { Mail, MapPin, Phone, User } from "lucide-react";
-import { useAuth } from "../../../../context/AuthContext";
+
 import { useState } from "react";
+import { useAuth } from "../../../../hooks/auth/useAuth";
 
 // step 1
 

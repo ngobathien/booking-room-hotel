@@ -5,9 +5,9 @@ import {
   getAllRooms,
   getDetailRoomById,
   updateRoom,
-} from "../common/services/roomService";
-import { useRoomContext } from "../context/RoomContext";
-import type { CreateRoomPayload } from "../types/room.types";
+} from "../../common/services/roomService";
+import type { CreateRoomPayload } from "../../types/room.types";
+import { useRoomContext } from "./useRoom";
 
 const useRoomAction = () => {
   const { setCurrentRoom, setLoading, setRooms } = useRoomContext();

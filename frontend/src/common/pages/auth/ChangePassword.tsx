@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { changePasswordApi } from "../../services/authService";
 import { useChangePassword } from "../../../hooks/useChangePassword";
-import { useAuth } from "../../../context/AuthContext";
+
 import { Link } from "react-router";
 
 const ChangePassword = () => {
