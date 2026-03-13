@@ -47,7 +47,7 @@ export class BookingsService {
 
     const conflict = await this.bookingModel.findOne({
       room: roomId,
-      bookingStatus: { $ne: BookingStatus.CANCELLED },
+      bookingStatus: { $in: [BookingStatus.PENDING, BookingStatus.CONFIRMED] },
       checkInDate: { $lt: checkOutDate },
       checkOutDate: { $gt: checkInDate },
     });
@@ -59,7 +59,7 @@ export class BookingsService {
 
   // tạo mã booking
   generateBookingCode() {
-    const prefix = process.env.BOOKING_CODE_PREFIX;
+    const prefix = process.env.BOOKING_CODE_PREFIX || 'BKNBT';
     const random = Math.floor(100000 + Math.random() * 900000);
     const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
 
@@ -255,6 +255,7 @@ export class BookingsService {
 
     // Cập nhật trạng thái sang CHECKED_IN (khách đã nhận phòng)
     booking.stayStatus = BookingStayStatus.CHECKED_IN;
+    booking.checkedInAt = new Date();
 
     // Lưu lại database
     await booking.save();
@@ -286,6 +287,8 @@ export class BookingsService {
     booking.stayStatus = BookingStayStatus.CHECKED_OUT;
     //
     booking.bookingStatus = BookingStatus.COMPLETED;
+
+    booking.checkedOutAt = new Date();
     // Lưu vào database
     await booking.save();
 
