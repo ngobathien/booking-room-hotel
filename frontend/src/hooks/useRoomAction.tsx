@@ -63,7 +63,7 @@ const useRoomAction = () => {
       setLoading(true);
       const room = await getDetailRoomById(roomId);
       setCurrentRoom(room);
-      return room; // ✅ QUAN TRỌNG
+      return room;
     } catch (error) {
       console.error("Fetch room detail failed", error);
       throw error;

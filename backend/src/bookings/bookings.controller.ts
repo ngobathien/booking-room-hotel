@@ -45,7 +45,6 @@ export class BookingsController {
 
   // tạo booking mới
   @UseGuards(AuthGuard)
-  @Roles(UserRole.ADMIN)
   @Post()
   createBooking(
     @Body() dto: CreateBookingDto,

@@ -4,7 +4,7 @@ import { BeatLoader } from "react-spinners";
 
 import { useAuth } from "../../../context/AuthContext";
 
-import { useLogin } from "../../../hooks/useLogin";
+import { useAuthAction } from "../../../hooks/useAuthAction";
 import { toast } from "react-toastify";
 
 const Login = () => {
@@ -21,7 +21,7 @@ const Login = () => {
 
   //=========================== Xử lý sự kiện đăng nhập ===========================
 
-  const { handleLogin, loading } = useLogin();
+  const { handleLogin, loading } = useAuthAction();
 
   const handleSubmitLogin = async (event: React.FormEvent) => {
     event.preventDefault();

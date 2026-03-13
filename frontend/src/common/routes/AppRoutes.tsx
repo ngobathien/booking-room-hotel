@@ -26,6 +26,12 @@ import AddRoomTypePage from "../../admin/pages/room-types/AddRoomTypePage";
 import EditRoomTypePage from "../../admin/pages/room-types/EditRoomTypePage";
 import VerifyOtpEmail from "../pages/auth/VerifyOtpEmail";
 import { CheckoutPage } from "../../user/pages/Booking/CheckOutPage";
+import { PaymentBookingPage } from "../../user/pages/Payments/PaymentBookingPage";
+import { PaymentResultPage } from "../../user/pages/Payments/PaymentResultPage";
+import MyBookingsPage from "../../user/pages/Booking/MyBookingsPage";
+import BookingManagement from "../../admin/pages/bookings/BookingManagement";
+import BookingDetailPage from "../../admin/pages/bookings/BookingDetailPage";
+import AdminBookingLayout from "../../admin/components/layouts/AdminBookingLayout";
 
 const AppRoutes = () => (
   <Routes>
@@ -49,13 +55,20 @@ const AppRoutes = () => (
       {/* checkout */}
       <Route path="checkout/:roomId" element={<CheckoutPage />} />
 
+      {/* Payment Booking Page */}
+      <Route
+        path="payment/method/:bookingId"
+        element={<PaymentBookingPage />}
+      />
+
+      <Route path="payment/result" element={<PaymentResultPage />} />
       {/* ================= USER (LOGIN REQUIRED) ================= */}
       <Route element={<ProtectedRoute allowedRoles={[ROLES.USER]} />}>
         {/* trang cá nhân ========================================*/}
         <Route path="/profile" element={<ProfilePage />} />
 
         {/* ==================== trang đặt phòng của tôi =============================*/}
-        {/* <Route path="/my-bookings" element={<ProfilePage />} /> */}
+        <Route path="/my-bookings" element={<MyBookingsPage />} />
       </Route>
     </Route>
 
@@ -63,15 +76,12 @@ const AppRoutes = () => (
     <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]} />}>
       <Route path="dashboard" element={<AdminLayout />}>
         <Route index element={<DashboardPage />} />
-
         <Route path="users" element={<ManageUsersPage />} />
-
         <Route path="rooms" element={<AdminRoomLayout />}>
           <Route index element={<ManageRoomPage />} />
           <Route path="create" element={<AddRoomForm />} />
           <Route path="edit/:id" element={<EditRoomForm />} />
         </Route>
-
         <Route path="room-types" element={<AdminRoomTypesLayout />}>
           <Route index element={<ManageRoomTypesPage />} />
           {/* <Route path="create" element={<AddRoomTypeForm />} />
@@ -80,6 +90,12 @@ const AppRoutes = () => (
           <Route path="edit/:id" element={<EditRoomTypePage />} />
           EditRoomTypesPage
         </Route>
+        {/*  */}
+        <Route path="bookings" element={<AdminBookingLayout />}>
+          <Route index element={<BookingManagement />} />
+          <Route path=":id" element={<BookingDetailPage />} />
+        </Route>
+        bookings
       </Route>
 
       {/* <Route path="dashboard" element={<DashboardPage />}>

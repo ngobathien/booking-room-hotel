@@ -14,8 +14,8 @@ import ConfirmationStep from "../../components/bookings/step/ConfirmationStep";
 import { useBooking } from "../../../context/BookingContext";
 import useRoomAction from "../../../hooks/useRoomAction";
 import BookingSummary from "../../components/bookings/BookingSummary";
-import PaymentStep from "../../components/bookings/step/PaymentBookingStep";
 import { useAuth } from "../../../context/AuthContext";
+import { PaymentBookingPage } from "../Payments/PaymentBookingPage";
 
 export const CheckoutPage = () => {
   const { id } = useParams();
@@ -161,7 +161,7 @@ export const CheckoutPage = () => {
           )}
 
           {step === 3 && (
-            <PaymentStep
+            <PaymentBookingPage
               onBack={prevStep}
               room={currentRoom}
               checkInDate={checkInDate}

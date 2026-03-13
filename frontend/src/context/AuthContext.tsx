@@ -107,9 +107,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   console.log("info user full: ", user);
   // quên mật khẩu
-  const forgotPassword = async (email: string) => {
-    const forgotPassword = await forgotPasswordApi(email);
-  };
+
   return (
     <AuthContext.Provider
       value={{

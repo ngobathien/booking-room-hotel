@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import { UserProvider } from "./context/UserContext";
 import { RoomProvider } from "./context/RoomContext";
 import { BookingProvider } from "./context/BookingContext";
+import { PaymentProvider } from "./context/PaymentContext";
 
 function App() {
   return (
@@ -16,7 +17,9 @@ function App() {
           <UserProvider>
             <RoomProvider>
               <BookingProvider>
-                <AppRoutes />
+                <PaymentProvider>
+                  <AppRoutes />
+                </PaymentProvider>
               </BookingProvider>
             </RoomProvider>
           </UserProvider>
