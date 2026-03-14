@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import { CheckCircle2, ArrowRight, Home, User, Download } from "lucide-react";
 
@@ -7,8 +7,6 @@ import { getBookingById } from "../../../common/services/bookingService";
 import { useBooking } from "../../../hooks/booking/useBooking";
 
 export const PaymentResultPage = () => {
-  const location = useLocation();
-
   const [searchParams] = useSearchParams();
   const bookingId = searchParams.get("bookingId");
   const status = searchParams.get("status");

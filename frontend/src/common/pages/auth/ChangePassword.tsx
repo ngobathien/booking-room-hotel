@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { changePasswordApi } from "../../services/authService";
+import React, { useState } from "react";
 import { useChangePassword } from "../../../hooks/useChangePassword";
 
 import { Link } from "react-router";
 
 const ChangePassword = () => {
-  const [userId, setUserId] = React.useState<string | null>(null);
+  // const [userId, setUserId] = React.useState<string | null>(null);
   const [oldPassword, setOldPassword] = React.useState("");
   const [showOldPassword, setShowOldPassword] = useState<boolean>(false);
 

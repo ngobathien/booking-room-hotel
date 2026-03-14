@@ -1,10 +1,9 @@
-import React from "react";
 import { useSearchParams } from "react-router";
 
 const RoomSort = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const sort = searchParams.get("sort");
+  const sort = searchParams.get("sort") ?? "price_asc";
 
   const handleSortChange = (value: string) => {
     const params = Object.fromEntries([...searchParams]);

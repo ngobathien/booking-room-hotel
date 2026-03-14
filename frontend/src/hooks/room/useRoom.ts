@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { RoomContext } from "../../context/room/room.context";
+import { RoomContext } from "../../context/room/RoomContext";
 
 export const useRoomContext = () => {
   const context = useContext(RoomContext);

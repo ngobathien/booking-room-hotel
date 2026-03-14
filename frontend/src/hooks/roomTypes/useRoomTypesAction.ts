@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
 import {
   createNewRoomType,
   deleteRoomTypeById,
   getAllRoomTypes,
   updateRoomTypeById,
-} from "../common/services/roomTypeService";
-import type { RoomType } from "../types/room-types.types";
+} from "../../common/services/roomTypeService";
+import type { CreateRoomTypeDto, RoomType } from "../../types/room-types.types";
+import { useRoomTypeContext } from "./useRoomTypes";
 
-export const useRoomTypes = () => {
-  const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
-  const [loading, setLoading] = useState(false);
+export const useRoomTypesAction = () => {
+  const { roomTypes, setRoomTypes, loading, setLoading } = useRoomTypeContext();
 
   const fetchRoomTypes = async () => {
     setLoading(true);
@@ -19,7 +19,7 @@ export const useRoomTypes = () => {
     setLoading(false);
   };
 
-  const createRoomType = async (data: RoomType) => {
+  const createRoomType = async (data: CreateRoomTypeDto) => {
     await createNewRoomType(data);
     toast.success("Thêm loại phòng thành công");
     fetchRoomTypes();
@@ -51,6 +51,7 @@ export const useRoomTypes = () => {
   }, []);
 
   return {
+    setRoomTypes,
     roomTypes,
     loading,
     createRoomType,

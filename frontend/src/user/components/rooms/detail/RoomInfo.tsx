@@ -32,7 +32,6 @@ const RoomInfo = ({ room }: Props) => {
           <li>🛏 Loại phòng: {room.roomType.typeName}</li>
           <li>👥 Sức chứa: {room.roomType.capacity} người</li>
           <li>🏨 Mã phòng: {room.roomNumber}</li>
-          <li>🕒 Cập nhật: {new Date(room.updatedAt).toLocaleDateString()}</li>
         </ul>
       </div>
     </div>

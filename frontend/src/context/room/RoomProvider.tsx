@@ -5,7 +5,7 @@ import {
   searchAvailableRooms,
 } from "../../common/services/roomService";
 import { useSearchParams } from "react-router";
-import { RoomContext } from "./room.context";
+import { RoomContext } from "./RoomContext";
 
 export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -58,6 +58,7 @@ export const RoomProvider = ({ children }: { children: React.ReactNode }) => {
 
     fetchRooms();
   }, [searchParams]);
+
   return (
     <RoomContext.Provider
       value={{

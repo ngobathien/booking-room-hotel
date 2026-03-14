@@ -1,5 +1,3 @@
-import React from "react";
-
 import { Search } from "lucide-react";
 import { Link } from "react-router";
 import { useRoomContext } from "../../../hooks/room/useRoom";

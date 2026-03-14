@@ -1,4 +1,4 @@
-import { BookingStatus, type Booking } from "../../../../types/booking.types";
+import { BOOKING_STATUS, type Booking } from "../../../../types/booking.types";
 
 type Props = {
   booking: Booking;
@@ -11,7 +11,7 @@ export default function BookingStatusTimeline({ booking }: Props) {
 
       <div className="space-y-6">
         {/* CONFIRMED */}
-        {booking.bookingStatus === BookingStatus.CONFIRMED && (
+        {booking.bookingStatus === BOOKING_STATUS.CONFIRMED && (
           <div className="flex gap-4 items-start">
             <div className="w-3 h-3 mt-2 rounded-full bg-emerald-500"></div>
 

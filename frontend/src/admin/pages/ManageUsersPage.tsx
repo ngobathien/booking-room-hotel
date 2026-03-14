@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { useUserActions } from "../../hooks/useUserActions";
 import UserListTable from "../components/users/UserListTable";
-import { useUsers } from "../../hooks/user/useUser";
 
 const ManageUsersPage = () => {
   const { fetchUsers } = useUserActions();
-  const { users } = useUsers();
-  const [editingUserId, setEditingUserId] = useState<string | null>(null);
-  const [editData, setEditData] = useState<Partial<User>>({});
+  // const { users } = useUsers();
+  // const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  // const [editData, setEditData] = useState<Partial<User>>({});
 
   useEffect(() => {
     fetchUsers();

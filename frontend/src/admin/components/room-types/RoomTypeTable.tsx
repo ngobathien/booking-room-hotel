@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import type { RoomType } from "../../../types/roomType.types";
-import { useRoomTypes } from "../../../hooks/useRoomTypes";
+
+import type { RoomType } from "../../../types/room-types.types";
 
 interface Props {
   roomTypes: RoomType[];
@@ -51,7 +51,7 @@ const RoomTypeTable: React.FC<Props> = ({ roomTypes, loading, onDelete }) => {
               {/*  */}
               <td className="px-6 py-3">
                 <span className="text-xs font-bold text-slate-400">
-                  {rt.available} trống / {rt.total} tổng
+                  {/* {rt?.available} trống / {rt.total} tổng */}
                 </span>
               </td>
               <td className="px-6 py-3 text-right">

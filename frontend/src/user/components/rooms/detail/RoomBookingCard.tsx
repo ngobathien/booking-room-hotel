@@ -1,6 +1,6 @@
+import { ArrowRight, ShieldCheck, Users } from "lucide-react";
 import React, { useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ShieldCheck, Users, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import type { Room } from "../../../../types/room.types";
 
 import { useBookingAction } from "../../../../hooks/booking/useBookingAction";
@@ -25,7 +25,6 @@ const RoomBookingCard: React.FC<Props> = ({ room }) => {
 
   const navigate = useNavigate();
   const { user } = useAuth();
-  const location = useLocation();
   const { filterParams } = useRoomContext();
   const { handleCheckRoomAvailability } = useBookingAction();
 

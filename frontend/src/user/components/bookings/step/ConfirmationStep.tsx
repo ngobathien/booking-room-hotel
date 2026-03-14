@@ -1,9 +1,8 @@
 import { ArrowLeft } from "lucide-react";
-import React from "react";
+import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 import { useBookingAction } from "../../../../hooks/booking/useBookingAction";
 import type { Room } from "../../../../types/room.types";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router";
 
 interface CustomerInfo {
   fullName: string;
@@ -21,7 +20,6 @@ interface Props {
 }
 
 const ConfirmationStep = ({
-  onNext,
   onBack,
   room,
   checkInDate,
@@ -141,9 +139,6 @@ const ConfirmationStep = ({
 
                 <div>
                   <div className="font-bold">{room.roomNumber}</div>
-                  <div className="text-xs text-slate-500">
-                    {room.bedType} • {room.view}
-                  </div>
                 </div>
               </div>
 

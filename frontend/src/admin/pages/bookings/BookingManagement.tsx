@@ -27,7 +27,7 @@ export default function BookingManagement() {
       </div>
 
       <BookingTable
-        bookings={bookings}
+        bookings={bookings ?? []}
         onRowClick={(id) => navigate(`/dashboard/bookings/${id}`)}
       />
     </div>

@@ -6,9 +6,11 @@ import { cn } from "../../../lib/utils";
 import { usePaymentAction } from "../../../hooks/payment/usePaymentAction";
 import { toast } from "react-toastify";
 import { useBooking } from "../../../hooks/booking/useBooking";
+import type { MethodPayments } from "../../../types/payment.types";
 
 export const PaymentBookingPage = () => {
-  const [method, setMethod] = React.useState("vnpay");
+  const [method, setMethod] = React.useState<MethodPayments>("vnpay");
+
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const { currentBooking } = useBooking();
@@ -41,11 +43,13 @@ export const PaymentBookingPage = () => {
       setIsSubmitting(false);
     }
   };
-  const methods = [
+
+  const methods: { id: MethodPayments; label: string; icon: any }[] = [
     { id: "vnpay", label: "Thanh toán VNPay", icon: CreditCard },
     { id: "momo", label: "Ví MoMo", icon: ShieldCheck },
     { id: "cod", label: "Thanh toán tại khách sạn", icon: MapPin },
   ];
+
   return (
     <div className="space-y-8">
       <div className="rounded-3xl bg-white p-8 shadow-sm border border-slate-100">
@@ -69,53 +73,6 @@ export const PaymentBookingPage = () => {
             </button>
           ))}
         </div>
-
-        {method === "card" && (
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Số thẻ
-              </label>
-              <input
-                type="text"
-                placeholder="0000 0000 0000 0000"
-                className="w-full rounded-xl border-slate-100 bg-slate-50 p-4 text-sm focus:ring-primary"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Ngày hết hạn
-                </label>
-                <input
-                  type="text"
-                  placeholder="MM/YY"
-                  className="w-full rounded-xl border-slate-100 bg-slate-50 p-4 text-sm focus:ring-primary"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  CVV
-                </label>
-                <input
-                  type="text"
-                  placeholder="***"
-                  className="w-full rounded-xl border-slate-100 bg-slate-50 p-4 text-sm focus:ring-primary"
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Tên chủ thẻ
-              </label>
-              <input
-                type="text"
-                placeholder="NGUYEN VAN A"
-                className="w-full rounded-xl border-slate-100 bg-slate-50 p-4 text-sm focus:ring-primary"
-              />
-            </div>
-          </div>
-        )}
       </div>
 
       <div className="flex flex-col md:flex-row gap-4">

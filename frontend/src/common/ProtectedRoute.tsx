@@ -1,10 +1,12 @@
-import React, { useContext } from "react";
-
-import { Navigate, Outlet, useNavigate } from "react-router";
-import LoadingSkeleton from "./LoadingSkeleton";
+import { Navigate, Outlet } from "react-router";
 import { useAuth } from "../hooks/auth/useAuth";
+import LoadingSkeleton from "./LoadingSkeleton";
 
-const ProtectedRoute = ({ allowedRoles }) => {
+type ProtectedRouteProps = {
+  allowedRoles?: string[];
+};
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
   const { user, isLoggedIn, isAdmin, loading } = useAuth();
 
   // ⛔ CHỜ load profile xong
