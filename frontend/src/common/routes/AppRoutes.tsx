@@ -30,6 +30,7 @@ import ResetPassword from "../pages/auth/ResetPassword";
 import VerifyOtpEmail from "../pages/auth/VerifyOtpEmail";
 import ProfilePage from "../pages/ProfilePage";
 import ProtectedRoute from "../ProtectedRoute";
+import GoogleSuccess from "../pages/auth/GoogleSuccess";
 
 const AppRoutes = () => (
   <Routes>
@@ -104,30 +105,7 @@ const AppRoutes = () => (
     <Route path="/reset-password" element={<ResetPassword />} />
     <Route path="/change-password" element={<ChangePassword />} />
     <Route path="verify-otp" element={<VerifyOtpEmail />} />
-
-    {/*
-     <Route path="/dashboard" element={<DashboardPage />}>
-      <Route path="users" element={<ManageUsersPage />} />
-      <Route path="posts" element={<ManagePostsPage />} />
-      <Route path="class" element={<ManageClassesPage />} />
-    </Route> */}
-    {/* Các trang đăng nhập & đăng ký có layout riêng */}
-    {/* <Route
-      path="/login"
-      element={
-        <AuthLayout>
-          <Login />
-        </AuthLayout>
-      }
-    /> */}
-    {/* <Route
-      path="/register"
-      element={
-        <AuthLayout>
-          <Register />
-        </AuthLayout>
-      }
-    /> */}
+    <Route path="/google-success" element={<GoogleSuccess />} />
   </Routes>
 );
 

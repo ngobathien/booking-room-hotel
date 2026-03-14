@@ -42,6 +42,7 @@ const ConfirmationStep = ({
     try {
       const booking = await handleCreateBooking(room._id, customerInfo);
 
+      console.log("booking", booking);
       if (!booking) return;
 
       // chuyển sang trang payment

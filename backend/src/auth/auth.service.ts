@@ -22,6 +22,18 @@ import { MailService } from '../services/mail.service';
 import { Otp, OtpDocument } from './schemas/email-otp.schema';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 
+interface GoogleProfile {
+  displayName: string;
+  emails?: { value: string }[];
+  photos?: { value: string }[];
+}
+
+interface GoogleLoginResponse {
+  message: string;
+  access_token: string;
+  user: User;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -74,6 +86,9 @@ export class AuthService {
 
     /* so sánh password từ client gửi lên với password của hệ thống lưu ở database 
      thông qua user được tìm thấy */
+    if (!user.password) {
+      throw new UnauthorizedException('Tài khoản không có mật khẩu');
+    }
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
@@ -147,6 +162,7 @@ export class AuthService {
     const user = await this.userModel.create({
       ...signUpDto,
       password: hashedPassword,
+      provider: 'local',
       isVerified: false,
     });
 
@@ -288,6 +304,10 @@ export class AuthService {
     if (!user) throw new NotFoundException('User not found...');
 
     // so sánh mật khẩu cũ với mật khẩu trong database
+    if (!user.password) {
+      throw new BadRequestException('Tài khoản không có mật khẩu');
+    }
+
     const comparePassword = await bcrypt.compare(oldPassword, user.password);
 
     if (!comparePassword) {
@@ -384,6 +404,40 @@ export class AuthService {
 
     return {
       message: 'Đặt lại mật khẩu thành công',
+    };
+  }
+
+  // ============================= login bằng gg  =============================
+  async googleLogin(profile: GoogleProfile): Promise<GoogleLoginResponse> {
+    const email = profile.emails?.[0]?.value;
+    const fullName = profile.displayName;
+    const avatar = profile.photos?.[0]?.value;
+
+    if (!email) {
+      throw new BadRequestException('Không lấy được email từ Google');
+    }
+    let user = await this.usersService.findByEmail(email);
+
+    if (!user) {
+      user = await this.userModel.create({
+        email,
+        fullName,
+        avatar,
+        provider: 'google',
+        isVerified: true,
+      });
+    }
+
+    const payload = {
+      sub: user._id.toString(),
+    };
+
+    const access_token = await this.jwtService.signAsync(payload);
+
+    return {
+      message: 'Login Google thành công',
+      access_token,
+      user,
     };
   }
 }

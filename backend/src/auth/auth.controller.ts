@@ -8,6 +8,8 @@ import {
   UseGuards,
   Request,
   Put,
+  Req,
+  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in-auth.dto';
@@ -19,14 +21,18 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { ForgotPassworDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
-// import { CreateAuthDto } from './dto/create-auth.dto';
-// import { UpdateAuthDto } from './dto/update-auth.dto';
 
+import { AuthGuard as PassportAuthGuard } from '@nestjs/passport';
+import { ConfigService } from '@nestjs/config';
+import { Profile } from 'passport-google-oauth20';
+
+import type { Response } from 'express';
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
+    private configService: ConfigService,
   ) {}
 
   // đăng nhập
@@ -96,5 +102,24 @@ export class AuthController {
   @Post('resend-otp')
   resendOtp(@Body('email') email: string) {
     return this.authService.resendOtp(email);
+  }
+
+  @Get('google')
+  @UseGuards(PassportAuthGuard('google'))
+  async googleAuth() {}
+
+  @Get('google/callback')
+  @UseGuards(PassportAuthGuard('google'))
+  async googleAuthRedirect(
+    @Req() req: Request & { user: Profile },
+    @Res() res: Response,
+  ) {
+    const url_frontend = this.configService.get<string>('URL_CLIENT')!;
+
+    const data = await this.authService.googleLogin(req.user);
+
+    return res.redirect(
+      `${url_frontend}/google-success?token=${data.access_token}`,
+    );
   }
 }

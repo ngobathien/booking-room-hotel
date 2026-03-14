@@ -13,6 +13,7 @@ import { User, UserSchema } from '../users/schemas/user.schema';
 import { ResetToken, ResetTokenSchema } from './schemas/reset-token.schema';
 import { MailService } from '../services/mail.service';
 import { Otp, OtpSchema } from './schemas/email-otp.schema';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   // import UsersModule để sử dụng UsersService trong AuthService
@@ -31,6 +32,6 @@ import { Otp, OtpSchema } from './schemas/email-otp.schema';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, MailService],
+  providers: [AuthService, MailService, GoogleStrategy],
 })
 export class AuthModule {}
