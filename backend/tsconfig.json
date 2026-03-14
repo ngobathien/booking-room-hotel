@@ -15,9 +15,7 @@
 
     "rootDir": ".",
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    },
+
     "outDir": "./dist",
     "incremental": true,
     "skipLibCheck": true,
