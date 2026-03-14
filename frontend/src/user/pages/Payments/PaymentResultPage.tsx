@@ -118,7 +118,7 @@ export const PaymentResultPage = () => {
           {/* Actions */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Link
-              to="/profile"
+              to="/my-bookings"
               className="flex items-center justify-center gap-2 rounded-2xl bg-primary py-4 px-6 font-bold text-white shadow-xl shadow-primary/30 hover:bg-blue-700 transition-all"
             >
               <User className="w-5 h-5" /> Xem đơn đặt phòng

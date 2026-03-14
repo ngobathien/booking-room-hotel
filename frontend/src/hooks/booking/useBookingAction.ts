@@ -88,11 +88,11 @@ export const useBookingAction = () => {
         phone_number: customerInfo.phone_number,
       });
 
-      setCurrentBooking(booking.data);
+      setCurrentBooking(booking);
 
       toast.success("Đặt phòng thành công");
 
-      return booking.data;
+      return booking;
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Lỗi đặt phòng");
     } finally {
