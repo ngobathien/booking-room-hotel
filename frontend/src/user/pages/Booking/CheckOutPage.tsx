@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Link,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { Check } from "lucide-react";
 
 import { cn } from "../../../lib/utils";
@@ -24,21 +19,19 @@ export const CheckoutPage = () => {
   const { id } = useParams();
   const [step, setStep] = React.useState(1);
   const { getRoomById } = useRoomAction();
-  const { filterParams, rooms, currentRoom } = useRoomContext();
+  const { rooms, currentRoom } = useRoomContext();
   console.log("currentRoom", currentRoom);
 
   const [searchParams] = useSearchParams();
 
   const queryCheckIn = searchParams.get("checkIn");
   const queryCheckOut = searchParams.get("checkOut");
-  const queryGuests = searchParams.get("guests");
 
   const {
     checkInDate,
     checkOutDate,
     setCheckInDate,
     setCheckOutDate,
-    available,
     loading,
   } = useBooking();
   const { user } = useAuth();
@@ -163,16 +156,7 @@ export const CheckoutPage = () => {
             />
           )}
 
-          {step === 3 && (
-            <PaymentBookingPage
-              onBack={prevStep}
-              room={currentRoom}
-              checkInDate={checkInDate}
-              checkOutDate={checkOutDate}
-              nights={nights}
-              customerInfo={customerInfo}
-            />
-          )}
+          {step === 3 && <PaymentBookingPage />}
         </div>
 
         {/* Summary Sidebar nằm bên phải*/}

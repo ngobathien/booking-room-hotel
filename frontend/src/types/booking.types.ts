@@ -6,18 +6,24 @@ export type CheckRoomAvailabilityParams = {
   checkOutDate: string;
 };
 
-export enum BookingStatus {
-  PENDING = "pending",
-  CONFIRMED = "confirmed",
-  CANCELLED = "cancelled",
-  COMPLETED = "completed",
-}
+export const BOOKING_STATUS = {
+  PENDING: "pending",
+  CONFIRMED: "confirmed",
+  CANCELLED: "cancelled",
+  COMPLETED: "completed",
+} as const;
 
-export enum BookingStayStatus {
-  NOT_CHECKED_IN = "not_checked_in",
-  CHECKED_IN = "checked-in",
-  CHECKED_OUT = "checked-out",
-}
+export type BookingStatus =
+  (typeof BOOKING_STATUS)[keyof typeof BOOKING_STATUS];
+
+export const BOOKING_STAY_STATUS = {
+  NOT_CHECKED_IN: "not_checked_in",
+  CHECKED_IN: "checked-in",
+  CHECKED_OUT: "checked-out",
+} as const;
+
+export type BookingStayStatus =
+  (typeof BOOKING_STAY_STATUS)[keyof typeof BOOKING_STAY_STATUS];
 
 export type Booking = {
   _id: string;

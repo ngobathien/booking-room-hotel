@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 import { useBookingAction } from "../../../hooks/booking/useBookingAction";
 import { Link } from "react-router-dom";
 
-import { Calendar, ChevronRight, History, ChevronDown } from "lucide-react";
+import { Calendar, ChevronRight, History } from "lucide-react";
 import { useBooking } from "../../../hooks/booking/useBooking";
 
 const MyBookingsPage = () => {

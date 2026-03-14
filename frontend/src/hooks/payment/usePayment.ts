@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { PaymentContext } from "../../context/payment/payment.context";
+import { PaymentContext } from "../../context/payment/PaymentContext";
 
 export const usePayment = () => {
   const context = useContext(PaymentContext);

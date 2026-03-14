@@ -1,16 +1,9 @@
-import axios from "axios";
-import api from "./apiClient.ts";
 import type {
   LoginData,
   RegisterData,
   VerifyOtp,
 } from "../../types/auth.types.ts";
-
-const auth = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  timeout: 100000,
-  headers: { "Content-Type": "application/json" },
-});
+import api from "./apiClient.ts";
 
 // Đăng ký
 

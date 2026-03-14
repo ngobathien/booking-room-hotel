@@ -83,10 +83,6 @@ const RoomDetailPage = () => {
               <li>🛏 Loại phòng: {currentRoom.roomType.typeName}</li>
               <li>👥 Sức chứa: {currentRoom.roomType.capacity} người</li>
               <li>🏨 Mã phòng: {currentRoom.roomNumber}</li>
-              <li>
-                🕒 Cập nhật:{" "}
-                {new Date(currentRoom.updatedAt).toLocaleDateString()}
-              </li>
             </ul>
           </div>
         </div>

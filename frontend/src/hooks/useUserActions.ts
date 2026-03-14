@@ -7,7 +7,7 @@ import {
 import { useUsers } from "./user/useUser";
 
 export const useUserActions = () => {
-  const { users, setUsers, currentUser, setCurrentUser } = useUsers();
+  const { setUsers, currentUser, setCurrentUser } = useUsers();
 
   const fetchUsers = async () => {
     try {

@@ -1,17 +1,20 @@
-import { Mail, MapPin, Phone, User } from "lucide-react";
+import { Mail, Phone, User } from "lucide-react";
 
-import { useState } from "react";
 import { useAuth } from "../../../../hooks/auth/useAuth";
 
 // step 1
-
+type CustomerInfo = {
+  fullName: string;
+  email: string;
+  phone_number: string;
+};
 interface Props {
   customerInfo: {
     fullName: string;
     email: string;
     phone_number: string;
   };
-  setCustomerInfo: (data: any) => void;
+  setCustomerInfo: React.Dispatch<React.SetStateAction<CustomerInfo>>;
   onNext: () => void;
 }
 const CustomerInfoStep = ({ customerInfo, setCustomerInfo, onNext }: Props) => {
@@ -57,7 +60,7 @@ const CustomerInfoStep = ({ customerInfo, setCustomerInfo, onNext }: Props) => {
                   type="email"
                   value={customerInfo.email}
                   onChange={(e) =>
-                    setCustomerInfo((prev) => ({
+                    setCustomerInfo((prev: any) => ({
                       ...prev,
                       email: e.target.value,
                     }))
@@ -79,7 +82,7 @@ const CustomerInfoStep = ({ customerInfo, setCustomerInfo, onNext }: Props) => {
                   type="tel"
                   value={customerInfo.phone_number}
                   onChange={(e) =>
-                    setCustomerInfo((prev) => ({
+                    setCustomerInfo((prev: any) => ({
                       ...prev,
                       phone_number: e.target.value,
                     }))

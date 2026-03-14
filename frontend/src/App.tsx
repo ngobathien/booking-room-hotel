@@ -1,4 +1,4 @@
-import { BrowserRouter, Link, Route, Routes } from "react-router";
+import { BrowserRouter } from "react-router";
 import AppRoutes from "./common/routes/AppRoutes";
 
 import { AuthProvider } from "./context/auth/AuthProvider";
@@ -8,6 +8,7 @@ import { UserProvider } from "./context/user/UserProvider";
 import { RoomProvider } from "./context/room/RoomProvider";
 import { BookingProvider } from "./context/booking/BookingProvider";
 import { PaymentProvider } from "./context/payment/PaymentProvider";
+import { RoomTypeProvider } from "./context/roomType/RoomTypeProvider";
 
 function App() {
   return (
@@ -16,11 +17,13 @@ function App() {
         <BrowserRouter>
           <UserProvider>
             <RoomProvider>
-              <BookingProvider>
-                <PaymentProvider>
-                  <AppRoutes />
-                </PaymentProvider>
-              </BookingProvider>
+              <RoomTypeProvider>
+                <BookingProvider>
+                  <PaymentProvider>
+                    <AppRoutes />
+                  </PaymentProvider>
+                </BookingProvider>
+              </RoomTypeProvider>
             </RoomProvider>
           </UserProvider>
         </BrowserRouter>

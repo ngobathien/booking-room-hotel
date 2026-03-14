@@ -18,11 +18,7 @@ export interface BookingContextType {
   setLoading: (value: boolean) => void;
 }
 
-export type MethodPayments = {
-  vnpay: "vnpay";
-  momo: "momo";
-  cod: "cod";
-};
+export type MethodPayments = "vnpay" | "momo" | "cod";
 
 export type CreatePaymentPayload = {
   bookingId: string;
@@ -30,15 +26,10 @@ export type CreatePaymentPayload = {
 };
 
 export interface PaymentContextType {
-  checkInDate: string;
-  checkOutDate: string;
-  guests: number;
-  available: boolean | null;
   loading: boolean;
+  // paymentUrl?: string;
+  // transactionId?: string;
 
-  setCheckInDate: (value: string) => void;
-  setCheckOutDate: (value: string) => void;
-  setGuests: (value: number) => void;
-  setAvailable: (value: boolean | null) => void;
   setLoading: (value: boolean) => void;
+  // setPaymentUrl: (value: string) => void;
 }

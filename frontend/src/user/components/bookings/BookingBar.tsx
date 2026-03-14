@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 
-import { useRoomTypes } from "../../../hooks/useRoomTypes";
 import { useNavigate } from "react-router";
 import { useBooking } from "../../../hooks/booking/useBooking";
+import { useRoomTypesAction } from "../../../hooks/roomTypes/useRoomTypesAction";
 
 const BookingBar: React.FC = () => {
-  const { available, remainingRooms, loading } = useBooking();
+  const { available, loading } = useBooking();
 
   const navigate = useNavigate();
-  const { roomTypes } = useRoomTypes();
+  const { roomTypes } = useRoomTypesAction();
 
   console.log("roomTypes", roomTypes);
 
@@ -108,7 +108,7 @@ const BookingBar: React.FC = () => {
               onChange={(e) =>
                 setSearchParams({
                   ...searchParams,
-                  guests: Number(e.target.value),
+                  guests: e.target.value,
                 })
               }
               className="w-full pl-10 pr-4 py-3 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-primary outline-none transition-all"
@@ -134,7 +134,7 @@ const BookingBar: React.FC = () => {
         <div className="mt-4 text-center">
           {available ? (
             <p className="text-green-600 font-semibold">
-              ✅ Còn {remainingRooms} phòng khả dụng
+              {/* ✅ Còn {remainingRooms} phòng khả dụng */}
             </p>
           ) : (
             <p className="text-red-600 font-semibold">

@@ -24,7 +24,6 @@ export const useBookingAction = () => {
     checkOutDate,
     available,
 
-    bookings,
     setBookings,
 
     setAvailable,

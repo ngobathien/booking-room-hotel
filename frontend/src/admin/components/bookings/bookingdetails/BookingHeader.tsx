@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Printer, Download } from "lucide-react";
 import {
-  BookingStatus,
-  BookingStayStatus,
+  BOOKING_STATUS,
+  BOOKING_STAY_STATUS,
   type Booking,
 } from "../../../../types/booking.types";
 import { useBookingAction } from "../../../../hooks/booking/useBookingAction";
@@ -37,8 +37,8 @@ export default function BookingHeader({ booking }: Props) {
         </button>
 
         {/* CHECK IN STATUS*/}
-        {booking.bookingStatus === BookingStatus.CONFIRMED &&
-          booking.stayStatus === BookingStayStatus.NOT_CHECKED_IN && (
+        {booking.bookingStatus === BOOKING_STATUS.CONFIRMED &&
+          booking.stayStatus === BOOKING_STAY_STATUS.NOT_CHECKED_IN && (
             <button
               onClick={() => handleCheckInBooking(booking._id)}
               className="px-4 py-2 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow"
@@ -48,7 +48,7 @@ export default function BookingHeader({ booking }: Props) {
           )}
 
         {/* CHECK OUT STATUS*/}
-        {booking.stayStatus === BookingStayStatus.CHECKED_IN && (
+        {booking.stayStatus === BOOKING_STAY_STATUS.CHECKED_IN && (
           <button
             onClick={() => handleCheckOutBooking(booking._id)}
             className="px-4 py-2 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 shadow"

@@ -2,7 +2,6 @@ import { toast } from "react-toastify";
 import {
   createNewRoom,
   deleteRoomById,
-  getAllRooms,
   getDetailRoomById,
   updateRoom,
 } from "../../common/services/roomService";
@@ -13,22 +12,25 @@ const useRoomAction = () => {
   const { setCurrentRoom, setLoading, setRooms } = useRoomContext();
 
   // Lấy tất cả danh sách room
-  const fetchRooms = async () => {
-    try {
-      setLoading(true);
-      const rooms = await getAllRooms();
-      setRooms(rooms);
-    } catch (error) {
-      console.error("Fetch room detail failed", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchRooms = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const rooms = await getAllRooms();
+  //     setRooms(rooms);
+  //   } catch (error) {
+  //     console.error("Fetch room detail failed", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   // thêm một phòng mới
-  const handleCreateNewRoom = async (data: CreateRoomPayload) => {
+  const handleCreateNewRoom = async (
+    data: CreateRoomPayload,
+    files?: File[],
+  ) => {
     try {
-      const newRoom = await createNewRoom(data);
+      const newRoom = await createNewRoom(data, files);
       toast.success("Thêm phòng thành công");
 
       setRooms((prev) => [...prev, newRoom]); // add vào list
@@ -42,9 +44,11 @@ const useRoomAction = () => {
   const handleUpdateRoom = async (
     roomId: string,
     data: Partial<CreateRoomPayload>,
+    files?: File[],
   ) => {
     try {
-      const updatedRoom = await updateRoom(roomId, data);
+      const updatedRoom = await updateRoom(roomId, data, files);
+
       toast.success("Cập nhật phòng thành công");
 
       setRooms((prev) =>
@@ -57,6 +61,7 @@ const useRoomAction = () => {
       throw error;
     }
   };
+
   // Lấy chi tiết một phòng
   const getRoomById = async (roomId: string) => {
     try {

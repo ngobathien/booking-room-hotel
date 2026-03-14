@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import * as ReactRouterDom from "react-router-dom";
 import { toast } from "react-toastify";
-import { useRoomTypes } from "../../../hooks/useRoomTypes";
+
 import useRoomAction from "../../../hooks/room/useRoomAction";
 import EditUploadImages from "./EditUploadImages";
+import { useRoomTypesAction } from "../../../hooks/roomTypes/useRoomTypesAction";
 
 const { useParams, useNavigate } = ReactRouterDom;
 
@@ -18,7 +19,7 @@ interface RoomFormData {
 const EditRoomForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { roomTypes } = useRoomTypes();
+  const { roomTypes } = useRoomTypesAction();
   const { getRoomById, handleUpdateRoom } = useRoomAction();
 
   const [loadingPage, setLoadingPage] = useState(false); // load dữ liệu
