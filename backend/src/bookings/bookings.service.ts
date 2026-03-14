@@ -148,6 +148,7 @@ export class BookingsService {
 
     //
     const bookingCode = this.generateBookingCode();
+
     // Tạo booking
     return this.bookingModel.create({
       bookingCode,
