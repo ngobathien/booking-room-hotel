@@ -49,7 +49,9 @@ export const createNewRoom = async (
 
   // append text fields
   Object.entries(newRoomData).forEach(([key, value]) => {
-    if (value) formData.append(key, value as any);
+    if (value !== undefined && value !== null) {
+      formData.append(key, String(value));
+    }
   });
 
   // append file nếu có
@@ -78,14 +80,35 @@ export const deleteRoomById = async (roomId: string) => {
   }
 };
 
-export const updateRoom = async (roomId: string, data: CreateRoomPayload) => {
-  try {
-    const response = await api.patch(`/rooms/${roomId}`, data);
-    return response.data;
-  } catch (error) {
-    console.error("Error updating room:", error);
-    throw error;
-  }
-};
+// export const updateRoom = async (roomId: string, data: CreateRoomPayload) => {
+//   try {
+//     const response = await api.patch(`/rooms/${roomId}`, data);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error updating room:", error);
+//     throw error;
+//   }
+// };
 
+export const updateRoom = async (
+  roomId: string,
+  data: Partial<CreateRoomPayload>,
+  files?: File[],
+) => {
+  const formData = new FormData();
+
+  Object.entries(data).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      formData.append(key, String(value));
+    }
+  });
+
+  files?.forEach((file) => {
+    formData.append("images", file);
+  });
+
+  const response = await api.patch(`/rooms/${roomId}`, formData);
+
+  return response.data;
+};
 export const deleteAllRooms = () => {};

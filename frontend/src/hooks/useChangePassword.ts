@@ -1,8 +1,9 @@
 import { toast } from "react-toastify";
 import { changePasswordApi } from "../common/services/authService";
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+
 import { useNavigate } from "react-router";
+import { useAuth } from "./auth/useAuth";
 
 export const useChangePassword = () => {
   const [loading, setLoading] = useState(false);

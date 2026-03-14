@@ -1,19 +1,19 @@
-import React, { useEffect } from "react";
-import { RoomStatus, type Room } from "../../../types/room.types";
+import React from "react";
 import { useNavigate } from "react-router";
+import {
+  RoomStatus,
+  type Room,
+  type RoomStatusType,
+} from "../../../types/room.types";
 
 interface RoomTableProps {
   rooms: Room[];
-  onEdit: (id: string) => void;
+  // onEdit: (id: string) => void;
   onDelete: (id: string) => void;
 }
-const RoomListTable: React.FC<RoomTableProps> = ({
-  rooms,
-  onEdit,
-  onDelete,
-}) => {
+const RoomListTable: React.FC<RoomTableProps> = ({ rooms, onDelete }) => {
   const navigate = useNavigate();
-  const getStatusBadge = (status: RoomStatus) => {
+  const getStatusBadge = (status: RoomStatusType) => {
     switch (status) {
       case RoomStatus.AVAILABLE:
         return (
