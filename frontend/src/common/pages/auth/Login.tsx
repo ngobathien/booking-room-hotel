@@ -5,6 +5,7 @@ import { BeatLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../hooks/auth/useAuth";
 import { useAuthAction } from "../../../hooks/auth/useAuthAction";
+import { GOOGLE_LOGIN_URL } from "../../../config/env";
 
 const Login = () => {
   const [email, setEmail] = React.useState<string>("");
@@ -31,6 +32,15 @@ const Login = () => {
     }
 
     handleLogin(email, password);
+  };
+
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const handleLoginGoogle = () => {
+    console.log("GOOGLE_LOGIN_URL:", GOOGLE_LOGIN_URL);
+
+    setGoogleLoading(true);
+
+    window.location.href = GOOGLE_LOGIN_URL;
   };
 
   const isPasswordMatch =
@@ -180,7 +190,7 @@ const Login = () => {
               </button>
             </form>
             <div className="mt-6 text-center text-sm text-gray-600">
-              Chưa có tài khoản?{" "}
+              Chưa có tài khoản? {/* chuyển hướng sang đăng ký */}
               <Link
                 to="/register"
                 className="text-indigo-600 hover:text-indigo-500 font-medium"
@@ -189,7 +199,34 @@ const Login = () => {
               </Link>
             </div>
 
-            {/* chuyển hướng sang đăng ký */}
+            {/* login với gg */}
+            <div className="flex items-center my-4">
+              <div className="flex-1 border-t"></div>
+              <span className="px-3 text-gray-500 text-sm">Hoặc</span>
+              <div className="flex-1 border-t"></div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleLoginGoogle}
+              disabled={googleLoading}
+              className="w-full flex items-center justify-center gap-3 border border-gray-300 hover:bg-gray-100 py-2.5 rounded-lg transition"
+            >
+              {googleLoading ? (
+                <BeatLoader size={8} color="#4F46E5" />
+              ) : (
+                <>
+                  <img
+                    src="https://developers.google.com/identity/images/g-logo.png"
+                    alt="google"
+                    className="w-5 h-5"
+                  />
+                  <span className="font-medium text-gray-700">
+                    Đăng nhập với Google
+                  </span>
+                </>
+              )}
+            </button>
           </div>
         </div>
       )}
