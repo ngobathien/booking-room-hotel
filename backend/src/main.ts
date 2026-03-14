@@ -1,4 +1,3 @@
-import 'module-alias/register';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
@@ -16,10 +15,11 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
 
-  await app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}${api_url}/`);
+  // await app.listen(port, () => {
+  //   console.log(`Example app listening at http://localhost:${port}${api_url}/`);
+  // });
+  await app.listen(port);
 
-    // console.log(process.env.PORT);
-  });
+  console.log(`Server running on port ${port}`);
 }
 bootstrap();
