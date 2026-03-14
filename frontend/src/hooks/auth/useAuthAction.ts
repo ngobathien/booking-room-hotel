@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
-import { loginApi } from "../common/services/authService";
-import { useAuth } from "../context/AuthContext";
-import { ROLES } from "../common/constants/roleConstant";
+import { loginApi } from "../../common/services/authService";
 
-export const useLogin = () => {
+import { ROLES } from "../../common/constants/roleConstant";
+import { useAuth } from "./useAuth";
+
+export const useAuthAction = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  // login
   const handleLogin = async (email: string, password: string) => {
     if (!email || !password) {
       toast.error("Vui lòng nhập email và mật khẩu!");

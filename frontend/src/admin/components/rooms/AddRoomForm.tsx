@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import * as ReactRouterDom from "react-router-dom";
 import { toast } from "react-toastify";
-import { useRoomTypes } from "../../../hooks/useRoomTypes";
-import useRoomAction from "../../../hooks/useRoomAction";
+import useRoomAction from "../../../hooks/room/useRoomAction";
 import AddUploadImages from "./AddUploadImages";
+import { useRoomTypesAction } from "../../../hooks/roomTypes/useRoomTypesAction";
 
-const { useParams, useNavigate } = ReactRouterDom;
+const { useNavigate } = ReactRouterDom;
 
 interface RoomFormData {
   roomNumber: string;
@@ -29,7 +29,7 @@ const AddRoomForm: React.FC = () => {
     description: "",
   });
   const { handleCreateNewRoom } = useRoomAction();
-  const { roomTypes } = useRoomTypes();
+  const { roomTypes } = useRoomTypesAction();
   //
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

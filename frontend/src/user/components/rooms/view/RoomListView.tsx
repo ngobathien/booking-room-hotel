@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import type { Room } from "../../../../types/room.types";
-import { useRoomContext } from "../../../../context/RoomContext";
+import { useRoomContext } from "../../../../hooks/room/useRoom";
 
 interface RoomListViewProps {
   rooms: Room[];

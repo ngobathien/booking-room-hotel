@@ -1,4 +1,4 @@
-import type { RoomType } from "../../types/room-types.types";
+import type { CreateRoomTypeDto, RoomType } from "../../types/room-types.types";
 import api from "./apiClient";
 
 export const getAllRoomTypes = async (): Promise<RoomType[]> => {
@@ -23,7 +23,7 @@ export const getDetailRoomTypeById = async (roomId: string) => {
   }
 };
 
-export const createNewRoomType = async (newRoomTypeData: RoomType) => {
+export const createNewRoomType = async (newRoomTypeData: CreateRoomTypeDto) => {
   try {
     const response = await api.post(`/room-types`, newRoomTypeData);
     return response.data;

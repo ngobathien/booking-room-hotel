@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { useUsers, type User } from "../../../context/UserContext";
+
 import { ROLES } from "../../../common/constants/roleConstant";
-import { STATUS_USER_STYLE } from "../../../common/constants/users/statusUserStyle";
 import { useUserActions } from "../../../hooks/useUserActions";
+import { useUsers } from "../../../hooks/user/useUser";
+import { STATUS_USER_STYLE, type User } from "../../../types/user.types";
 
 const UserListTable = () => {
   const { fetchUsers, handleDeleteUser, handleUpdateUser } = useUserActions();

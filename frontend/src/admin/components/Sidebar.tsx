@@ -1,6 +1,5 @@
-import React from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/auth/useAuth";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -9,8 +8,8 @@ interface SidebarProps {
   onToggleDark: () => void;
 }
 
-const Sidebar = ({ isOpen, onClose, isDark, onToggleDark }: SidebarProps) => {
-  const { user, logout } = useAuth();
+const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const navItems = [

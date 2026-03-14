@@ -1,36 +1,33 @@
-import { Outlet, useNavigate } from "react-router";
-import RoomTypesListTable from "../../components/room-types/RoomTypeTable";
 import { useEffect, useState } from "react";
-import type { RoomType } from "../../../types/room-types.types";
-import {
-  createNewRoomType,
-  deleteRoomTypeById,
-  getAllRoomTypes,
-} from "../../../common/services/roomTypeService";
+import { Outlet, useNavigate } from "react-router";
+import { getAllRoomTypes } from "../../../common/services/roomTypeService";
 
+import { useRoomTypesAction } from "../../../hooks/roomTypes/useRoomTypesAction";
 import RoomTypeGrid from "../../components/room-types/RoomTypeGrid";
 import RoomTypeTable from "../../components/room-types/RoomTypeTable";
-import { useRoomTypes } from "../../../hooks/useRoomTypes";
+import { useRoomTypeContext } from "../../../hooks/roomTypes/useRoomTypes";
 
 const ManageRoomTypesPage = () => {
   const navigate = useNavigate();
 
   // chế độ hiển thị: grid (ô) hoặc list(danh sách)
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  //
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  //
-  const [editingType, setEditingType] = useState<RoomType | null>(null);
+  // //
+  // const [isFormOpen, setIsFormOpen] = useState(false);
+  // //
+  // const [editingType, setEditingType] = useState<RoomType | null>(null);
 
   // dùng custom hook useRoomTypes
-  const { roomTypes, loading, deleteRoomType } = useRoomTypes();
+  const { deleteRoomType } = useRoomTypesAction();
+
+  const { roomTypes, setRoomTypes, loading } = useRoomTypeContext();
 
   // lấy dữ liệu room types
   useEffect(() => {
     const fetchRoomTypes = async () => {
-      const roomTypes = await getAllRoomTypes();
-      console.log(roomTypes);
-      setRoomTypes(roomTypes);
+      const data = await getAllRoomTypes();
+      console.log(data);
+      setRoomTypes(data);
     };
     //
     fetchRoomTypes();
