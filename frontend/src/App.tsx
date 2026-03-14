@@ -1,11 +1,14 @@
-import { BrowserRouter, Link, Route, Routes } from "react-router";
+import { BrowserRouter } from "react-router";
 import AppRoutes from "./common/routes/AppRoutes";
 
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./context/auth/AuthProvider";
 import { ToastContainer } from "react-toastify";
 
-import { UserProvider } from "./context/UserContext";
-import { RoomProvider } from "./context/RoomContext";
+import { UserProvider } from "./context/user/UserProvider";
+import { RoomProvider } from "./context/room/RoomProvider";
+import { BookingProvider } from "./context/booking/BookingProvider";
+import { PaymentProvider } from "./context/payment/PaymentProvider";
+import { RoomTypeProvider } from "./context/roomType/RoomTypeProvider";
 
 function App() {
   return (
@@ -14,7 +17,13 @@ function App() {
         <BrowserRouter>
           <UserProvider>
             <RoomProvider>
-              <AppRoutes />
+              <RoomTypeProvider>
+                <BookingProvider>
+                  <PaymentProvider>
+                    <AppRoutes />
+                  </PaymentProvider>
+                </BookingProvider>
+              </RoomTypeProvider>
             </RoomProvider>
           </UserProvider>
         </BrowserRouter>

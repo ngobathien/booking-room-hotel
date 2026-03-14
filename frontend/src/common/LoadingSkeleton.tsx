@@ -1,5 +1,3 @@
-import React from "react";
-
 const LoadingSkeleton = () => {
   return (
     <div className="h-16 flex items-center justify-end gap-4 px-6">

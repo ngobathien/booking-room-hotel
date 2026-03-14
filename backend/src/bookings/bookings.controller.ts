@@ -45,9 +45,11 @@ export class BookingsController {
 
   // tạo booking mới
   @UseGuards(AuthGuard)
-  @Roles(UserRole.ADMIN)
   @Post()
-  createBooking(@Body() dto: CreateBookingDto, @Req() req) {
+  createBooking(
+    @Body() dto: CreateBookingDto,
+    @Req() req: Request & { user: { userId: string } },
+  ) {
     return this.bookingsService.createBooking(dto, req.user.userId);
   }
 
@@ -57,6 +59,13 @@ export class BookingsController {
   @Get()
   findAll() {
     return this.bookingsService.findAll();
+  }
+
+  // user xem lịch sử đặt phòng của mình
+  @UseGuards(AuthGuard)
+  @Get('me')
+  async getMyBookings(@Req() req: Request & { user: { userId: string } }) {
+    return this.bookingsService.getMyBookings(req.user.userId);
   }
 
   // lấy chi tiết một booking
@@ -83,11 +92,5 @@ export class BookingsController {
   @Patch(':id/check-out')
   checkOut(@Param('id') id: string) {
     return this.bookingsService.checkOutBooking(id);
-  }
-  // user xem lịch sử đặt phòng của mình
-  @UseGuards(AuthGuard)
-  @Get('my-bookings')
-  async getMyBookings(@Req() req) {
-    return this.bookingsService.getMyBookings(req.user.userId);
   }
 }

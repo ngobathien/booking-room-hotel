@@ -1,11 +1,13 @@
+import { ArrowRight, ShieldCheck, Users } from "lucide-react";
 import React, { useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { ShieldCheck, Users, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import type { Room } from "../../../../types/room.types";
 
-import { useBooking } from "../../../../context/BookingContext";
-import { useBookingAction } from "../../../../hooks/useBookingAction";
-import { useRoomContext } from "../../../../context/RoomContext";
+import { useBookingAction } from "../../../../hooks/booking/useBookingAction";
+
+import { useAuth } from "../../../../hooks/auth/useAuth";
+import { useBooking } from "../../../../hooks/booking/useBooking";
+import { useRoomContext } from "../../../../hooks/room/useRoom";
 
 interface Props {
   room: Room;
@@ -21,7 +23,8 @@ const RoomBookingCard: React.FC<Props> = ({ room }) => {
     loading,
   } = useBooking();
 
-  const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { filterParams } = useRoomContext();
   const { handleCheckRoomAvailability } = useBookingAction();
 
@@ -53,6 +56,16 @@ const RoomBookingCard: React.FC<Props> = ({ room }) => {
     }
   }, [checkInDate, checkOutDate, room._id]);
 
+  const handleBookingWithAuth = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    navigate(
+      `/checkout/${room._id}?checkIn=${checkInDate}&checkOut=${checkOutDate}&guests=${filterParams.guests || 1}`,
+    );
+  };
   //
   return (
     <aside className="relative">
@@ -157,18 +170,18 @@ const RoomBookingCard: React.FC<Props> = ({ room }) => {
                   </div>
                 </div>
 
-                <Link
-                  // to={`/checkout/${room._id}${location.search}`}
-                  to={`/checkout/${room._id}?checkIn=${checkInDate}&checkOut=${checkOutDate}&guests=${filterParams.guests || 1}`}
+                <button
+                  onClick={handleBookingWithAuth}
                   className={`flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-lg font-black shadow-xl transition-all
-                    ${
-                      available
-                        ? "bg-primary text-white hover:bg-blue-700"
-                        : "bg-gray-300 text-gray-500 cursor-not-allowed pointer-events-none"
-                    }`}
+    ${
+      available
+        ? "bg-primary text-white hover:bg-blue-700"
+        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+    }`}
+                  disabled={!available}
                 >
                   Đặt phòng ngay <ArrowRight className="h-5 w-5" />
-                </Link>
+                </button>
               </div>
             ) : (
               <div className="rounded-2xl bg-amber-50 p-4 border border-amber-100">

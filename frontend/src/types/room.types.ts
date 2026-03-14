@@ -47,6 +47,12 @@ export interface Room {
   description: string;
 }
 
+export interface FilterParams {
+  checkInDate: string | null;
+  checkOutDate: string | null;
+  guests: number | null;
+}
+
 export interface RoomContextType {
   rooms: Room[];
   currentRoom: Room | null;
@@ -55,6 +61,8 @@ export interface RoomContextType {
   setRooms: React.Dispatch<React.SetStateAction<Room[]>>;
   setCurrentRoom: React.Dispatch<React.SetStateAction<Room | null>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+
+  filterParams: FilterParams;
 }
 
 // dùng cho search phòng
@@ -68,8 +76,9 @@ export interface SearchRoomResponse {
   rooms: Room[];
 }
 
-export const STATUS_ROOM_STYLE = {
+export const STATUS_ROOM_STYLE: Record<RoomStatusType, string> = {
   AVAILABLE: "bg-emerald-100 text-emerald-700 border border-emerald-200",
   BOOKED: "bg-amber-100 text-amber-700 border border-amber-200",
+  OCCUPIED: "bg-blue-100 text-blue-700 border border-blue-200",
   MAINTENANCE: "bg-rose-100 text-rose-700 border border-rose-200",
-} as const;
+};

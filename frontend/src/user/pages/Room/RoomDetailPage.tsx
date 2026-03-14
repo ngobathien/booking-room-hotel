@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import useRoomAction from "../../../hooks/useRoomAction";
-import { useRoomContext } from "../../../context/RoomContext";
+import useRoomAction from "../../../hooks/room/useRoomAction";
+
+import RoomBookingCard from "../../components/rooms/detail/RoomBookingCard";
+import { useRoomContext } from "../../../hooks/room/useRoom";
 
 const RoomDetailPage = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -81,38 +83,12 @@ const RoomDetailPage = () => {
               <li>🛏 Loại phòng: {currentRoom.roomType.typeName}</li>
               <li>👥 Sức chứa: {currentRoom.roomType.capacity} người</li>
               <li>🏨 Mã phòng: {currentRoom.roomNumber}</li>
-              <li>
-                🕒 Cập nhật:{" "}
-                {new Date(currentRoom.updatedAt).toLocaleDateString()}
-              </li>
             </ul>
           </div>
         </div>
 
         {/* Right */}
-        <div className="border rounded-xl p-5 shadow-sm space-y-4 h-fit sticky top-6">
-          <div>
-            <p className="text-gray-500 text-sm">Giá / đêm</p>
-            <p className="text-3xl font-bold text-primary">
-              {currentRoom.roomType.pricePerNight.toLocaleString()} VND
-            </p>
-          </div>
-
-          <button
-            disabled={currentRoom.status !== "AVAILABLE"}
-            className={`w-full py-3 rounded-lg font-semibold transition ${
-              currentRoom.status === "AVAILABLE"
-                ? "bg-primary text-white hover:opacity-90"
-                : "bg-gray-300 text-gray-600 cursor-not-allowed"
-            }`}
-          >
-            Đặt phòng
-          </button>
-
-          <p className="text-xs text-gray-500 text-center">
-            Chưa bao gồm thuế & phí
-          </p>
-        </div>
+        <RoomBookingCard room={currentRoom} />
       </div>
     </div>
   );

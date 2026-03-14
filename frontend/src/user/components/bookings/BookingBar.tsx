@@ -1,39 +1,27 @@
 import React, { useState } from "react";
-import { useBooking } from "../../../context/BookingContext";
-import { toast } from "react-toastify";
-import { useRoomTypes } from "../../../hooks/useRoomTypes";
-import { useNavigate } from "react-router";
 
-const BookingBar: React.FC<BookingBarProps> = () => {
-  const {
-    checkInDate,
-    checkOutDate,
-    guests,
-    setCheckInDate,
-    setCheckOutDate,
-    setGuests,
-    checkAvailability,
-    available,
-    remainingRooms,
-    loading,
-  } = useBooking();
+import { useNavigate } from "react-router";
+import { useBooking } from "../../../hooks/booking/useBooking";
+import { useRoomTypesAction } from "../../../hooks/roomTypes/useRoomTypesAction";
+
+const BookingBar: React.FC = () => {
+  const { available, loading } = useBooking();
 
   const navigate = useNavigate();
-  const { roomTypes } = useRoomTypes();
+  const { roomTypes } = useRoomTypesAction();
 
   console.log("roomTypes", roomTypes);
 
   const today = new Date().toISOString().split("T")[0];
-  console.log("available, remainingRooms:", available, remainingRooms);
 
-  // 
+  //
   const [searchParams, setSearchParams] = useState({
     checkIn: "",
     checkOut: "",
     guests: "",
   });
 
-  //  
+  //
   const handleSearch = () => {
     const params = new URLSearchParams({
       checkInDate: searchParams.checkIn,
@@ -120,7 +108,7 @@ const BookingBar: React.FC<BookingBarProps> = () => {
               onChange={(e) =>
                 setSearchParams({
                   ...searchParams,
-                  guests: Number(e.target.value),
+                  guests: e.target.value,
                 })
               }
               className="w-full pl-10 pr-4 py-3 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-primary outline-none transition-all"
@@ -146,7 +134,7 @@ const BookingBar: React.FC<BookingBarProps> = () => {
         <div className="mt-4 text-center">
           {available ? (
             <p className="text-green-600 font-semibold">
-              ✅ Còn {remainingRooms} phòng khả dụng
+              {/* ✅ Còn {remainingRooms} phòng khả dụng */}
             </p>
           ) : (
             <p className="text-red-600 font-semibold">

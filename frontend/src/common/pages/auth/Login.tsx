@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import React, { useState } from "react";
+import { Link } from "react-router";
 import { BeatLoader } from "react-spinners";
 
-import { useAuth } from "../../../context/AuthContext";
-
-import { useLogin } from "../../../hooks/useLogin";
 import { toast } from "react-toastify";
+import { useAuth } from "../../../hooks/auth/useAuth";
+import { useAuthAction } from "../../../hooks/auth/useAuthAction";
 
 const Login = () => {
   const [email, setEmail] = React.useState<string>("");
@@ -17,11 +16,11 @@ const Login = () => {
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
 
-  const { isLoggedIn, setIsLoggedIn, user, login } = useAuth();
+  const { isLoggedIn } = useAuth();
 
   //=========================== Xử lý sự kiện đăng nhập ===========================
 
-  const { handleLogin, loading } = useLogin();
+  const { handleLogin, loading } = useAuthAction();
 
   const handleSubmitLogin = async (event: React.FormEvent) => {
     event.preventDefault();

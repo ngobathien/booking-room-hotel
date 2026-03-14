@@ -1,6 +1,6 @@
 import React from "react";
 import { ShieldCheck } from "lucide-react";
-import type { Room } from "../../../../types/room.types";
+import type { Room } from "../../../types/room.types";
 
 interface Props {
   room: Room;
@@ -20,7 +20,7 @@ const BookingSummary: React.FC<Props> = ({ room, nights, guests = 2 }) => {
 
         <div className="flex gap-4 mb-6">
           <img
-            src={room.images}
+            src={room.images[0]}
             className="h-20 w-20 rounded-xl object-cover"
             alt={room.roomNumber}
           />

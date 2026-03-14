@@ -5,9 +5,10 @@ import { ROOM_TYPE_VI } from "../../../common/constants/roomType/roomType";
 
 interface Props {
   rooms: Room[];
+  onDelete: (id: string) => void;
 }
 
-const RoomGrid: React.FC<Props> = ({ rooms }) => {
+const RoomGrid: React.FC<Props> = ({ rooms, onDelete }) => {
   const navigate = useNavigate();
 
   return (
@@ -24,12 +25,24 @@ const RoomGrid: React.FC<Props> = ({ rooms }) => {
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-              <div className="flex gap-2 w-full">
+              {/* nút sửa xóa */}
+              <div className="flex gap-2 ml-auto">
                 <button
                   onClick={() => navigate(`edit/${room._id}`)}
-                  className="flex-1 bg-white/20 backdrop-blur text-white font-bold py-2 rounded-lg hover:bg-white/40 transition-all text-xs text-center"
+                  className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/20 backdrop-blur hover:bg-white/40 transition"
                 >
-                  Chỉnh sửa
+                  <span className="material-symbols-outlined text-white text-[18px]">
+                    edit
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => onDelete(room._id)}
+                  className="w-9 h-9 flex items-center justify-center rounded-lg bg-red-500/80 hover:bg-red-500 transition"
+                >
+                  <span className="material-symbols-outlined text-white text-[18px]">
+                    delete
+                  </span>
                 </button>
               </div>
             </div>

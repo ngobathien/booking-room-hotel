@@ -1,9 +1,7 @@
-import React from "react";
-
 import { Outlet } from "react-router";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
 import Breadcrumb from "../Breadcrumb";
+import Footer from "./Footer";
+import Navbar from "./Navbar";
 
 const MainLayout = () => {
   return (
