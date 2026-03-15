@@ -6,6 +6,7 @@ const apiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
 
 // Thêm token vào request
@@ -33,13 +34,21 @@ apiClient.interceptors.response.use(
           throw new Error("No refresh token");
         }
 
+        // const res = await axios.post(
+        //   `${import.meta.env.VITE_API_URL}/auth/refresh-token`,
+        //   {
+        //     refreshToken: refreshToken,
+        //   },
+        // );
+
+        // với cookie
         const res = await axios.post(
           `${import.meta.env.VITE_API_URL}/auth/refresh-token`,
+          {},
           {
-            refreshToken: refreshToken,
+            withCredentials: true,
           },
         );
-
         const newAccessToken = res.data.accessToken;
 
         localStorage.setItem("accessToken", newAccessToken);

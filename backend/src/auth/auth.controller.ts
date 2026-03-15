@@ -6,7 +6,6 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
-  Request,
   Put,
   Req,
   Res,
@@ -26,7 +25,7 @@ import { AuthGuard as PassportAuthGuard } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { Profile } from 'passport-google-oauth20';
 
-import type { Response } from 'express';
+import type { Response, Request } from 'express';
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -36,10 +35,31 @@ export class AuthController {
   ) {}
 
   // đăng nhập
-  @HttpCode(HttpStatus.OK)
+  // @HttpCode(HttpStatus.OK)
+  // @Post('login')
+  // signIn(@Body() signInDto: SignInDto) {
+  //   return this.authService.signIn(signInDto);
+  // }
+
+  // đăng nhập trả về refreshToken với cookie
   @Post('login')
-  signIn(@Body() signInDto: SignInDto) {
-    return this.authService.signIn(signInDto);
+  async signIn(
+    @Body() signInDto: SignInDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const data = await this.authService.signIn(signInDto);
+
+    res.cookie('refreshToken', data.refreshToken, {
+      httpOnly: true,
+      secure: false, // true khi deploy https
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return {
+      accessToken: data.accessToken,
+      user: data.user,
+    };
   }
 
   // đăng ký
@@ -51,7 +71,8 @@ export class AuthController {
   // xác định xem đã đăng nhập hay chưa, và là ai
   @UseGuards(AuthGuard)
   @Get('profile')
-  async getProfile(@Request() req: Request & { user: { userId: string } }) {
+  @Get('profile')
+  async getProfile(@Req() req: Request & { user: { userId: string } }) {
     // const data = await this.usersService.findById(req.user.sub);
     // console.log('data từ database', data);
     // console.log('data từ database', req.infoUser);
@@ -62,16 +83,23 @@ export class AuthController {
     // return this.usersService.findById(req.user.sub);
   }
 
+  // @Post('refresh-token')
+  // refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+  //   return this.authService.refreshTokens(refreshTokenDto);
+  // }
+
   @Post('refresh-token')
-  refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
-    return this.authService.refreshTokens(refreshTokenDto);
+  refreshToken(@Req() req: Request) {
+    const refreshToken = req.cookies.refreshToken;
+
+    return this.authService.refreshTokens(refreshToken);
   }
 
   @UseGuards(AuthGuard)
   @Put('change-password')
   changePassword(
     @Body() changePasswordDto: ChangePasswordDto,
-    @Request() req: Request & { user: { userId: string } },
+    @Req() req: Request & { user: { userId: string } },
   ) {
     const { oldPassword, newPassword } = changePasswordDto;
     return this.authService.changePassword(
