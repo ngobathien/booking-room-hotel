@@ -14,6 +14,7 @@ import { ResetToken, ResetTokenSchema } from './schemas/reset-token.schema';
 import { MailService } from '../services/mail.service';
 import { Otp, OtpSchema } from './schemas/email-otp.schema';
 import { GoogleStrategy } from './strategies/google.strategy';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   // import UsersModule để sử dụng UsersService trong AuthService
@@ -25,10 +26,16 @@ import { GoogleStrategy } from './strategies/google.strategy';
       { name: ResetToken.name, schema: ResetTokenSchema },
       { name: Otp.name, schema: OtpSchema },
     ]),
-    JwtModule.register({
+    JwtModule.registerAsync({
+      inject: [ConfigService],
       global: true,
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '7d' },
+
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET')!,
+        signOptions: {
+          expiresIn: config.get<string>('JWT_EXPIRES_IN') as any,
+        },
+      }),
     }),
   ],
   controllers: [AuthController],

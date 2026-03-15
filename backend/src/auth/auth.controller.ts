@@ -119,7 +119,7 @@ export class AuthController {
     const data = await this.authService.googleLogin(req.user);
 
     return res.redirect(
-      `${url_frontend}/google-success?token=${data.access_token}`,
+      `${url_frontend}/google-success?token=${data.accessToken}`,
     );
   }
 }

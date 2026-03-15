@@ -30,7 +30,7 @@ interface GoogleProfile {
 
 interface GoogleLoginResponse {
   message: string;
-  access_token: string;
+  accessToken: string;
   user: User;
 }
 
@@ -103,9 +103,9 @@ export class AuthService {
     };
     // console.log("payload  ",payload);
 
-    // ====================== access_token ======================
-    const access_token = await this.jwtService.signAsync(payload);
-    // console.log('access_token: ', access_token);
+    // ====================== accessToken ======================
+    const accessToken = await this.jwtService.signAsync(payload);
+    // console.log('accessToken: ', accessToken);
 
     // ====================== refreshToken ======================
     const refreshToken = randomUUID();
@@ -121,15 +121,16 @@ export class AuthService {
     // ====================== tạo refreshToken mới lưu vào database ======================
     await this.refreshTokenModel.create({
       userId: user._id,
-      token: refreshToken,
+      refreshToken,
       // thời gian hết hạn của refresh token
+      // expiresAt: new Date(Date.now() + 20 * 1000), // 20s để test
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
 
     // nếu đúng thì trả về thông tin user
     return {
       message: 'Đăng nhập thành công',
-      access_token,
+      accessToken,
       refreshToken,
       user: {
         role: user.role,
@@ -261,12 +262,12 @@ export class AuthService {
 
   async refreshTokens(refreshTokenDto: RefreshTokenDto) {
     // Nhận refresh token từ client
-    const { token } = refreshTokenDto;
+    const { refreshToken } = refreshTokenDto;
 
     // tìm refresh token trong database
     const stored = await this.refreshTokenModel.findOne({
       // tìm mã token hiện tại, là một chuỗi chẳng hạn kèm với thời gian hết hạn của refresh token đó
-      token,
+      refreshToken,
       expiresAt: { $gt: new Date() },
     });
     console.log('stored: ', stored?._id);
@@ -432,11 +433,11 @@ export class AuthService {
       sub: user._id.toString(),
     };
 
-    const access_token = await this.jwtService.signAsync(payload);
+    const accessToken = await this.jwtService.signAsync(payload);
 
     return {
       message: 'Login Google thành công',
-      access_token,
+      accessToken,
       user,
     };
   }
