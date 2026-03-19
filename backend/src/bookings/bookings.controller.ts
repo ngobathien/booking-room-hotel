@@ -1,20 +1,19 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
   Param,
-  Delete,
-  UseGuards,
-  Req,
+  Patch,
+  Post,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { UserRole } from '../users/schemas/user.schema';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
-import { AuthGuard } from '../auth/guards/auth.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole } from '../users/schemas/user.schema';
 /* 
 GET    /bookings/check-availability x
 POST   /bookings x

@@ -4,19 +4,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import {
   Booking,
   BookingDocument,
-  BookingStatus,
 } from '../../../bookings/schemas/booking.schema';
 import { Model } from 'mongoose';
 import { Response } from 'express';
 import * as qs from 'qs';
 import * as crypto from 'crypto';
 import { ConfigService } from '@nestjs/config';
-import {
-  Payment,
-  PaymentDocument,
-  PaymentStatus,
-} from '../../schemas/payment.schema';
+import { Payment, PaymentDocument } from '../../schemas/payment.schema';
 import { MailService } from '../../../services/mail.service';
+import { PaymentStatus } from 'src/payments/enums/payment-status.enum';
+import { BookingStatus } from 'src/bookings/enums/booking-status.enum';
 
 @Injectable()
 export class VnpayService {

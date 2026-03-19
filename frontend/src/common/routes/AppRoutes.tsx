@@ -31,6 +31,9 @@ import VerifyOtpEmail from "../pages/auth/VerifyOtpEmail";
 import ProfilePage from "../pages/ProfilePage";
 import ProtectedRoute from "../ProtectedRoute";
 import GoogleSuccess from "../pages/auth/GoogleSuccess";
+import ManageHotelPage from "../../admin/pages/hotel/ManageHotelPage";
+import AdminHotelLayout from "../../admin/components/layouts/AdminHotelLayout";
+import AdminProfilePage from "../../admin/pages/profile/AdminProfilePage";
 
 const AppRoutes = () => (
   <Routes>
@@ -75,7 +78,16 @@ const AppRoutes = () => (
     <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]} />}>
       <Route path="dashboard" element={<AdminLayout />}>
         <Route index element={<DashboardPage />} />
+        {/* ================= profile =============== */}
+        <Route path="profile" element={<AdminProfilePage />} />
+        {/* ================= users =============== */}
         <Route path="users" element={<ManageUsersPage />} />
+        {/* ================= hotel =============== */}
+        <Route path="hotel" element={<AdminHotelLayout />}>
+          <Route index element={<ManageHotelPage />} />
+          {/* <Route path="edit" element={<EditHotelPage />} />
+          <Route path="images" element={<HotelImagesPage />} /> */}
+        </Route>
         <Route path="rooms" element={<AdminRoomLayout />}>
           <Route index element={<ManageRoomPage />} />
           <Route path="create" element={<AddRoomForm />} />

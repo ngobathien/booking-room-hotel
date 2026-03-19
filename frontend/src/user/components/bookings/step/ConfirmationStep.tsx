@@ -7,7 +7,7 @@ import type { Room } from "../../../../types/room.types";
 interface CustomerInfo {
   fullName: string;
   email: string;
-  phone_number: string;
+  phoneNumber: string;
 }
 
 interface Props {
@@ -29,7 +29,7 @@ const ConfirmationStep = ({
   // tạo biến riêng
   const fullName = customerInfo?.fullName;
   const email = customerInfo?.email;
-  const phone_number = customerInfo?.phone_number;
+  const phoneNumber = customerInfo?.phoneNumber;
 
   console.log("customerInfo", customerInfo);
 
@@ -118,7 +118,7 @@ const ConfirmationStep = ({
 
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Số điện thoại</span>
-                  <span className="font-bold">{phone_number}</span>
+                  <span className="font-bold">{phoneNumber}</span>
                 </div>
               </div>
             </div>

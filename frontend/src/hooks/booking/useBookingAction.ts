@@ -15,7 +15,7 @@ import { useBooking } from "./useBooking";
 type CustomerInfo = {
   fullName: string;
   email: string;
-  phone_number: string;
+  phoneNumber: string;
 };
 
 export const useBookingAction = () => {
@@ -85,7 +85,7 @@ export const useBookingAction = () => {
         checkOutDate,
         fullName: customerInfo.fullName,
         email: customerInfo.email,
-        phone_number: customerInfo.phone_number,
+        phoneNumber: customerInfo.phoneNumber,
       });
 
       setCurrentBooking(booking);

@@ -1,19 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreatePaymentDto } from './dto/create-payment.dto';
-import { UpdatePaymentDto } from './dto/update-payment.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { Booking, BookingDocument } from '../bookings/schemas/booking.schema';
-import { Model } from 'mongoose';
-import {
-  Payment,
-  PaymentDocument,
-  PaymentMethod,
-  PaymentStatus,
-} from './schemas/payment.schema';
-import * as qs from 'qs';
-import * as crypto from 'crypto';
 import { ConfigService } from '@nestjs/config';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Booking, BookingDocument } from '../bookings/schemas/booking.schema';
+import { CreatePaymentDto } from './dto/create-payment.dto';
 import { VnpayService } from './gateways/vnpay/vnpay.service';
+import { Payment, PaymentDocument } from './schemas/payment.schema';
+import { PaymentStatus } from './enums/payment-status.enum';
+import { PaymentMethod } from './enums/payment-method.enum';
 
 @Injectable()
 export class PaymentsService {

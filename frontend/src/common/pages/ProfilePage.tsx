@@ -41,7 +41,7 @@ const ProfilePage = () => {
           <InfoRow label="Email" value={user.email} />
           <InfoRow
             label="Số điện thoại"
-            value={user.phone_number || "Chưa cập nhật"}
+            value={user.phoneNumber || "Chưa cập nhật"}
           />
           <InfoRow label="Vai trò" value={user.role} />
           <InfoRow

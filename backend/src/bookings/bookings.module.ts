@@ -12,6 +12,10 @@ import {
 } from '../room-types/schemas/room-type.schema';
 import { Room, RoomSchema } from '../rooms/schemas/room.schema';
 import { User, UserSchema } from '../users/schemas/user.schema';
+import {
+  BookingItem,
+  BookingItemSchema,
+} from 'src/booking-items/schemas/booking-item.schema';
 
 @Module({
   imports: [
@@ -24,6 +28,7 @@ import { User, UserSchema } from '../users/schemas/user.schema';
       { name: RoomType.name, schema: RoomTypeSchema },
       { name: Room.name, schema: RoomSchema },
       { name: User.name, schema: UserSchema },
+      { name: BookingItem.name, schema: BookingItemSchema },
     ]),
   ],
   controllers: [BookingsController],

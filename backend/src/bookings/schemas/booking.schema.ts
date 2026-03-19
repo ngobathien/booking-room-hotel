@@ -2,29 +2,15 @@
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { BookingStatus } from '../enums/booking-status.enum';
+import { BookingStayStatus } from '../enums/booking-stay-status.enum';
 
 export type BookingDocument = Booking & Document;
-
-export enum BookingStatus {
-  PENDING = 'pending',
-  CONFIRMED = 'confirmed',
-  CANCELLED = 'cancelled',
-  COMPLETED = 'completed',
-}
-
-export enum BookingStayStatus {
-  NOT_CHECKED_IN = 'not_checked_in',
-  CHECKED_IN = 'checked-in',
-  CHECKED_OUT = 'checked-out',
-}
 
 @Schema({ timestamps: true })
 export class Booking {
   @Prop({ unique: true })
   bookingCode: string;
-
-  @Prop({ type: Types.ObjectId, ref: 'Room', required: true })
-  room: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   user: Types.ObjectId;
@@ -37,7 +23,7 @@ export class Booking {
   email: string;
 
   @Prop({ required: false })
-  phone_number: string;
+  phoneNumber: string;
 
   @Prop({ required: true })
   checkInDate: Date;

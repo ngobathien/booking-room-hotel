@@ -123,7 +123,7 @@ export default function BookingTable({ bookings, onRowClick }: Props) {
                       <p className="font-semibold">{booking.fullName}</p>
 
                       <p className="text-xs text-gray-500">
-                        {booking.phone_number}
+                        {booking.phoneNumber}
                       </p>
                     </div>
                   </td>

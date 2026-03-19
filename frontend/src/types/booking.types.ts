@@ -31,7 +31,7 @@ export type Booking = {
 
   fullName: string;
   email: string;
-  phone_number: string;
+  phoneNumber: string;
 
   room: Room;
   checkInDate: string;
@@ -70,5 +70,5 @@ export type CreateBookingPayload = {
   checkOutDate: string;
   fullName?: string;
   email?: string;
-  phone_number?: string;
+  phoneNumber?: string;
 };

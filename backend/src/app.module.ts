@@ -10,9 +10,13 @@ import { AuthModule } from './auth/auth.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { RoomTypesModule } from './room-types/room-types.module';
 import { PaymentsModule } from './payments/payments.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { BookingItemsModule } from './booking-items/booking-items.module';
+import { HotelsModule } from './hotels/hotels.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     // env
     ConfigModule.forRoot({ isGlobal: true, load: [] }),
 
@@ -40,6 +44,8 @@ import { PaymentsModule } from './payments/payments.module';
     RoomsModule,
     RoomTypesModule,
     PaymentsModule,
+    BookingItemsModule,
+    HotelsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

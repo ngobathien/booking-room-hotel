@@ -4,7 +4,7 @@ export interface User {
   _id: string;
   fullName: string;
   email: string;
-  phone_number: string;
+  phoneNumber: string;
   role: string;
   status: UserStatus;
 }

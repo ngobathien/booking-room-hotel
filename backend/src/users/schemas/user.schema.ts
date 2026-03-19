@@ -30,7 +30,7 @@ export class User {
 
   // @Prop({ required: false, unique: true })
   @Prop()
-  phone_number: string;
+  phoneNumber: string;
 
   @Prop({
     required: false,

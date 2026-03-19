@@ -1,20 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, Types } from 'mongoose';
+import { PaymentMethod } from '../enums/payment-method.enum';
+import { PaymentStatus } from '../enums/payment-status.enum';
 
 export type PaymentDocument = Payment & Document;
-
-export enum PaymentStatus {
-  PENDING = 'pending',
-  SUCCESS = 'success',
-  FAILED = 'failed',
-  EXPIRED = 'expired',
-}
-
-export enum PaymentMethod {
-  COD = 'cod',
-  VNPAY = 'vnpay',
-  MOMO = 'momo',
-}
 
 @Schema({ timestamps: true })
 export class Payment {

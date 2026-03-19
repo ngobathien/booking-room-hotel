@@ -6,13 +6,13 @@ import { useAuth } from "../../../../hooks/auth/useAuth";
 type CustomerInfo = {
   fullName: string;
   email: string;
-  phone_number: string;
+  phoneNumber: string;
 };
 interface Props {
   customerInfo: {
     fullName: string;
     email: string;
-    phone_number: string;
+    phoneNumber: string;
   };
   setCustomerInfo: React.Dispatch<React.SetStateAction<CustomerInfo>>;
   onNext: () => void;
@@ -80,11 +80,11 @@ const CustomerInfoStep = ({ customerInfo, setCustomerInfo, onNext }: Props) => {
                 <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                 <input
                   type="tel"
-                  value={customerInfo.phone_number}
+                  value={customerInfo.phoneNumber}
                   onChange={(e) =>
                     setCustomerInfo((prev: any) => ({
                       ...prev,
-                      phone_number: e.target.value,
+                      phoneNumber: e.target.value,
                     }))
                   }
                   placeholder="090 123 4567"

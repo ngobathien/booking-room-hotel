@@ -1,8 +1,8 @@
 import { IsDateString, IsEmail, IsMongoId, IsString } from 'class-validator';
 
 export class CreateBookingDto {
-  @IsMongoId()
-  room: string;
+  @IsMongoId({ each: true })
+  rooms: string[];
 
   @IsDateString()
   checkInDate: string;
@@ -17,5 +17,5 @@ export class CreateBookingDto {
   email: string;
 
   @IsString()
-  phone_number: string;
+  phoneNumber: string;
 }

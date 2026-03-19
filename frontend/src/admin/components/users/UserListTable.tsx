@@ -93,21 +93,21 @@ const UserListTable = () => {
                       user.email
                     )}
                   </td>
-                  {/* phone_number */}
+                  {/* phoneNumber */}
                   <td className="px-6 py-4 whitespace-nowrap">
                     {editingUserId === user._id ? (
                       <input
-                        value={editData.phone_number || ""}
+                        value={editData.phoneNumber || ""}
                         onChange={(e) =>
                           setEditData({
                             ...editData,
-                            phone_number: e.target.value,
+                            phoneNumber: e.target.value,
                           })
                         }
                         className="border px-2 py-1 rounded w-full"
                       />
                     ) : (
-                      user.phone_number || ""
+                      user.phoneNumber || ""
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -174,7 +174,7 @@ const UserListTable = () => {
                             setEditData({
                               fullName: user.fullName,
                               email: user.email,
-                              phone_number: user.phone_number,
+                              phoneNumber: user.phoneNumber,
                               role: user.role,
                             });
                           }}

@@ -6,12 +6,7 @@ import {
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import {
-  Booking,
-  BookingDocument,
-  BookingStatus,
-  BookingStayStatus,
-} from './schemas/booking.schema';
+import { Booking, BookingDocument } from './schemas/booking.schema';
 import { Model } from 'mongoose';
 import { Room, RoomDocument } from '../rooms/schemas/room.schema';
 import {
@@ -19,6 +14,13 @@ import {
   RoomTypeDocument,
 } from '../room-types/schemas/room-type.schema';
 import { User, UserDocument } from '../users/schemas/user.schema';
+import { BookingStatus } from './enums/booking-status.enum';
+import { BookingStayStatus } from './enums/booking-stay-status.enum';
+import {
+  BookingItem,
+  BookingItemDocument,
+} from 'src/booking-items/schemas/booking-item.schema';
+import { generateBookingCode } from 'src/common/utils/booking/generate-booking-code';
 
 @Injectable()
 export class BookingsService {
@@ -29,6 +31,9 @@ export class BookingsService {
     @InjectModel(Room.name) private roomModel: Model<RoomDocument>,
     @InjectModel(RoomType.name) private roomTypeModel: Model<RoomTypeDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+
+    @InjectModel(BookingItem.name)
+    private bookingItemModel: Model<BookingItemDocument>,
   ) {}
 
   // Kiểm tra phòng có sẵn trong khoảng thời gian hay không
@@ -45,25 +50,35 @@ export class BookingsService {
       throw new BadRequestException('Checkout phải lớn hơn checkin');
     }
 
-    const conflict = await this.bookingModel.findOne({
-      room: roomId,
-      bookingStatus: { $in: [BookingStatus.PENDING, BookingStatus.CONFIRMED] },
-      checkInDate: { $lt: checkOutDate },
-      checkOutDate: { $gt: checkInDate },
-    });
+    // const conflict = await this.bookingModel.findOne({
+    //   room: roomId,
+    //   bookingStatus: { $in: [BookingStatus.PENDING, BookingStatus.CONFIRMED] },
+    //   checkInDate: { $lt: checkOutDate },
+    //   checkOutDate: { $gt: checkInDate },
+    // });
+
+    // return {
+    //   available: !conflict,
+    // };
+
+    const conflict = await this.bookingItemModel
+      .findOne({
+        room: roomId,
+      })
+      .populate({
+        path: 'booking',
+        match: {
+          bookingStatus: {
+            $in: [BookingStatus.PENDING, BookingStatus.CONFIRMED],
+          },
+          checkInDate: { $lt: checkOutDate },
+          checkOutDate: { $gt: checkInDate },
+        },
+      });
 
     return {
-      available: !conflict,
+      available: !conflict || !conflict.booking,
     };
-  }
-
-  // tạo mã booking
-  generateBookingCode() {
-    const prefix = process.env.BOOKING_CODE_PREFIX || 'BKNBT';
-    const random = Math.floor(100000 + Math.random() * 900000);
-    const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-
-    return `${prefix}${date}${random}`;
   }
 
   // Tạo booking mới
@@ -76,9 +91,12 @@ export class BookingsService {
        7. Tạo booking */
   async createBooking(createBookingDto: CreateBookingDto, userId: string) {
     // nhận dữ liệu từ DTO, đầu vào
-    const { room, checkInDate, checkOutDate, fullName, email, phone_number } =
+    const { rooms, checkInDate, checkOutDate, fullName, email, phoneNumber } =
       createBookingDto;
 
+    if (!rooms || rooms.length === 0) {
+      throw new BadRequestException('Phải chọn ít nhất 1 phòng');
+    }
     // validate check-in, check-out
     const checkIn = new Date(checkInDate);
     const checkOut = new Date(checkOutDate);
@@ -97,100 +115,134 @@ export class BookingsService {
         'Ngày check-in phải là ngày hôm nay hoặc ngày sau đó',
       );
     }
-    // Kiểm tra phòng có tồn tại không
-    const roomData = await this.roomModel
-      .findById(room)
-      .populate<{ roomType: RoomTypeDocument }>('roomType');
-
-    if (!roomData) {
-      throw new NotFoundException('Phòng không tồn tại');
-    }
-    console.log(roomData);
-    console.log(roomData.roomType);
-    // Kiểm tra trùng lịch
-    const overlappingBooking = await this.bookingModel.findOne({
-      room,
-
-      // chỉ những booking đang giữ phòng, là bị tính vào overlap
-      bookingStatus: {
-        $in: [BookingStatus.PENDING, BookingStatus.CONFIRMED],
-      },
-
-      //
-      $or: [
-        {
-          // checkInDate < newCheckOut
-          checkInDate: { $lt: checkOut },
-          // checkOutDate > newCheckIn
-          checkOutDate: { $gt: checkIn },
-        },
-      ],
-    });
-
-    if (overlappingBooking) {
-      throw new BadRequestException('Phòng đã được đặt trong thời gian này');
-    }
-
-    // Tính số đêm
-    const nights = Math.ceil(
-      (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24),
-    ); // 1000 ms * 60s * 60m * 24h
-
-    // tính tổng tiền
-    const totalPrice = nights * roomData.roomType.pricePerNight;
 
     // Lấy thông tin user để snapshot
     const user = await this.userModel.findById(userId);
-
     if (!user) {
       throw new NotFoundException('User không tồn tại');
     }
 
-    //
-    const bookingCode = this.generateBookingCode();
+    // tạo mã booking
+    const bookingCode = generateBookingCode();
 
-    // Tạo booking
-    return this.bookingModel.create({
-      bookingCode,
-      room,
+    // tạo booking
+    const booking = await this.bookingModel.create({
+      bookingCode: bookingCode,
       user: userId,
       fullName: fullName || user.fullName,
       email: email || user.email,
-      phone_number: phone_number || user.phone_number,
+      phoneNumber: phoneNumber || user.phoneNumber,
       checkInDate: checkIn,
       checkOutDate: checkOut,
-      totalPrice,
-      /*  ban đầu khi tạo booking, status sẽ là 'pending', sau đó có thể update
-      lên 'confirmed' khi thanh toán thành công,
-      hoặc 'cancelled' nếu khách hàng hủy booking */
+      totalPrice: 0,
       bookingStatus: BookingStatus.PENDING,
     });
+
+    // khởi tạo tổng tiền booking ban đầu = 0
+    let totalPrice = 0;
+
+    //
+    for (const roomId of rooms) {
+      // Kiểm tra từng phòng có tồn tại không
+      const room = await this.roomModel
+        .findById(roomId)
+        .populate<{ roomType: RoomTypeDocument }>('roomType');
+      if (!room) {
+        throw new NotFoundException('Phòng không tồn tại');
+      }
+
+      // Kiểm tra trùng lịch
+      // const overlappingBooking = await this.bookingItemModel.findOne({
+      //   roomId,
+      //   // chỉ những booking đang giữ phòng, là bị tính vào overlap
+      //   bookingStatus: {
+      //     $in: [BookingStatus.PENDING, BookingStatus.CONFIRMED],
+      //   },
+      //   //
+      //   $or: [
+      //     {
+      //       // checkInDate < newCheckOut
+      //       checkInDate: { $lt: checkOut },
+      //       // checkOutDate > newCheckIn
+      //       checkOutDate: { $gt: checkIn },
+      //     },
+      //   ],
+      // });
+      const overlappingBooking = await this.bookingItemModel
+        .findOne({
+          room: roomId,
+        })
+        .populate({
+          path: 'booking',
+          match: {
+            bookingStatus: {
+              $in: [BookingStatus.PENDING, BookingStatus.CONFIRMED],
+            },
+            checkInDate: { $lt: checkOut },
+            checkOutDate: { $gt: checkIn },
+          },
+        });
+
+      if (overlappingBooking && overlappingBooking.booking) {
+        throw new BadRequestException('Phòng đã được đặt trong thời gian này');
+      }
+
+      // Tính số đêm
+      const nights = Math.ceil(
+        (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24),
+      ); // 1000 ms * 60s * 60m * 24h
+
+      // tính tiền từng phòng
+      const price = nights * room.roomType.pricePerNight;
+
+      totalPrice = totalPrice + price;
+
+      // tạo booking item
+      await this.bookingItemModel.create({
+        booking: booking._id,
+        room: roomId,
+        price,
+      });
+    }
+
+    // Update booking
+    booking.totalPrice = totalPrice;
+    await booking.save();
+
+    return booking;
   }
 
-  // lấy tất cả booking
+  // ================= GET ALL =================
   async findAll() {
     const bookings = await this.bookingModel
       .find()
-      .populate('room')
-      .populate('user');
-    // return bookings
-    return { message: 'Get all bookings successfully', data: bookings };
+      .populate('user')
+      .sort({ createdAt: -1 });
+
+    return {
+      message: 'Get all bookings successfully',
+      data: bookings,
+    };
   }
 
-  // lấy booking theo id
+  // ================= GET ONE =================
   async findOne(id: string) {
-    const booking = await this.bookingModel
-      .findById(id)
-      .populate('room')
-      .populate('user');
+    const booking = await this.bookingModel.findById(id).populate('user');
 
     if (!booking) {
-      throw new NotFoundException('Booking not found');
+      throw new NotFoundException('Không tìm thấy booking');
     }
+
+    const items = await this.bookingItemModel
+      .find({ booking: id })
+      .populate('room');
 
     return {
       message: 'Get booking successfully',
-      data: booking,
+      data: {
+        booking,
+        items,
+      },
     };
   }
 
@@ -254,6 +306,17 @@ export class BookingsService {
       throw new BadRequestException('Booking chưa được xác nhận');
     }
 
+    // cập nhật các items
+    await this.bookingItemModel.updateMany(
+      {
+        booking: id,
+      },
+      {
+        stayStatus: BookingStayStatus.CHECKED_IN,
+        checkedInAt: new Date(),
+      },
+    );
+
     // Cập nhật trạng thái sang CHECKED_IN (khách đã nhận phòng)
     booking.stayStatus = BookingStayStatus.CHECKED_IN;
     booking.checkedInAt = new Date();
@@ -284,6 +347,14 @@ export class BookingsService {
       throw new BadRequestException('Khách chưa check-in');
     }
 
+    await this.bookingItemModel.updateMany(
+      { booking: id },
+      {
+        stayStatus: BookingStayStatus.CHECKED_OUT,
+        checkedOutAt: new Date(),
+      },
+    );
+
     // Cập nhật trạng thái sang CHECKED_OUT (khách đã trả phòng)
     booking.stayStatus = BookingStayStatus.CHECKED_OUT;
     //
@@ -304,14 +375,24 @@ export class BookingsService {
   async getMyBookings(userId: string) {
     const bookings = await this.bookingModel
       .find({ user: userId })
-      .populate('room')
       .sort({ createdAt: -1 });
 
-    const total = await this.bookingModel.countDocuments({ user: userId });
+    const result = await Promise.all(
+      bookings.map(async (booking) => {
+        const items = await this.bookingItemModel
+          .find({ booking: booking._id })
+          .populate('room');
+
+        return {
+          booking,
+          items,
+        };
+      }),
+    );
+
     return {
       message: 'Get my bookings successfully',
-      countMyBookings: total,
-      data: bookings,
+      data: result,
     };
   }
 }

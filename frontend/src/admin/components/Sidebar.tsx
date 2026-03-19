@@ -20,6 +20,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { label: "Giao dịch", path: "/dashboard/payments", icon: "payments" },
     { label: "Người dùng", path: "/dashboard/users", icon: "manage_accounts" },
     { label: "Đánh giá", path: "/dashboard/reviews", icon: "star" },
+    { label: "Thông tin khách sạn", path: "/dashboard/hotel", icon: "hotel" },
   ];
 
   const handleLogout = () => {
@@ -116,7 +117,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             </div>
             <div className="flex gap-1 mt-1">
               <Link
-                to="/profile"
+                to="/dashboard/profile"
                 className="flex-1 flex items-center justify-center py-2 bg-white rounded-lg border border-slate-200 text-[10px] font-bold text-slate-600 hover:bg-slate-50 transition-all"
               >
                 HỒ SƠ
