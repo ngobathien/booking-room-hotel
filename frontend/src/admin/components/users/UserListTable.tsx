@@ -3,7 +3,11 @@ import { useEffect, useState } from "react";
 import { ROLES } from "../../../common/constants/roleConstant";
 import { useUserActions } from "../../../hooks/user/useUserActions";
 import { useUsers } from "../../../hooks/user/useUser";
-import { STATUS_USER_STYLE, type User } from "../../../types/user.types";
+import {
+  STATUS_USER_STYLE,
+  type User,
+  type UserRole,
+} from "../../../types/user.types";
 
 const UserListTable = () => {
   const { fetchUsers, handleDeleteUser, handleUpdateUser } = useUserActions();
@@ -115,7 +119,10 @@ const UserListTable = () => {
                       <select
                         value={editData.role}
                         onChange={(e) =>
-                          setEditData({ ...editData, role: e.target.value })
+                          setEditData({
+                            ...editData,
+                            role: e.target.value as UserRole,
+                          })
                         }
                         className="border px-2 py-1 rounded"
                       >

@@ -2,12 +2,10 @@ import React, { useState } from "react";
 
 import { useNavigate } from "react-router";
 import { useBooking } from "../../../hooks/booking/useBooking";
-import { useRoomTypesAction } from "../../../hooks/roomTypes/useRoomTypesAction";
 
 const BookingBar: React.FC = () => {
   const { available, loading } = useBooking();
   const navigate = useNavigate();
-  const { roomTypes } = useRoomTypesAction();
 
   const today = new Date().toISOString().split("T")[0];
 

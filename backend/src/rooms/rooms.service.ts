@@ -24,11 +24,11 @@ export class RoomsService {
     @InjectModel(Booking.name)
     private bookingModel: Model<BookingDocument>,
   ) {
-    if (!process.env.BUCKET_NAME) {
-      throw new Error('BUCKET_NAME is not defined');
+    if (!process.env.SUPABASE_BUCKET_ROOMS) {
+      throw new Error('SUPABASE_BUCKET_ROOMS is not defined');
     }
 
-    this.bucketName = process.env.BUCKET_NAME;
+    this.bucketName = process.env.SUPABASE_BUCKET_ROOMS;
   }
 
   /**

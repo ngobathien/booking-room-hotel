@@ -1,15 +1,16 @@
-import React, { useState } from "react";
-import { useAuth } from "../../hooks/auth/useAuth";
-import LoadingSkeleton from "../LoadingSkeleton";
-import ProfileSidebar from "../components/profile/ProfileSidebar";
-import PersonalInfo from "../components/profile/PersonalInfo";
-import SecuritySettings from "../components/profile/SecuritySettings";
-import { useUserActions } from "../../hooks/user/useUserActions";
+import { useState } from "react";
+import { useAuth } from "../../../hooks/auth/useAuth";
+import { useUserActions } from "../../../hooks/user/useUserActions";
+import LoadingSkeleton from "../../LoadingSkeleton";
+import PersonalInfo from "../../components/profile/PersonalInfo";
+import ProfileSidebar from "../../components/profile/ProfileSidebar";
+import SecuritySettings from "../../components/profile/SecuritySettings";
 
 const ProfilePage = () => {
   const { user, loading } = useAuth();
   const [activeTab, setActiveTab] = useState("profile"); // profile | security | history
   const { handleUpdateUser } = useUserActions();
+
   if (loading || !user) return <LoadingSkeleton />;
 
   return (
@@ -19,7 +20,7 @@ const ProfilePage = () => {
         <ProfileSidebar
           activeTab={activeTab}
           setActiveTab={setActiveTab}
-          userRole={user.role.toLowerCase()}
+          userRole={user.role} // trực tiếp enum backend
         />
 
         {/* Main content theo tab */}
@@ -28,6 +29,7 @@ const ProfilePage = () => {
             <PersonalInfo user={user} onUpdate={handleUpdateUser} />
           )}
           {activeTab === "security" && <SecuritySettings />}
+          {activeTab === "history" && <div>Lịch sử đặt phòng ở đây</div>}
         </div>
       </div>
     </div>

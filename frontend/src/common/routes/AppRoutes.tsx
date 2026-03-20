@@ -28,7 +28,7 @@ import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import ResetPassword from "../pages/auth/ResetPassword";
 import VerifyOtpEmail from "../pages/auth/VerifyOtpEmail";
-import ProfilePage from "../pages/ProfilePage";
+import ProfilePage from "../pages/profile/ProfilePage";
 import ProtectedRoute from "../ProtectedRoute";
 import GoogleSuccess from "../pages/auth/GoogleSuccess";
 import ManageHotelPage from "../../admin/pages/hotel/ManageHotelPage";

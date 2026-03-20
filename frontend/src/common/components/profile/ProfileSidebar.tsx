@@ -2,44 +2,30 @@ import React from "react";
 import { User, History, LogOut, Shield, Star, Headset } from "lucide-react";
 import { cn } from "../../../lib/utils";
 
+type UserRole = "ADMIN" | "USER";
+
 interface ProfileSidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
-  userRole?: "admin" | "user";
+  userRole?: UserRole;
 }
+
+const roleLabelMap: Record<UserRole, string> = {
+  ADMIN: "Quản trị viên",
+  USER: "Thành viên Silver",
+};
 
 const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
   activeTab,
   setActiveTab,
-  userRole = "user",
+  userRole = "USER",
 }) => {
-  const isAdmin = userRole === "admin";
+  const isAdmin = userRole === "ADMIN";
 
   return (
     <aside className="w-full lg:w-72 flex-shrink-0">
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col gap-8">
         {/* Avatar + info */}
-        <div className="flex items-center gap-4">
-          <div
-            className="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-14 h-14 border-2 border-primary"
-            style={{
-              backgroundImage: `url(${
-                isAdmin
-                  ? "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150"
-                  : "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"
-              })`,
-            }}
-          ></div>
-          <div className="flex flex-col">
-            <h3 className="text-lg font-bold">
-              {isAdmin ? "Admin Manager" : "Nguyễn Văn A"}
-            </h3>
-            <p className="text-primary text-[10px] font-bold mt-1.5 flex items-center gap-1 uppercase tracking-wider">
-              <Star className="h-3 w-3 fill-current" />{" "}
-              {isAdmin ? "Quản trị viên" : "Thành viên Silver"}
-            </p>
-          </div>
-        </div>
 
         {/* Menu */}
         <nav className="flex flex-col gap-2">

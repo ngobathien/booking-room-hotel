@@ -4,6 +4,7 @@ import { UsersController } from './users.controller';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schemas/user.schema';
+import { SupabaseService } from 'src/config/supabase.config';
 
 @Module({
   // import UserSchema từ user.schema.ts
@@ -12,9 +13,9 @@ import { User, UserSchema } from './schemas/user.schema';
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService, SupabaseService],
 
   // exports để cho các module khác dùng
-  exports: [UsersService],
+  exports: [UsersService, SupabaseService],
 })
 export class UsersModule {}

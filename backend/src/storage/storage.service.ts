@@ -5,7 +5,7 @@
 
 // @Injectable()
 // export class StorageService {
-//   private bucketName = process.env.BUCKET_NAME!;
+//   private bucketName = process.env.SUPABASE_BUCKET_ROOMS!;
 //   private supabase = this.supabaseService.client;
 //   constructor(private readonly supabaseService: SupabaseService) {}
 
