@@ -32,11 +32,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     // Có token → gọi API lấy thông tin user
     try {
-      const res = await getProfile();
-      // console.log("getProfile: ", res);
-
-      // Lưu user vào state
-      setUsers(res);
+      const profile = await getProfile(); // fetch user đầy đủ
+      setUsers(profile); // chỉ set vào AuthContext
 
       // Đánh dấu đã đăng nhập
       setIsLoggedIn(true);

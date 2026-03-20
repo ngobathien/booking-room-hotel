@@ -20,6 +20,7 @@ import { UserRole } from '../users/schemas/user.schema';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { SearchRoomDto } from './dto/search-room.dto';
+import { FindRoomsDto } from './dto/find-rooms.dto';
 
 @Controller('rooms')
 export class RoomsController {
@@ -48,34 +49,9 @@ export class RoomsController {
   @Get()
   findAllRooms(
     // lọc phòng
-
-    @Query('status') status?: string,
-    @Query('capacity') capacity?: number,
-
-    @Query('roomType') roomType?: string,
-    @Query('minPrice') minPrice?: number,
-    @Query('maxPrice') maxPrice?: number,
-
-    // phân trang
-    @Query('page') page?: number,
-    @Query('limit') limit?: number,
-
-    //
-    @Query('sort') sort?: string,
+    @Query() query: FindRoomsDto,
   ) {
-    return this.roomsService.findAllRooms({
-      status,
-      capacity,
-
-      roomType,
-
-      minPrice,
-      maxPrice,
-
-      page,
-      limit,
-      sort,
-    });
+    return this.roomsService.findAllRooms(query);
   }
 
   // tìm room theo id của riêng room đó từ database

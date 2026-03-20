@@ -8,6 +8,7 @@ import { VnpayService } from './gateways/vnpay/vnpay.service';
 import { Payment, PaymentDocument } from './schemas/payment.schema';
 import { PaymentStatus } from './enums/payment-status.enum';
 import { PaymentMethod } from './enums/payment-method.enum';
+import { AdminQueryPaymentDto } from './dto/admin-query-payment.dto';
 
 @Injectable()
 export class PaymentsService {
@@ -120,11 +121,69 @@ export class PaymentsService {
     }
   }
 
-  findAll() {
-    return `This action returns all payments`;
+  // Danh sách payment có filter + pagination
+  async adminFindAll(query: AdminQueryPaymentDto) {
+    const { status, bookingId, method, page = 1, limit = 20 } = query;
+
+    const filter: Record<string, any> = {};
+
+    if (status) filter.status = status;
+    if (bookingId) filter.booking = bookingId;
+    if (method) filter.method = method;
+
+    const payments = await this.paymentModel
+      .find(filter)
+      .populate('booking') // để admin biết booking info
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    const total = await this.paymentModel.countDocuments(filter);
+
+    return { payments, total, page, limit };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} payment`;
+  // Lấy chi tiết payment
+  async adminFindOne(id: string) {
+    const payment = await this.paymentModel.findById(id).populate('booking');
+    if (!payment) throw new NotFoundException('Payment not found');
+    return payment;
+  }
+
+  // Admin cập nhật trạng thái payment
+  async adminUpdateStatus(id: string, status: PaymentStatus) {
+    const payment = await this.paymentModel.findById(id);
+    if (!payment) throw new NotFoundException('Payment not found');
+
+    payment.status = status;
+    await payment.save();
+    return payment;
+  }
+
+  // Tổng doanh thu
+  async getTotalRevenue() {
+    const result = await this.paymentModel.aggregate([
+      { $match: { status: PaymentStatus.SUCCESS } }, // chỉ tính payment thành công
+      { $group: { _id: null, totalRevenue: { $sum: '$amount' } } },
+    ]);
+
+    const totalRevenue = result[0]?.totalRevenue || 0;
+    return { totalRevenue };
+  }
+
+  // Có thể kết hợp thống kê theo phương thức thanh toán
+  async getRevenueByMethod() {
+    const result = await this.paymentModel.aggregate([
+      { $match: { status: PaymentStatus.SUCCESS } },
+      {
+        $group: {
+          _id: '$method',
+          totalRevenue: { $sum: '$amount' },
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    return result; // ví dụ: [{ _id: 'VNPAY', totalRevenue: 2000000, count: 2 }, ...]
   }
 }

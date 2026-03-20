@@ -14,6 +14,7 @@ import { HotelsModule } from './hotels/hotels.module';
 import { PaymentsModule } from './payments/payments.module';
 import { RoomTypesModule } from './room-types/room-types.module';
 import { RoomsModule } from './rooms/rooms.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { RoomsModule } from './rooms/rooms.module';
     BookingItemsModule,
     HotelsModule,
     BookingSchedulerModule,
+    ReviewsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

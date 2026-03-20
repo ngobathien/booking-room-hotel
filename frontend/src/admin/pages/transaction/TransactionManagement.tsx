@@ -8,7 +8,7 @@ interface Payment {
   createdAt: string;
 }
 
-const PaymentManagement: React.FC = () => {
+const TransactionManagement: React.FC = () => {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -67,4 +67,4 @@ const PaymentManagement: React.FC = () => {
   );
 };
 
-export default PaymentManagement;
+export default TransactionManagement;

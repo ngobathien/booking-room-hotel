@@ -66,21 +66,15 @@ export const useBookingAction = () => {
   /* ================= CREATE BOOKING ================= */
 
   const handleCreateBooking = async (
-    roomId: string,
+    roomIds: string[], // Đổi từ roomId: string sang mảng
     customerInfo: CustomerInfo,
   ) => {
     if (!checkInDate || !checkOutDate) return;
 
-    if (available === false) {
-      toast.error("Phòng không còn trống");
-      return;
-    }
-
     setLoading(true);
-
     try {
       const booking = await createBooking({
-        room: roomId,
+        rooms: roomIds, // Truyền mảng roomIds vào API
         checkInDate,
         checkOutDate,
         fullName: customerInfo.fullName,
@@ -89,9 +83,7 @@ export const useBookingAction = () => {
       });
 
       setCurrentBooking(booking);
-
       toast.success("Đặt phòng thành công");
-
       return booking;
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Lỗi đặt phòng");

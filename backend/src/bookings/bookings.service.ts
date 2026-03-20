@@ -151,23 +151,6 @@ export class BookingsService {
         throw new NotFoundException('Phòng không tồn tại');
       }
 
-      // Kiểm tra trùng lịch
-      // const overlappingBooking = await this.bookingItemModel.findOne({
-      //   roomId,
-      //   // chỉ những booking đang giữ phòng, là bị tính vào overlap
-      //   bookingStatus: {
-      //     $in: [BookingStatus.PENDING, BookingStatus.CONFIRMED],
-      //   },
-      //   //
-      //   $or: [
-      //     {
-      //       // checkInDate < newCheckOut
-      //       checkInDate: { $lt: checkOut },
-      //       // checkOutDate > newCheckIn
-      //       checkOutDate: { $gt: checkIn },
-      //     },
-      //   ],
-      // });
       const overlappingBooking = await this.bookingItemModel
         .findOne({
           room: roomId,

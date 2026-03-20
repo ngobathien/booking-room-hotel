@@ -1,12 +1,12 @@
+import { Filter, Grid, List, Search } from "lucide-react";
 import React from "react";
-import { Outlet, Link, useSearchParams } from "react-router-dom";
-import { Filter, Search, Grid, List } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
 
+import { useRoomContext } from "../../../hooks/room/useRoom";
 import { cn } from "../../../lib/utils";
 import RoomSort from "../rooms/RoomSort";
 import { RoomGridView } from "../rooms/view/RoomGridView";
 import { RoomListView } from "../rooms/view/RoomListView";
-import { useRoomContext } from "../../../hooks/room/useRoom";
 
 const RoomLayout = () => {
   const { rooms, loading } = useRoomContext();
@@ -44,7 +44,7 @@ const RoomLayout = () => {
   };
   return (
     <>
-      <Outlet />
+      {/* <Outlet /> */}
 
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         {/* Header Info */}

@@ -5,11 +5,13 @@ import { changePasswordApi, loginApi } from "../../common/services/authService";
 
 import { ROLES } from "../../common/constants/roleConstant";
 import { useAuth } from "./useAuth";
+import { useUsers } from "../user/useUser";
 
 export const useAuthActions = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login, logout } = useAuth();
+  const { setCurrentUser } = useUsers();
 
   const handleLogin = async (email: string, password: string) => {
     if (!email || !password) {
@@ -19,7 +21,12 @@ export const useAuthActions = () => {
     setLoading(true);
     try {
       const res = await loginApi({ email, password });
+      console.log(res);
+
       login(res.accessToken);
+      setCurrentUser(res.user);
+      console.log("res.user", res.user);
+
       toast.success("Đăng nhập thành công!");
       navigate(res.user?.role === ROLES.ADMIN ? "/dashboard" : "/", {
         replace: true,

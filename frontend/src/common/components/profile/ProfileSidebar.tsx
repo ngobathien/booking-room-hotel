@@ -1,5 +1,5 @@
+import { Headset, History, LogOut, Shield, User } from "lucide-react";
 import React from "react";
-import { User, History, LogOut, Shield, Star, Headset } from "lucide-react";
 import { cn } from "../../../lib/utils";
 
 type UserRole = "ADMIN" | "USER";

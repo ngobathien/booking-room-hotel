@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { Check } from "lucide-react";
 
 import { cn } from "../../../lib/utils";
@@ -16,14 +16,14 @@ import { useBooking } from "../../../hooks/booking/useBooking";
 import { useRoomContext } from "../../../hooks/room/useRoom";
 
 export const CheckoutPage = () => {
-  const { id } = useParams();
-  const [step, setStep] = React.useState(1);
+  const [step, setStep] = useState(1);
   const { getRoomById } = useRoomAction();
-  const { rooms, currentRoom } = useRoomContext();
-  console.log("currentRoom", currentRoom);
+  const { setRooms } = useRoomContext(); // lưu rooms vào context
+  const { user } = useAuth();
 
   const [searchParams] = useSearchParams();
 
+  const queryRooms = searchParams.get("rooms")?.split(",") || [];
   const queryCheckIn = searchParams.get("checkIn");
   const queryCheckOut = searchParams.get("checkOut");
 
@@ -32,17 +32,14 @@ export const CheckoutPage = () => {
     checkOutDate,
     setCheckInDate,
     setCheckOutDate,
-    loading,
+    selectedRooms, // Đây là danh sách phòng hiển thị
   } = useBooking();
-  const { user } = useAuth();
 
   const [customerInfo, setCustomerInfo] = useState({
     fullName: user?.fullName || "",
     email: user?.email || "",
     phoneNumber: user?.phoneNumber || "",
   });
-
-  const { setRooms } = useRoomContext();
 
   const calculateNights = (start: string | null, end: string | null) => {
     if (!start || !end) return 0;
@@ -53,39 +50,42 @@ export const CheckoutPage = () => {
   };
 
   const nights = calculateNights(checkInDate, checkOutDate);
+
+  // 1. Cập nhật ngày từ URL nếu có
   useEffect(() => {
-    if (queryCheckIn && queryCheckOut) {
-      setCheckInDate(queryCheckIn);
-      setCheckOutDate(queryCheckOut);
-    }
+    if (queryCheckIn) setCheckInDate(queryCheckIn);
+    if (queryCheckOut) setCheckOutDate(queryCheckOut);
   }, [queryCheckIn, queryCheckOut]);
 
+  // 2. Load rooms từ queryRooms
   useEffect(() => {
-    const fetchRoom = async () => {
-      try {
-        if (!id) return;
-
-        const data = await getRoomById(id);
-        setRooms(data); // hoặc có thể dùng currentRoom luôn
-      } catch (error) {
-        console.error(error);
+    const fetchRooms = async () => {
+      if (queryRooms.length > 0) {
+        try {
+          const roomData = await Promise.all(
+            queryRooms.map((id) => getRoomById(id)),
+          );
+          const validRooms = roomData.filter(Boolean);
+          setRooms(validRooms); // Cập nhật vào context để useBooking lấy ra được
+        } catch (error) {
+          console.error("Lỗi khi tải phòng:", error);
+        }
       }
     };
-
-    fetchRoom();
-  }, [id]);
+    fetchRooms();
+  }, [searchParams.get("rooms")]); // Chạy lại khi danh sách ID trên URL thay đổi
 
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
 
-  if (loading)
-    return (
-      <div className="flex h-screen items-center justify-center">
-        Đang tải...
-      </div>
-    );
+  // if (loading)
+  //   return (
+  //     <div className="flex h-screen items-center justify-center">
+  //       Đang tải...
+  //     </div>
+  //   );
 
-  if (!rooms || !currentRoom)
+  if (!selectedRooms || selectedRooms.length === 0)
     return (
       <div className="flex h-screen items-center justify-center">
         Không tìm thấy phòng
@@ -146,21 +146,14 @@ export const CheckoutPage = () => {
           )}
 
           {step === 2 && (
-            <ConfirmationStep
-              onNext={nextStep}
-              onBack={prevStep}
-              room={currentRoom}
-              checkInDate={checkInDate}
-              checkOutDate={checkOutDate}
-              customerInfo={customerInfo}
-            />
+            <ConfirmationStep onBack={prevStep} customerInfo={customerInfo} />
           )}
 
           {step === 3 && <PaymentBookingPage />}
         </div>
 
-        {/* Summary Sidebar nằm bên phải*/}
-        <BookingSummary room={currentRoom} nights={nights} />
+        {/* Summary Sidebar */}
+        <BookingSummary rooms={selectedRooms} nights={nights} />
       </div>
     </div>
   );

@@ -45,6 +45,15 @@ export type Booking = {
   checkedOutAt?: string;
 };
 export interface BookingContextType {
+  // thêm vào giỏ hàng
+  selectedRooms: Room[];
+  addRoom: (room: Room) => void;
+  removeRoom: (roomId: string) => void;
+  clearRooms: () => void;
+  totalPrice: number;
+  isCartOpen: boolean;
+  setIsCartOpen: (isOpen: boolean) => void;
+
   checkInDate: string;
   checkOutDate: string;
   guests: number;
@@ -65,7 +74,7 @@ export interface BookingContextType {
 }
 
 export type CreateBookingPayload = {
-  room: string;
+  rooms: string[];
   checkInDate: string;
   checkOutDate: string;
   fullName?: string;

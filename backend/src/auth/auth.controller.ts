@@ -1,31 +1,28 @@
 import {
+  Body,
   Controller,
   Get,
   Post,
-  Body,
-  HttpCode,
-  HttpStatus,
-  UseGuards,
   Put,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { SignInDto } from './dto/sign-in-auth.dto';
-import { SignUpDto } from './dto/sign-up-auth.dto';
-import { AuthGuard } from './guards/auth.guard';
 import { UsersService } from '../users/users.service';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { AuthService } from './auth.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ForgotPassworDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { SignInDto } from './dto/sign-in-auth.dto';
+import { SignUpDto } from './dto/sign-up-auth.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { AuthGuard } from './guards/auth.guard';
 
-import { AuthGuard as PassportAuthGuard } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
+import { AuthGuard as PassportAuthGuard } from '@nestjs/passport';
 import { Profile } from 'passport-google-oauth20';
 
-import type { Response, Request } from 'express';
+import type { Request, Response } from 'express';
 @Controller('auth')
 export class AuthController {
   constructor(

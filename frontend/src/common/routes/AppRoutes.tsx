@@ -34,6 +34,11 @@ import GoogleSuccess from "../pages/auth/GoogleSuccess";
 import ManageHotelPage from "../../admin/pages/hotel/ManageHotelPage";
 import AdminHotelLayout from "../../admin/components/layouts/AdminHotelLayout";
 import AdminProfilePage from "../../admin/pages/profile/AdminProfilePage";
+import AdminTransactionLayout from "../../admin/components/layouts/AdminTransactionLayout";
+import TransactionManagement from "../../admin/pages/transaction/TransactionManagement";
+import AdminReviewsLayout from "../../admin/components/layouts/AdminReviewsLayout";
+import ReviewManagement from "../../admin/pages/reviews/ReviewManagement";
+import { CartPage } from "../../user/pages/Cart/CartPage";
 
 const AppRoutes = () => (
   <Routes>
@@ -45,17 +50,17 @@ const AppRoutes = () => (
       <Route index element={<HomePage />} />
 
       {/*  ================ trang danh sách rooms ========================*/}
-      <Route path="rooms" element={<RoomLayout />}>
-        {/*  ================ trang chi tiết room ========================*/}
-        <Route path=":roomId/:slug" element={<RoomDetailPage />} />
-      </Route>
 
+      <Route path="rooms" element={<RoomLayout />} />
+
+      <Route path="rooms/:roomId/:slug" element={<RoomDetailPage />} />
       {/* <Route path="/rooms" element={<RoomList />} />
 
       <Route path="/rooms/:roomId" element={<RoomDetailPage />} /> */}
+      <Route path="my-carts" element={<CartPage />} />
 
       {/* checkout */}
-      <Route path="checkout/:roomId" element={<CheckoutPage />} />
+      <Route path="checkout" element={<CheckoutPage />} />
 
       {/* Payment Booking Page */}
       <Route
@@ -87,6 +92,14 @@ const AppRoutes = () => (
           <Route index element={<ManageHotelPage />} />
           {/* <Route path="edit" element={<EditHotelPage />} />
           <Route path="images" element={<HotelImagesPage />} /> */}
+        </Route>
+        {/* ================= reviews =============== */}
+        <Route path="reviews" element={<AdminReviewsLayout />}>
+          <Route index element={<ReviewManagement />} />
+        </Route>
+        {/* ================= transactions =============== */}
+        <Route path="transactions" element={<AdminTransactionLayout />}>
+          <Route index element={<TransactionManagement />} />
         </Route>
         <Route path="rooms" element={<AdminRoomLayout />}>
           <Route index element={<ManageRoomPage />} />

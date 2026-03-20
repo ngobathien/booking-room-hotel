@@ -17,9 +17,13 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { label: "Phòng", path: "/dashboard/rooms", icon: "meeting_room" },
     { label: "Loại phòng", path: "/dashboard/room-types", icon: "sell" },
     { label: "Booking", path: "/dashboard/bookings", icon: "calendar_month" },
-    { label: "Giao dịch", path: "/dashboard/payments", icon: "payments" },
     { label: "Người dùng", path: "/dashboard/users", icon: "manage_accounts" },
     { label: "Đánh giá", path: "/dashboard/reviews", icon: "star" },
+    {
+      label: "Giao dịch",
+      path: "/dashboard/transactions",
+      icon: "money",
+    },
     { label: "Thông tin khách sạn", path: "/dashboard/hotel", icon: "hotel" },
   ];
 

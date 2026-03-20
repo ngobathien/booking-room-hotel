@@ -134,6 +134,12 @@ export class AuthService {
       refreshToken,
       user: {
         role: user.role,
+        _id: user._id,
+        email: user.email,
+        fullName: user.fullName,
+        avatar: user.avatar,
+        isVerified: user.isVerified,
+        status: user.status,
       },
     };
   }
