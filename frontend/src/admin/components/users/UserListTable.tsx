@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { ROLES } from "../../../common/constants/roleConstant";
-import { useUserActions } from "../../../hooks/useUserActions";
+import { useUserActions } from "../../../hooks/user/useUserActions";
 import { useUsers } from "../../../hooks/user/useUser";
 import { STATUS_USER_STYLE, type User } from "../../../types/user.types";
 

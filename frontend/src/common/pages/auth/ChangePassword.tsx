@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useChangePassword } from "../../../hooks/useChangePassword";
+import { useChangePassword } from "../../../hooks/user/useChangePassword";
 
 import { Link } from "react-router";
 

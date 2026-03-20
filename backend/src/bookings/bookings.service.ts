@@ -7,7 +7,7 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Booking, BookingDocument } from './schemas/booking.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Room, RoomDocument } from '../rooms/schemas/room.schema';
 import {
   RoomType,
@@ -227,15 +227,20 @@ export class BookingsService {
 
   // ================= GET ONE =================
   async findOne(id: string) {
+    // Tìm booking theo id và populate thông tin user
     const booking = await this.bookingModel.findById(id).populate('user');
 
     if (!booking) {
       throw new NotFoundException('Không tìm thấy booking');
     }
 
+    // Lấy các booking item liên quan, populate room + roomType
     const items = await this.bookingItemModel
-      .find({ booking: id })
-      .populate('room');
+      .find({ booking: new Types.ObjectId(id) })
+      .populate({
+        path: 'room',
+        populate: { path: 'roomType' }, // lấy luôn thông tin loại phòng
+      });
 
     return {
       message: 'Get booking successfully',

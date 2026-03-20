@@ -59,10 +59,43 @@ export class PaymentsService {
       await existingPayment.save();
     }
 
+    // Lấy từ ConfigService xem có dùng giây hay phút
+    const useSeconds = this.configService.get<boolean>(
+      'USE_EXPIRE_SECONDS',
+      false,
+    );
+
+    // Tạo biến expiryAt là thời điểm payment hết hạn
+    const expiryAt = new Date();
+
+    if (useSeconds) {
+      // Nếu dùng giây
+      // Lấy số giây từ .env, mặc định 30 giây nếu chưa khai báo
+      const expireSeconds = this.configService.get<number>(
+        'PAYMENT_EXPIRE_SECONDS',
+        30,
+      );
+
+      // Cộng số giây vào thời điểm hiện tại → thời điểm hết hạn
+      expiryAt.setSeconds(expiryAt.getSeconds() + expireSeconds);
+    } else {
+      // Nếu dùng phút
+      // Lấy số phút từ .env, mặc định 15 phút nếu chưa khai báo
+      const expireMinutes = this.configService.get<number>(
+        'PAYMENT_EXPIRE_MINUTES',
+        15,
+      );
+
+      // Cộng số phút vào thời điểm hiện tại → thời điểm hết hạn
+      expiryAt.setMinutes(expiryAt.getMinutes() + expireMinutes);
+    }
+
+    // Tạo payment với expiryAt
     const payment = await this.paymentModel.create({
       booking: booking._id,
       amount: booking.totalPrice,
       method,
+      expiryAt,
       status: PaymentStatus.PENDING,
     });
 

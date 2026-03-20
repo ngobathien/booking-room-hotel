@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { useUserActions } from "../../hooks/useUserActions";
+import { useUserActions } from "../../hooks/user/useUserActions";
 import UserListTable from "../components/users/UserListTable";
 
 const ManageUsersPage = () => {

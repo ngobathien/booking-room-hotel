@@ -3,8 +3,8 @@ import {
   getAllUsers,
   updateUser,
   deleteUser,
-} from "../common/services/userService";
-import { useUsers } from "./user/useUser";
+} from "../../common/services/userService";
+import { useUsers } from "./useUser";
 
 export const useUserActions = () => {
   const { setUsers, currentUser, setCurrentUser } = useUsers();

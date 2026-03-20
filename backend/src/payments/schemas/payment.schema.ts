@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document, Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { PaymentMethod } from '../enums/payment-method.enum';
 import { PaymentStatus } from '../enums/payment-status.enum';
 
@@ -34,6 +34,10 @@ export class Payment {
 
   @Prop()
   transactionId: string;
+
+  // thời điểm mà payment sẽ hết hạn
+  @Prop({ required: true })
+  expiryAt: Date;
 
   createdAt: Date;
   updatedAt: Date;
