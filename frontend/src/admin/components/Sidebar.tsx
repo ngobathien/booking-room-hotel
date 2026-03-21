@@ -21,7 +21,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { label: "Đánh giá", path: "/dashboard/reviews", icon: "star" },
     {
       label: "Giao dịch",
-      path: "/dashboard/transactions",
+      path: "/dashboard/payments",
       icon: "money",
     },
     { label: "Thông tin khách sạn", path: "/dashboard/hotel", icon: "hotel" },

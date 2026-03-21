@@ -1,6 +1,6 @@
 import { Camera, Lock, User } from "lucide-react";
 import { useState } from "react";
-import { uploadAvatar } from "../../services/userService";
+import { uploadAvatar } from "../../../common/services/userService";
 
 interface PersonalInfoProps {
   user: {

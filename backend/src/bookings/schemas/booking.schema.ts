@@ -12,6 +12,9 @@ export class Booking {
   @Prop({ unique: true })
   bookingCode: string;
 
+  @Prop({ type: Types.ObjectId, ref: 'Room', required: true })
+  room: Types.ObjectId;
+
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   user: Types.ObjectId;
 
@@ -24,6 +27,9 @@ export class Booking {
 
   @Prop({ required: false })
   phoneNumber: string;
+
+  @Prop()
+  specialRequest?: string;
 
   @Prop({ required: true })
   checkInDate: Date;
@@ -39,6 +45,9 @@ export class Booking {
 
   @Prop({ enum: BookingStayStatus, default: BookingStayStatus.NOT_CHECKED_IN })
   stayStatus: BookingStayStatus;
+
+  // @Prop({ type: String, unique: true, sparse: true, default: null })
+  // idempotencyKey?: string;
 
   // timeline khi checkin, checkout theo time thực tế
   @Prop()

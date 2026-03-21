@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../../../hooks/auth/useAuth";
 import { useUserActions } from "../../../hooks/user/useUserActions";
-import LoadingSkeleton from "../../LoadingSkeleton";
+import LoadingSkeleton from "../../../common/LoadingSkeleton";
 import PersonalInfo from "../../components/profile/PersonalInfo";
 import ProfileSidebar from "../../components/profile/ProfileSidebar";
 import SecuritySettings from "../../components/profile/SecuritySettings";

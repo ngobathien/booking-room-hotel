@@ -1,6 +1,9 @@
 import { Route, Routes } from "react-router";
 import AdminBookingLayout from "../../admin/components/layouts/AdminBookingLayout";
+import AdminHotelLayout from "../../admin/components/layouts/AdminHotelLayout";
 import AdminLayout from "../../admin/components/layouts/AdminLayout";
+import AdminPaymentLayout from "../../admin/components/layouts/AdminPaymentLayout";
+import AdminReviewsLayout from "../../admin/components/layouts/AdminReviewsLayout";
 import AdminRoomLayout from "../../admin/components/layouts/AdminRoomLayout";
 import AdminRoomTypesLayout from "../../admin/components/layouts/AdminRoomTypesLayout";
 import AddRoomForm from "../../admin/components/rooms/AddRoomForm";
@@ -8,8 +11,12 @@ import EditRoomForm from "../../admin/components/rooms/EditRooForm";
 import BookingDetailPage from "../../admin/pages/bookings/BookingDetailPage";
 import BookingManagement from "../../admin/pages/bookings/BookingManagement";
 import DashboardPage from "../../admin/pages/DashboardPage";
+import ManageHotelPage from "../../admin/pages/hotel/ManageHotelPage";
 import ManageRoomPage from "../../admin/pages/ManageRoomPage";
 import ManageUsersPage from "../../admin/pages/ManageUsersPage";
+import PaymentManagement from "../../admin/pages/payment/PaymentManagement";
+import AdminProfilePage from "../../admin/pages/profile/AdminProfilePage";
+import ReviewManagement from "../../admin/pages/reviews/ReviewManagement";
 import AddRoomTypePage from "../../admin/pages/room-types/AddRoomTypePage";
 import EditRoomTypePage from "../../admin/pages/room-types/EditRoomTypePage";
 import ManageRoomTypesPage from "../../admin/pages/room-types/ManageRoomTypesPage";
@@ -17,28 +24,21 @@ import MainLayout from "../../user/components/layouts/MainLayout";
 import RoomLayout from "../../user/components/layouts/RoomLayout";
 import { CheckoutPage } from "../../user/pages/Booking/CheckOutPage";
 import MyBookingsPage from "../../user/pages/Booking/MyBookingsPage";
+import { CartPage } from "../../user/pages/Cart/CartPage";
 import HomePage from "../../user/pages/Home/HomePage";
 import { PaymentBookingPage } from "../../user/pages/Payments/PaymentBookingPage";
 import { PaymentResultPage } from "../../user/pages/Payments/PaymentResultPage";
+import ProfilePage from "../../user/pages/Profile/ProfilePage";
 import RoomDetailPage from "../../user/pages/Room/RoomDetailPage";
 import { ROLES } from "../constants/roleConstant";
 import ChangePassword from "../pages/auth/ChangePassword";
 import ForgotPassword from "../pages/auth/ForgotPassword";
+import GoogleSuccess from "../pages/auth/GoogleSuccess";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import ResetPassword from "../pages/auth/ResetPassword";
 import VerifyOtpEmail from "../pages/auth/VerifyOtpEmail";
-import ProfilePage from "../pages/profile/ProfilePage";
 import ProtectedRoute from "../ProtectedRoute";
-import GoogleSuccess from "../pages/auth/GoogleSuccess";
-import ManageHotelPage from "../../admin/pages/hotel/ManageHotelPage";
-import AdminHotelLayout from "../../admin/components/layouts/AdminHotelLayout";
-import AdminProfilePage from "../../admin/pages/profile/AdminProfilePage";
-import AdminTransactionLayout from "../../admin/components/layouts/AdminTransactionLayout";
-import TransactionManagement from "../../admin/pages/transaction/TransactionManagement";
-import AdminReviewsLayout from "../../admin/components/layouts/AdminReviewsLayout";
-import ReviewManagement from "../../admin/pages/reviews/ReviewManagement";
-import { CartPage } from "../../user/pages/Cart/CartPage";
 
 const AppRoutes = () => (
   <Routes>
@@ -60,7 +60,7 @@ const AppRoutes = () => (
       <Route path="my-carts" element={<CartPage />} />
 
       {/* checkout */}
-      <Route path="checkout" element={<CheckoutPage />} />
+      <Route path="checkout/:roomId" element={<CheckoutPage />} />
 
       {/* Payment Booking Page */}
       <Route
@@ -97,9 +97,9 @@ const AppRoutes = () => (
         <Route path="reviews" element={<AdminReviewsLayout />}>
           <Route index element={<ReviewManagement />} />
         </Route>
-        {/* ================= transactions =============== */}
-        <Route path="transactions" element={<AdminTransactionLayout />}>
-          <Route index element={<TransactionManagement />} />
+        {/* ================= payments =============== */}
+        <Route path="payments" element={<AdminPaymentLayout />}>
+          <Route index element={<PaymentManagement />} />
         </Route>
         <Route path="rooms" element={<AdminRoomLayout />}>
           <Route index element={<ManageRoomPage />} />

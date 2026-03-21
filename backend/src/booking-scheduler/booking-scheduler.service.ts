@@ -20,12 +20,11 @@ export class BookingSchedulerService {
   ) {}
 
   // Cron chạy mỗi 30 giây để test
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_5_SECONDS) // dev test
   async cancelExpiredPayments() {
     const now = new Date();
 
-    // ⚡ Thêm log để debug
-    this.logger.log(`Now: ${now.toISOString()}`);
+    this.logger.log(`Checking expired payments at: ${now.toISOString()}`);
 
     // 1️⃣ tìm payment PENDING mà đã quá expiryAt
     const expiredPayments = await this.paymentModel.find({
@@ -33,12 +32,13 @@ export class BookingSchedulerService {
       expiryAt: { $lt: now },
     });
 
-    this.logger.log(`Expired payments: ${expiredPayments.length}`); // ⚡ log số lượng
+    this.logger.log(`Found expired payments: ${expiredPayments.length}`);
 
     for (const payment of expiredPayments) {
-      // Hủy payment
-      payment.status = PaymentStatus.FAILED;
+      // Chuyển trạng thái thành EXPIRED
+      payment.status = PaymentStatus.EXPIRED;
       await payment.save();
+      this.logger.log(`Payment ${payment._id.toString()} set to EXPIRED`);
 
       // Hủy booking nếu chưa confirmed
       const booking = await this.bookingModel.findById(payment.booking);

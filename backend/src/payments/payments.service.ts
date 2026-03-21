@@ -9,6 +9,11 @@ import { Payment, PaymentDocument } from './schemas/payment.schema';
 import { PaymentStatus } from './enums/payment-status.enum';
 import { PaymentMethod } from './enums/payment-method.enum';
 import { AdminQueryPaymentDto } from './dto/admin-query-payment.dto';
+import { RevenueByMethodDto } from './dto/revenue-by-method.dto';
+
+interface TotalRevenueAgg {
+  totalRevenue: number;
+}
 
 @Injectable()
 export class PaymentsService {
@@ -113,7 +118,13 @@ export class PaymentsService {
         payment.paymentUrl = paymentUrl;
         await payment.save();
 
-        return { paymentUrl };
+        return {
+          paymentUrl,
+          expiryAt: payment.expiryAt,
+          remainingTime: Math.floor(
+            (payment.expiryAt.getTime() - new Date().getTime()) / 1000,
+          ), // giây còn lại
+        };
       }
 
       case PaymentMethod.MOMO:
@@ -133,7 +144,10 @@ export class PaymentsService {
 
     const payments = await this.paymentModel
       .find(filter)
-      .populate('booking') // để admin biết booking info
+      .populate(
+        'booking',
+        'fullName bookingCode email phoneNumber totalPrice checkInDate checkOutDate',
+      )
       .skip((page - 1) * limit)
       .limit(limit)
       .sort({ createdAt: -1 });
@@ -150,19 +164,9 @@ export class PaymentsService {
     return payment;
   }
 
-  // Admin cập nhật trạng thái payment
-  async adminUpdateStatus(id: string, status: PaymentStatus) {
-    const payment = await this.paymentModel.findById(id);
-    if (!payment) throw new NotFoundException('Payment not found');
-
-    payment.status = status;
-    await payment.save();
-    return payment;
-  }
-
   // Tổng doanh thu
   async getTotalRevenue() {
-    const result = await this.paymentModel.aggregate([
+    const result = await this.paymentModel.aggregate<TotalRevenueAgg>([
       { $match: { status: PaymentStatus.SUCCESS } }, // chỉ tính payment thành công
       { $group: { _id: null, totalRevenue: { $sum: '$amount' } } },
     ]);
@@ -172,8 +176,8 @@ export class PaymentsService {
   }
 
   // Có thể kết hợp thống kê theo phương thức thanh toán
-  async getRevenueByMethod() {
-    const result = await this.paymentModel.aggregate([
+  async getRevenueByMethod(): Promise<RevenueByMethodDto[]> {
+    const result = await this.paymentModel.aggregate<RevenueByMethodDto>([
       { $match: { status: PaymentStatus.SUCCESS } },
       {
         $group: {
@@ -184,6 +188,6 @@ export class PaymentsService {
       },
     ]);
 
-    return result; // ví dụ: [{ _id: 'VNPAY', totalRevenue: 2000000, count: 2 }, ...]
+    return result;
   }
 }

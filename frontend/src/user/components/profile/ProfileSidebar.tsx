@@ -1,6 +1,7 @@
 import { Headset, History, LogOut, Shield, User } from "lucide-react";
 import React from "react";
 import { cn } from "../../../lib/utils";
+import { useAuth } from "../../../hooks/auth/useAuth";
 
 type UserRole = "ADMIN" | "USER";
 
@@ -21,7 +22,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
   userRole = "USER",
 }) => {
   const isAdmin = userRole === "ADMIN";
-
+  const { logout } = useAuth();
   return (
     <aside className="w-full lg:w-72 flex-shrink-0">
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col gap-8">
@@ -70,7 +71,10 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
 
           <div className="h-px bg-slate-100 my-2"></div>
 
-          <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all text-left">
+          <button
+            onClick={logout} // ← thêm đây
+            className="cursor-pointer flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all text-left"
+          >
             <LogOut className="h-5 w-5" />
             <span className="text-sm font-bold">Đăng xuất</span>
           </button>

@@ -14,6 +14,7 @@ import { AuthGuard } from '../auth/guards/auth.guard';
 import { UserRole } from '../users/schemas/user.schema';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
+import { GetBookingsQueryDto } from './dto/get-bookings-query.dto';
 /* 
 GET    /bookings/check-availability x
 POST   /bookings x
@@ -49,17 +50,33 @@ export class BookingsController {
     @Body() dto: CreateBookingDto,
     @Req() req: Request & { user: { userId: string } },
   ) {
+    console.log('CONTROLLER DTO:', dto);
     return this.bookingsService.createBooking(dto, req.user.userId);
   }
 
+  //
+  @UseGuards(AuthGuard)
+  @Roles(UserRole.ADMIN)
+  @Get('stats')
+  getBookingStats() {
+    return this.bookingsService.getBookingStats();
+  }
+
   // lấy danh sách tất cả booking
+  // @UseGuards(AuthGuard)
+  // @Roles(UserRole.ADMIN)
+  // @Get()
+  // findAll() {
+  //   return this.bookingsService.findAll();
+  // }
+
+  // có phân trang
   @UseGuards(AuthGuard)
   @Roles(UserRole.ADMIN)
   @Get()
-  findAll() {
-    return this.bookingsService.findAll();
+  findAll(@Query() query: GetBookingsQueryDto) {
+    return this.bookingsService.findAll(query);
   }
-
   // user xem lịch sử đặt phòng của mình
   @UseGuards(AuthGuard)
   @Get('me')

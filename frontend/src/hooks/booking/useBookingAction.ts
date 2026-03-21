@@ -9,6 +9,7 @@ import {
   getBookingById,
   checkInBooking,
   checkOutBooking,
+  getBookingStats,
 } from "../../common/services/bookingService";
 import { useBooking } from "./useBooking";
 
@@ -23,7 +24,7 @@ export const useBookingAction = () => {
     checkInDate,
     checkOutDate,
     available,
-
+    setStats,
     setBookings,
 
     setAvailable,
@@ -32,6 +33,14 @@ export const useBookingAction = () => {
     setMyBooking,
   } = useBooking();
 
+  const fetchBookingStats = async () => {
+    try {
+      const stats = await getBookingStats();
+      setStats(stats);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   /* ================= CHECK ROOM ================= */
 
   const handleCheckRoomAvailability = async (roomId: string) => {
@@ -66,15 +75,21 @@ export const useBookingAction = () => {
   /* ================= CREATE BOOKING ================= */
 
   const handleCreateBooking = async (
-    roomIds: string[], // Đổi từ roomId: string sang mảng
+    roomId: string,
     customerInfo: CustomerInfo,
   ) => {
     if (!checkInDate || !checkOutDate) return;
 
+    if (available === false) {
+      toast.error("Phòng không còn trống");
+      return;
+    }
+
     setLoading(true);
+
     try {
       const booking = await createBooking({
-        rooms: roomIds, // Truyền mảng roomIds vào API
+        room: roomId,
         checkInDate,
         checkOutDate,
         fullName: customerInfo.fullName,
@@ -83,7 +98,9 @@ export const useBookingAction = () => {
       });
 
       setCurrentBooking(booking);
-      toast.success("Đặt phòng thành công");
+
+      toast.info("Booking đã được tạo, chưa thanh toán.");
+
       return booking;
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Lỗi đặt phòng");
@@ -211,5 +228,7 @@ export const useBookingAction = () => {
 
     handleCheckInBooking,
     handleCheckOutBooking,
+
+    fetchBookingStats,
   };
 };

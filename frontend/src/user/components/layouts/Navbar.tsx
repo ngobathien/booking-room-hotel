@@ -25,7 +25,6 @@ const Navbar = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const { selectedRooms, totalPrice, isCartOpen, setIsCartOpen } = useBooking();
   const { isLoggedIn, user, logout, loading } = useAuth();
 
   if (loading) return <LoadingSkeleton />;
@@ -95,31 +94,6 @@ const Navbar = () => {
             )} */}
 
             {/* Cart Button */}
-            {isLoggedIn && (
-              <button
-                onClick={() => navigate("/my-carts")}
-                className="group relative flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/50 p-1.5 pr-4 transition-all hover:border-emerald-200 hover:bg-emerald-50/30"
-              >
-                <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-600 shadow-sm transition-all group-hover:bg-emerald-600 group-hover:text-white">
-                  <ShoppingBag className="h-5 w-5" />
-                  {selectedRooms.length > 0 && (
-                    <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white ring-2 ring-white group-hover:bg-slate-900">
-                      {selectedRooms.length}
-                    </span>
-                  )}
-                </div>
-                <div className="hidden text-left lg:block">
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-emerald-600">
-                    Giỏ hàng
-                  </div>
-                  <div className="text-sm font-black text-slate-900">
-                    {totalPrice.toLocaleString()}{" "}
-                    <span className="text-[10px]">VNĐ</span>
-                  </div>
-                </div>
-                <ChevronRight className="hidden h-4 w-4 text-slate-300 transition-transform group-hover:translate-x-0.5 group-hover:text-emerald-400 lg:block" />
-              </button>
-            )}
 
             {/* Notifications */}
             {isLoggedIn && (

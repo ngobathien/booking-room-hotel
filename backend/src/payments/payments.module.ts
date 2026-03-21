@@ -6,9 +6,11 @@ import { Payment, PaymentSchema } from './schemas/payment.schema';
 import { Booking, BookingSchema } from '../bookings/schemas/booking.schema';
 import { VnpayService } from './gateways/vnpay/vnpay.service';
 import { MailModule } from '../services/mail.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
+    UsersModule,
     MailModule,
     MongooseModule.forFeature([
       { name: Payment.name, schema: PaymentSchema },

@@ -7,19 +7,19 @@ export type CheckRoomAvailabilityParams = {
 };
 
 export const BOOKING_STATUS = {
-  PENDING: "pending",
-  CONFIRMED: "confirmed",
-  CANCELLED: "cancelled",
-  COMPLETED: "completed",
+  PENDING: "PENDING",
+  CONFIRMED: "CONFIRMED",
+  CANCELLED: "CANCELLED",
+  COMPLETED: "COMPLETED",
 } as const;
 
 export type BookingStatus =
   (typeof BOOKING_STATUS)[keyof typeof BOOKING_STATUS];
 
 export const BOOKING_STAY_STATUS = {
-  NOT_CHECKED_IN: "not_checked_in",
-  CHECKED_IN: "checked-in",
-  CHECKED_OUT: "checked-out",
+  NOT_CHECKED_IN: "NOT_CHECKED_IN",
+  CHECKED_IN: "CHECKED_IN",
+  CHECKED_OUT: "CHECKED_OUT-out",
 } as const;
 
 export type BookingStayStatus =
@@ -44,16 +44,8 @@ export type Booking = {
   checkedInAt?: string;
   checkedOutAt?: string;
 };
-export interface BookingContextType {
-  // thêm vào giỏ hàng
-  selectedRooms: Room[];
-  addRoom: (room: Room) => void;
-  removeRoom: (roomId: string) => void;
-  clearRooms: () => void;
-  totalPrice: number;
-  isCartOpen: boolean;
-  setIsCartOpen: (isOpen: boolean) => void;
 
+export interface BookingContextType {
   checkInDate: string;
   checkOutDate: string;
   guests: number;
@@ -62,7 +54,9 @@ export interface BookingContextType {
   currentBooking: Booking | null;
   myBooking: Booking[] | null;
   bookings: Booking[] | null;
+  stats: BookingStats;
 
+  setStats: React.Dispatch<React.SetStateAction<BookingStats>>;
   setBookings: (value: Booking[]) => void;
   setMyBooking: (value: Booking[]) => void;
   setCheckInDate: (value: string) => void;
@@ -74,10 +68,36 @@ export interface BookingContextType {
 }
 
 export type CreateBookingPayload = {
-  rooms: string[];
+  room: string;
   checkInDate: string;
   checkOutDate: string;
   fullName?: string;
   email?: string;
   phoneNumber?: string;
+  idempotencyKey?: string;
+};
+
+export type BookingStats = {
+  total: number;
+  confirmed: number;
+  pending: number;
+  cancelled: number;
+  completed: number;
+};
+
+export type GetAllBookingsResponse = {
+  message: string;
+  data: Booking[];
+  pagination: {
+    page: number;
+    limit: number;
+    totalItems: number;
+    totalPages: number;
+  };
+};
+
+export type BookingQueryPaymentParams = {
+  status?: string;
+  page?: number;
+  limit?: number;
 };

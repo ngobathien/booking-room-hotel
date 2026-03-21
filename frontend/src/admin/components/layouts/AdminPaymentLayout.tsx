@@ -1,10 +1,8 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 
-const AdminPaymentLayout: React.FC = () => {
+const AdminPaymentLayout = () => {
   return (
-    <div className="p-4 bg-slate-50 min-h-screen">
-      {/* có thể thêm header con nếu muốn */}
+    <div className="min-h-screen">
       <Outlet />
     </div>
   );

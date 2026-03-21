@@ -3,48 +3,38 @@ import { ShieldCheck } from "lucide-react";
 import type { Room } from "../../../types/room.types";
 
 interface Props {
-  rooms: Room[];
+  room: Room;
   nights: number;
   guests?: string | number;
 }
 
-const BookingSummary: React.FC<Props> = ({ rooms, nights, guests = 2 }) => {
-  if (!rooms || rooms.length === 0) return null;
+const BookingSummary: React.FC<Props> = ({ room, nights, guests = 2 }) => {
+  if (!room) return null;
 
-  // Tính tổng tiền tất cả phòng
-  const total = rooms.reduce(
-    (sum, room) => sum + (room.roomType.pricePerNight || 0) * nights,
-    0,
-  );
+  const total = room.roomType.pricePerNight * nights;
 
   return (
     <aside>
       <div className="rounded-3xl bg-white p-6 shadow-xl border border-slate-100">
         <h3 className="text-lg font-bold mb-6">Tóm tắt đặt phòng</h3>
 
-        {/* Danh sách phòng */}
-        <div className="space-y-4 mb-6">
-          {rooms.map((room) => (
-            <div key={room._id} className="flex gap-4">
-              <img
-                src={room.images[0]}
-                className="h-20 w-20 rounded-xl object-cover"
-                alt={room.roomNumber}
-              />
-              <div>
-                <h4 className="font-bold text-sm">Phòng #{room.roomNumber}</h4>
-                <p className="text-xs text-slate-500 mt-1">
-                  {room.roomType.typeName}
-                </p>
-                <div className="mt-2 text-primary font-bold text-sm">
-                  {room.roomType.pricePerNight.toLocaleString()}đ / đêm
-                </div>
-              </div>
+        <div className="flex gap-4 mb-6">
+          <img
+            src={room.images[0]}
+            className="h-20 w-20 rounded-xl object-cover"
+            alt={room.roomNumber}
+          />
+          <div>
+            <h4 className="font-bold text-sm">Phòng #{room.roomNumber}</h4>
+            <p className="text-xs text-slate-500 mt-1">
+              {room.roomType.typeName}
+            </p>
+            <div className="mt-2 text-primary font-bold text-sm">
+              {room.roomType.pricePerNight.toLocaleString()}đ / đêm
             </div>
-          ))}
+          </div>
         </div>
 
-        {/* Thông tin chung */}
         <div className="space-y-4 border-t border-slate-50 pt-6">
           <div className="flex justify-between text-sm">
             <span className="text-slate-500">Thời gian</span>
@@ -62,7 +52,6 @@ const BookingSummary: React.FC<Props> = ({ rooms, nights, guests = 2 }) => {
           </div>
         </div>
 
-        {/* Tổng cộng */}
         <div className="mt-6 space-y-3 border-t border-dashed border-slate-100 pt-6">
           <div className="flex justify-between text-sm">
             <span className="text-slate-500">Giá phòng</span>
