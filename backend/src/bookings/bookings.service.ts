@@ -3,22 +3,26 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateBookingDto } from './dto/create-booking.dto';
-import { UpdateBookingDto } from './dto/update-booking.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import {
-  Booking,
-  BookingDocument,
-  BookingStatus,
-  BookingStayStatus,
-} from './schemas/booking.schema';
 import { Model } from 'mongoose';
-import { Room, RoomDocument } from '../rooms/schemas/room.schema';
+import { generateBookingCode } from 'src/common/utils/booking/generate-booking-code';
 import {
   RoomType,
   RoomTypeDocument,
 } from '../room-types/schemas/room-type.schema';
+import { Room, RoomDocument } from '../rooms/schemas/room.schema';
 import { User, UserDocument } from '../users/schemas/user.schema';
+import { CreateBookingDto } from './dto/create-booking.dto';
+import { UpdateBookingDto } from './dto/update-booking.dto';
+import { BookingStatus } from './enums/booking-status.enum';
+import { BookingStayStatus } from './enums/booking-stay-status.enum';
+import { Booking, BookingDocument } from './schemas/booking.schema';
+import { GetBookingsQueryDto } from './dto/get-bookings-query.dto';
+
+interface BookingStatsAgg {
+  _id: BookingStatus;
+  count: number;
+}
 
 @Injectable()
 export class BookingsService {
@@ -57,15 +61,6 @@ export class BookingsService {
     };
   }
 
-  // tạo mã booking
-  generateBookingCode() {
-    const prefix = process.env.BOOKING_CODE_PREFIX || 'BKNBT';
-    const random = Math.floor(100000 + Math.random() * 900000);
-    const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-
-    return `${prefix}${date}${random}`;
-  }
-
   // Tạo booking mới
   /*   1. Nhận dữ liệu
        2. Validate ngày
@@ -76,7 +71,7 @@ export class BookingsService {
        7. Tạo booking */
   async createBooking(createBookingDto: CreateBookingDto, userId: string) {
     // nhận dữ liệu từ DTO, đầu vào
-    const { room, checkInDate, checkOutDate, fullName, email, phone_number } =
+    const { room, checkInDate, checkOutDate, fullName, email, phoneNumber } =
       createBookingDto;
 
     // validate check-in, check-out
@@ -147,16 +142,17 @@ export class BookingsService {
     }
 
     //
-    const bookingCode = this.generateBookingCode();
+    const bookingCode = generateBookingCode();
 
     // Tạo booking
     return this.bookingModel.create({
-      bookingCode,
+      bookingCode: bookingCode,
       room,
       user: userId,
       fullName: fullName || user.fullName,
       email: email || user.email,
-      phone_number: phone_number || user.phone_number,
+      phoneNumber: phoneNumber || user.phoneNumber,
+      specialRequest: createBookingDto.specialRequest || '',
       checkInDate: checkIn,
       checkOutDate: checkOut,
       totalPrice,
@@ -167,16 +163,77 @@ export class BookingsService {
     });
   }
 
-  // lấy tất cả booking
-  async findAll() {
-    const bookings = await this.bookingModel
-      .find()
-      .populate('room')
-      .populate('user');
-    // return bookings
-    return { message: 'Get all bookings successfully', data: bookings };
+  //
+  async getBookingStats() {
+    const stats: BookingStatsAgg[] = await this.bookingModel.aggregate([
+      { $group: { _id: '$bookingStatus', count: { $sum: 1 } } },
+    ]);
+
+    const result: {
+      total: number;
+      confirmed: number;
+      pending: number;
+      cancelled: number;
+      completed: number;
+    } = {
+      total: await this.bookingModel.countDocuments(),
+      confirmed: 0,
+      pending: 0,
+      cancelled: 0,
+      completed: 0,
+    };
+
+    stats.forEach((s) => {
+      switch (s._id) {
+        case BookingStatus.CONFIRMED:
+          result.confirmed = s.count;
+          break;
+        case BookingStatus.PENDING:
+          result.pending = s.count;
+          break;
+        case BookingStatus.CANCELLED:
+          result.cancelled = s.count;
+          break;
+        case BookingStatus.COMPLETED:
+          result.completed = s.count;
+          break;
+      }
+    });
+
+    return result;
   }
 
+  // có query
+  async findAll(query: GetBookingsQueryDto) {
+    const { status, page = 1, limit = 10 } = query;
+
+    const filter: Record<string, any> = {};
+
+    if (status) filter.bookingStatus = status;
+
+    const skip = (page - 1) * limit;
+
+    const [bookings, totalItems] = await Promise.all([
+      this.bookingModel
+        .find(filter)
+        .populate('room')
+        .populate('user')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      this.bookingModel.countDocuments(filter),
+    ]);
+
+    const totalPages = Math.ceil(totalItems / limit);
+
+    return {
+      message: 'Get bookings successfully',
+      data: bookings,
+      pagination: { page, limit, totalItems, totalPages },
+    };
+  }
+
+  // ================= GET ONE =================
   // lấy booking theo id
   async findOne(id: string) {
     const booking = await this.bookingModel
@@ -193,7 +250,6 @@ export class BookingsService {
       data: booking,
     };
   }
-
   update(id: number, updateBookingDto: UpdateBookingDto) {
     return `This action updates a #${id} booking`;
   }

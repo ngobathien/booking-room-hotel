@@ -16,6 +16,10 @@ export enum UserStatus {
   BLOCKED = 'BLOCKED',
 }
 
+export enum AuthProvider {
+  LOCAL = 'local',
+  GOOGLE = 'google',
+}
 @Schema({ timestamps: true })
 export class User {
   @Prop({ required: true })
@@ -26,13 +30,12 @@ export class User {
 
   // @Prop({ required: false, unique: true })
   @Prop()
-  phone_number: string;
+  phoneNumber: string;
 
   @Prop({
-    required: true,
-    //  select: false
+    required: false,
   })
-  password: string;
+  password?: string;
 
   @Prop()
   avatar: string;
@@ -58,6 +61,13 @@ export class User {
 
   @Prop({ default: false })
   isVerified: boolean;
+
+  @Prop({
+    type: String,
+    enum: AuthProvider,
+    default: AuthProvider.LOCAL,
+  })
+  provider: AuthProvider;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -1,6 +1,16 @@
 import type { CreateUserPayload, User } from "../../types/user.types";
 import api from "./apiClient";
 
+export const uploadAvatar = async (userId: string, file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await api.post(`/users/${userId}/avatar`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data.avatarUrl;
+};
+
 // Lấy danh sách user
 export const getAllUsers = async () => {
   const response = await api.get("/users");

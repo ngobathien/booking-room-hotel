@@ -1,11 +1,13 @@
 export type UserStatus = "ACTIVE" | "INACTIVE" | "BLOCKED";
+export type UserRole = "USER" | "ADMIN";
 
 export interface User {
   _id: string;
   fullName: string;
   email: string;
-  phone_number: string;
-  role: string;
+  phoneNumber?: string;
+  avatar?: string;
+  role: UserRole;
   status: UserStatus;
 }
 

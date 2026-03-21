@@ -1,6 +1,9 @@
 import { Route, Routes } from "react-router";
 import AdminBookingLayout from "../../admin/components/layouts/AdminBookingLayout";
+import AdminHotelLayout from "../../admin/components/layouts/AdminHotelLayout";
 import AdminLayout from "../../admin/components/layouts/AdminLayout";
+import AdminPaymentLayout from "../../admin/components/layouts/AdminPaymentLayout";
+import AdminReviewsLayout from "../../admin/components/layouts/AdminReviewsLayout";
 import AdminRoomLayout from "../../admin/components/layouts/AdminRoomLayout";
 import AdminRoomTypesLayout from "../../admin/components/layouts/AdminRoomTypesLayout";
 import AddRoomForm from "../../admin/components/rooms/AddRoomForm";
@@ -8,8 +11,12 @@ import EditRoomForm from "../../admin/components/rooms/EditRooForm";
 import BookingDetailPage from "../../admin/pages/bookings/BookingDetailPage";
 import BookingManagement from "../../admin/pages/bookings/BookingManagement";
 import DashboardPage from "../../admin/pages/DashboardPage";
+import ManageHotelPage from "../../admin/pages/hotel/ManageHotelPage";
 import ManageRoomPage from "../../admin/pages/ManageRoomPage";
 import ManageUsersPage from "../../admin/pages/ManageUsersPage";
+import PaymentManagement from "../../admin/pages/payment/PaymentManagement";
+import AdminProfilePage from "../../admin/pages/profile/AdminProfilePage";
+import ReviewManagement from "../../admin/pages/reviews/ReviewManagement";
 import AddRoomTypePage from "../../admin/pages/room-types/AddRoomTypePage";
 import EditRoomTypePage from "../../admin/pages/room-types/EditRoomTypePage";
 import ManageRoomTypesPage from "../../admin/pages/room-types/ManageRoomTypesPage";
@@ -17,18 +24,20 @@ import MainLayout from "../../user/components/layouts/MainLayout";
 import RoomLayout from "../../user/components/layouts/RoomLayout";
 import { CheckoutPage } from "../../user/pages/Booking/CheckOutPage";
 import MyBookingsPage from "../../user/pages/Booking/MyBookingsPage";
+import { CartPage } from "../../user/pages/Cart/CartPage";
 import HomePage from "../../user/pages/Home/HomePage";
 import { PaymentBookingPage } from "../../user/pages/Payments/PaymentBookingPage";
 import { PaymentResultPage } from "../../user/pages/Payments/PaymentResultPage";
+import ProfilePage from "../../user/pages/Profile/ProfilePage";
 import RoomDetailPage from "../../user/pages/Room/RoomDetailPage";
 import { ROLES } from "../constants/roleConstant";
 import ChangePassword from "../pages/auth/ChangePassword";
 import ForgotPassword from "../pages/auth/ForgotPassword";
+import GoogleSuccess from "../pages/auth/GoogleSuccess";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import ResetPassword from "../pages/auth/ResetPassword";
 import VerifyOtpEmail from "../pages/auth/VerifyOtpEmail";
-import ProfilePage from "../pages/ProfilePage";
 import ProtectedRoute from "../ProtectedRoute";
 
 const AppRoutes = () => (
@@ -41,14 +50,14 @@ const AppRoutes = () => (
       <Route index element={<HomePage />} />
 
       {/*  ================ trang danh sách rooms ========================*/}
-      <Route path="rooms" element={<RoomLayout />}>
-        {/*  ================ trang chi tiết room ========================*/}
-        <Route path=":roomId/:slug" element={<RoomDetailPage />} />
-      </Route>
 
+      <Route path="rooms" element={<RoomLayout />} />
+
+      <Route path="rooms/:roomId/:slug" element={<RoomDetailPage />} />
       {/* <Route path="/rooms" element={<RoomList />} />
 
       <Route path="/rooms/:roomId" element={<RoomDetailPage />} /> */}
+      <Route path="my-carts" element={<CartPage />} />
 
       {/* checkout */}
       <Route path="checkout/:roomId" element={<CheckoutPage />} />
@@ -74,7 +83,24 @@ const AppRoutes = () => (
     <Route element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]} />}>
       <Route path="dashboard" element={<AdminLayout />}>
         <Route index element={<DashboardPage />} />
+        {/* ================= profile =============== */}
+        <Route path="profile" element={<AdminProfilePage />} />
+        {/* ================= users =============== */}
         <Route path="users" element={<ManageUsersPage />} />
+        {/* ================= hotel =============== */}
+        <Route path="hotel" element={<AdminHotelLayout />}>
+          <Route index element={<ManageHotelPage />} />
+          {/* <Route path="edit" element={<EditHotelPage />} />
+          <Route path="images" element={<HotelImagesPage />} /> */}
+        </Route>
+        {/* ================= reviews =============== */}
+        <Route path="reviews" element={<AdminReviewsLayout />}>
+          <Route index element={<ReviewManagement />} />
+        </Route>
+        {/* ================= payments =============== */}
+        <Route path="payments" element={<AdminPaymentLayout />}>
+          <Route index element={<PaymentManagement />} />
+        </Route>
         <Route path="rooms" element={<AdminRoomLayout />}>
           <Route index element={<ManageRoomPage />} />
           <Route path="create" element={<AddRoomForm />} />
@@ -104,30 +130,7 @@ const AppRoutes = () => (
     <Route path="/reset-password" element={<ResetPassword />} />
     <Route path="/change-password" element={<ChangePassword />} />
     <Route path="verify-otp" element={<VerifyOtpEmail />} />
-
-    {/*
-     <Route path="/dashboard" element={<DashboardPage />}>
-      <Route path="users" element={<ManageUsersPage />} />
-      <Route path="posts" element={<ManagePostsPage />} />
-      <Route path="class" element={<ManageClassesPage />} />
-    </Route> */}
-    {/* Các trang đăng nhập & đăng ký có layout riêng */}
-    {/* <Route
-      path="/login"
-      element={
-        <AuthLayout>
-          <Login />
-        </AuthLayout>
-      }
-    /> */}
-    {/* <Route
-      path="/register"
-      element={
-        <AuthLayout>
-          <Register />
-        </AuthLayout>
-      }
-    /> */}
+    <Route path="/google-success" element={<GoogleSuccess />} />
   </Routes>
 );
 

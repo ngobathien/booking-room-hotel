@@ -25,7 +25,7 @@ export const useAuthAction = () => {
       console.log("info user : ", res);
       console.log("role: ", res.user?.role);
 
-      login(res.access_token);
+      login(res.accessToken);
 
       toast.success("Đăng nhập thành công!");
 

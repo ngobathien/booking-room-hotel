@@ -151,7 +151,7 @@ const MyBookingsPage = () => {
                         </p>
 
                         <p className="text-2xl font-black">
-                          {booking.totalPrice.toLocaleString()} VND
+                          {(booking.totalPrice ?? 0).toLocaleString()} VND
                         </p>
                       </div>
                     </div>

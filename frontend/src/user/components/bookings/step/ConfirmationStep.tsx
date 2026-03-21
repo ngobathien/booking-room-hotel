@@ -1,17 +1,17 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { useBookingAction } from "../../../../hooks/booking/useBookingAction";
 import type { Room } from "../../../../types/room.types";
+import { formatDateDDMMYY } from "../../../../utils/formatDateVN";
 
 interface CustomerInfo {
   fullName: string;
   email: string;
-  phone_number: string;
+  phoneNumber: string;
 }
 
 interface Props {
-  onNext: () => void;
   onBack: () => void;
   room: Room;
   checkInDate: string;
@@ -26,32 +26,35 @@ const ConfirmationStep = ({
   checkOutDate,
   customerInfo,
 }: Props) => {
-  // tạo biến riêng
-  const fullName = customerInfo?.fullName;
-  const email = customerInfo?.email;
-  const phone_number = customerInfo?.phone_number;
-
-  console.log("customerInfo", customerInfo);
+  const { fullName, email, phoneNumber } = customerInfo;
 
   const { handleCreateBooking } = useBookingAction();
-
   const navigate = useNavigate();
 
-  // xác nhận tạo booking mới
+  // Xác nhận tạo booking
   const handleConfirmBooking = async () => {
     try {
       const booking = await handleCreateBooking(room._id, customerInfo);
-
-      console.log("booking", booking);
       if (!booking) return;
 
-      // chuyển sang trang payment
       navigate(`/payment/method/${booking._id}`);
     } catch (error: any) {
       const message = error.response?.data?.message;
       toast.error(message || "Lỗi đặt phòng");
     }
   };
+
+  // Tính số đêm giữa checkIn và checkOut
+  const nights = (() => {
+    const ci = new Date(checkInDate);
+    const co = new Date(checkOutDate);
+    const diff = Math.ceil(
+      (co.getTime() - ci.getTime()) / (1000 * 60 * 60 * 24),
+    );
+    return diff > 0 ? diff : 1;
+  })();
+
+  const totalPrice = room.roomType.pricePerNight * nights;
 
   return (
     <div className="space-y-8">
@@ -61,10 +64,8 @@ const ConfirmationStep = ({
         {/* Alert lưu ý */}
         <div className="mb-8 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm">
           <div className="text-amber-500 text-lg">⚠️</div>
-
           <div>
             <p className="font-bold text-amber-700">Lưu ý quan trọng</p>
-
             <p className="text-amber-600 mt-1">
               Thời gian giữ phòng tối đa là{" "}
               <span className="font-bold">10 phút</span>. Sau thời gian này nếu
@@ -74,24 +75,25 @@ const ConfirmationStep = ({
         </div>
 
         <div className="space-y-8">
+          {/* Thông tin lưu trú & liên hệ */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Thông tin lưu trú */}
             <div className="space-y-4">
               <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400">
                 Thông tin lưu trú
               </h4>
-
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Ngày nhận phòng</span>
-                  <span className="font-bold">{checkInDate} (14:00)</span>
+                  <span className="font-bold">
+                    {formatDateDDMMYY(checkInDate)} (14:00)
+                  </span>
                 </div>
-
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Ngày trả phòng</span>
-                  <span className="font-bold">{checkOutDate} (12:00)</span>
+                  <span className="font-bold">
+                    {formatDateDDMMYY(checkOutDate)} (12:00)
+                  </span>
                 </div>
-
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Số lượng phòng</span>
                   <span className="font-bold">01 Phòng</span>
@@ -99,26 +101,22 @@ const ConfirmationStep = ({
               </div>
             </div>
 
-            {/* Thông tin liên hệ */}
             <div className="space-y-4">
               <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400">
                 Thông tin liên hệ
               </h4>
-
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Họ tên</span>
                   <span className="font-bold">{fullName}</span>
                 </div>
-
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Email</span>
                   <span className="font-bold">{email}</span>
                 </div>
-
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Số điện thoại</span>
-                  <span className="font-bold">{phone_number}</span>
+                  <span className="font-bold">{phoneNumber}</span>
                 </div>
               </div>
             </div>
@@ -135,26 +133,31 @@ const ConfirmationStep = ({
                 <img
                   src={room.images?.[0]}
                   className="h-16 w-16 rounded-lg object-cover"
-                  alt=""
+                  alt={room.roomNumber}
                 />
-
                 <div>
                   <div className="font-bold">{room.roomNumber}</div>
+                  <div className="text-[10px] text-slate-500">
+                    {room.bedType} • {room.view}
+                  </div>
+                  <div className="text-[10px] text-slate-400 mt-1">
+                    {nights} đêm x{" "}
+                    {room.roomType.pricePerNight.toLocaleString()}đ / đêm
+                  </div>
                 </div>
               </div>
-
-              <div className="flex items-center gap-4">
-                <button className="h-8 w-8 rounded-full border border-slate-200 flex items-center justify-center font-bold">
-                  -
-                </button>
-
-                <span className="font-bold">01</span>
-
-                <button className="h-8 w-8 rounded-full border border-slate-200 flex items-center justify-center font-bold">
-                  +
-                </button>
+              <div className="text-right font-bold text-primary">
+                {totalPrice.toLocaleString()}đ
               </div>
             </div>
+          </div>
+
+          {/* Trust info */}
+          <div className="mt-8 flex items-center gap-3 rounded-2xl bg-slate-50 p-4">
+            <ShieldCheck className="h-5 w-5 text-green-500" />
+            <p className="text-[10px] text-slate-500 font-medium">
+              Đảm bảo giá tốt nhất & Thanh toán an toàn
+            </p>
           </div>
         </div>
       </div>

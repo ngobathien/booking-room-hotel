@@ -10,7 +10,7 @@ export class SupabaseService {
     const supabaseKey = process.env.SUPABASE_KEY;
 
     if (!supabaseUrl || !supabaseKey) {
-      throw new Error('Missing Supabase environment variables');
+      throw new Error('SUPABASE_URL hoặc SUPABASE_KEY chưa được cấu hình');
     }
 
     this.client = createClient<any>(supabaseUrl, supabaseKey);

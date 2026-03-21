@@ -12,6 +12,7 @@ import { SupabaseService } from '../config/supabase.config';
 import { sanitizeFileName } from '../common/utils/sanitizeFileName.utils';
 import { Booking, BookingDocument } from '../bookings/schemas/booking.schema';
 import { SearchRoomDto } from './dto/search-room.dto';
+import { FindRoomsDto } from './dto/find-rooms.dto';
 
 @Injectable()
 export class RoomsService {
@@ -24,11 +25,11 @@ export class RoomsService {
     @InjectModel(Booking.name)
     private bookingModel: Model<BookingDocument>,
   ) {
-    if (!process.env.BUCKET_NAME) {
-      throw new Error('BUCKET_NAME is not defined');
+    if (!process.env.SUPABASE_BUCKET_ROOMS) {
+      throw new Error('SUPABASE_BUCKET_ROOMS is not defined');
     }
 
-    this.bucketName = process.env.BUCKET_NAME;
+    this.bucketName = process.env.SUPABASE_BUCKET_ROOMS;
   }
 
   /**
@@ -169,7 +170,7 @@ export class RoomsService {
   }
 
   // tìm all dữ liệu phòng
-  async findAllRooms(query: any) {
+  async findAllRooms(query: FindRoomsDto) {
     const {
       keyword,
       status,
@@ -182,7 +183,7 @@ export class RoomsService {
       sort,
     } = query;
 
-    const filter: any = {};
+    const filter: Record<string, any> = {};
 
     /* ======================
      1️⃣ SEARCH

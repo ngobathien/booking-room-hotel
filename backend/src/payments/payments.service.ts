@@ -1,19 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreatePaymentDto } from './dto/create-payment.dto';
-import { UpdatePaymentDto } from './dto/update-payment.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { Booking, BookingDocument } from '../bookings/schemas/booking.schema';
-import { Model } from 'mongoose';
-import {
-  Payment,
-  PaymentDocument,
-  PaymentMethod,
-  PaymentStatus,
-} from './schemas/payment.schema';
-import * as qs from 'qs';
-import * as crypto from 'crypto';
 import { ConfigService } from '@nestjs/config';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Booking, BookingDocument } from '../bookings/schemas/booking.schema';
+import { CreatePaymentDto } from './dto/create-payment.dto';
 import { VnpayService } from './gateways/vnpay/vnpay.service';
+import { Payment, PaymentDocument } from './schemas/payment.schema';
+import { PaymentStatus } from './enums/payment-status.enum';
+import { PaymentMethod } from './enums/payment-method.enum';
+import { AdminQueryPaymentDto } from './dto/admin-query-payment.dto';
+import { RevenueByMethodDto } from './dto/revenue-by-method.dto';
+
+interface TotalRevenueAgg {
+  totalRevenue: number;
+}
 
 @Injectable()
 export class PaymentsService {
@@ -65,10 +65,43 @@ export class PaymentsService {
       await existingPayment.save();
     }
 
+    // Lấy từ ConfigService xem có dùng giây hay phút
+    const useSeconds = this.configService.get<boolean>(
+      'USE_EXPIRE_SECONDS',
+      false,
+    );
+
+    // Tạo biến expiryAt là thời điểm payment hết hạn
+    const expiryAt = new Date();
+
+    if (useSeconds) {
+      // Nếu dùng giây
+      // Lấy số giây từ .env, mặc định 30 giây nếu chưa khai báo
+      const expireSeconds = this.configService.get<number>(
+        'PAYMENT_EXPIRE_SECONDS',
+        30,
+      );
+
+      // Cộng số giây vào thời điểm hiện tại → thời điểm hết hạn
+      expiryAt.setSeconds(expiryAt.getSeconds() + expireSeconds);
+    } else {
+      // Nếu dùng phút
+      // Lấy số phút từ .env, mặc định 15 phút nếu chưa khai báo
+      const expireMinutes = this.configService.get<number>(
+        'PAYMENT_EXPIRE_MINUTES',
+        15,
+      );
+
+      // Cộng số phút vào thời điểm hiện tại → thời điểm hết hạn
+      expiryAt.setMinutes(expiryAt.getMinutes() + expireMinutes);
+    }
+
+    // Tạo payment với expiryAt
     const payment = await this.paymentModel.create({
       booking: booking._id,
       amount: booking.totalPrice,
       method,
+      expiryAt,
       status: PaymentStatus.PENDING,
     });
 
@@ -85,7 +118,13 @@ export class PaymentsService {
         payment.paymentUrl = paymentUrl;
         await payment.save();
 
-        return { paymentUrl };
+        return {
+          paymentUrl,
+          expiryAt: payment.expiryAt,
+          remainingTime: Math.floor(
+            (payment.expiryAt.getTime() - new Date().getTime()) / 1000,
+          ), // giây còn lại
+        };
       }
 
       case PaymentMethod.MOMO:
@@ -93,11 +132,62 @@ export class PaymentsService {
     }
   }
 
-  findAll() {
-    return `This action returns all payments`;
+  // Danh sách payment có filter + pagination
+  async adminFindAll(query: AdminQueryPaymentDto) {
+    const { status, bookingId, method, page = 1, limit = 20 } = query;
+
+    const filter: Record<string, any> = {};
+
+    if (status) filter.status = status;
+    if (bookingId) filter.booking = bookingId;
+    if (method) filter.method = method;
+
+    const payments = await this.paymentModel
+      .find(filter)
+      .populate(
+        'booking',
+        'fullName bookingCode email phoneNumber totalPrice checkInDate checkOutDate',
+      )
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    const total = await this.paymentModel.countDocuments(filter);
+
+    return { payments, total, page, limit };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} payment`;
+  // Lấy chi tiết payment
+  async adminFindOne(id: string) {
+    const payment = await this.paymentModel.findById(id).populate('booking');
+    if (!payment) throw new NotFoundException('Payment not found');
+    return payment;
+  }
+
+  // Tổng doanh thu
+  async getTotalRevenue() {
+    const result = await this.paymentModel.aggregate<TotalRevenueAgg>([
+      { $match: { status: PaymentStatus.SUCCESS } }, // chỉ tính payment thành công
+      { $group: { _id: null, totalRevenue: { $sum: '$amount' } } },
+    ]);
+
+    const totalRevenue = result[0]?.totalRevenue || 0;
+    return { totalRevenue };
+  }
+
+  // Có thể kết hợp thống kê theo phương thức thanh toán
+  async getRevenueByMethod(): Promise<RevenueByMethodDto[]> {
+    const result = await this.paymentModel.aggregate<RevenueByMethodDto>([
+      { $match: { status: PaymentStatus.SUCCESS } },
+      {
+        $group: {
+          _id: '$method',
+          totalRevenue: { $sum: '$amount' },
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    return result;
   }
 }

@@ -17,7 +17,7 @@ function ProfilePage() {
 
   console.log(profile);
   const getToken = () => {
-    return localStorage.getItem("token");
+    return localStorage.getItem("accessToken");
   };
 
   const fetchProfile = async () => {
@@ -62,7 +62,7 @@ function ProfilePage() {
             Authorization: `Bearer ${getToken()}`,
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
       setProfile(response.data.user);
       setOriginalProfile(response.data.user);

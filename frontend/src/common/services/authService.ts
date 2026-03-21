@@ -22,8 +22,13 @@ export const register = async (userData: RegisterData) => {
 export const loginApi = async (userData: LoginData) => {
   try {
     const response = await api.post("/auth/login", userData);
-    // console.log("response", response);
-    // console.log("response data", response.data);
+
+    const { accessToken, refreshToken, user } = response.data;
+
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
+    localStorage.setItem("user", JSON.stringify(user));
+
     return response.data;
   } catch (error) {
     console.error("Error khi login:", error);

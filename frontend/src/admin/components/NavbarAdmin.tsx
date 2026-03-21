@@ -16,17 +16,15 @@ const NavbarAdmin: React.FC<NavbarProps> = ({
 
   // Danh sách tiêu đề trang dựa trên route
   const pageTitles: Record<string, string> = {
-    "/": "Tổng quan",
-    "/timeline": "Lịch trình",
-    "/rooms": "Phòng",
-    "/room-types": "Loại phòng",
-    "/bookings": "Booking",
-    "/customers": "Khách hàng",
-    "/payments": "Giao dịch",
-    "/users": "Người dùng",
-    "/reviews": "Đánh giá",
-    "/profile": "Hồ sơ cá nhân",
-    "/info": "Thông tin khách sạn",
+    "/dashboard": "Tổng quan",
+    "/dashboard/rooms": "Phòng",
+    "/dashboard/room-types": "Loại phòng",
+    "/dashboard/bookings": "Booking",
+    "/dashboard/payments": "Giao dịch",
+    "/dashboard/users": "Người dùng",
+    "/dashboard/reviews": "Đánh giá",
+    "/dashboard/profile": "Hồ sơ cá nhân",
+    "/dashboard/hotel": "Thông tin khách sạn",
   };
 
   const currentTitle = pageTitles[location.pathname] || "Chi tiết";
@@ -86,7 +84,7 @@ const NavbarAdmin: React.FC<NavbarProps> = ({
 
           {/* User Profile Quick Access */}
           <Link
-            to="/profile"
+            to="/dashboard/profile"
             className="flex items-center gap-3 p-1 pr-3 rounded-full hover:bg-slate-100 transition-all border border-transparent hover:border-slate-200"
           >
             <img

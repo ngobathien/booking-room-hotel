@@ -39,7 +39,7 @@ export const CheckoutPage = () => {
   const [customerInfo, setCustomerInfo] = useState({
     fullName: user?.fullName || "",
     email: user?.email || "",
-    phone_number: user?.phone_number || "",
+    phoneNumber: user?.phoneNumber || "",
   });
 
   const { setRooms } = useRoomContext();

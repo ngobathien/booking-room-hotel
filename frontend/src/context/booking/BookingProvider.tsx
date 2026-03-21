@@ -1,6 +1,6 @@
 // BookingContext.tsx
 import React, { useState } from "react";
-import type { Booking } from "../../types/booking.types";
+import type { Booking, BookingStats } from "../../types/booking.types";
 import { BookingContext } from "./booking.context";
 
 export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -15,6 +15,16 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentBooking, setCurrentBooking] = useState<Booking | null>(null);
   const [myBooking, setMyBooking] = useState<Booking[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
+
+  // Thêm stats
+  const [stats, setStats] = useState<BookingStats>({
+    total: 0,
+    confirmed: 0,
+    pending: 0,
+    cancelled: 0,
+    completed: 0,
+  });
+
   return (
     <BookingContext.Provider
       value={{
@@ -26,6 +36,9 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({
         currentBooking,
         myBooking,
         bookings,
+        stats,
+
+        setStats,
         setBookings,
         setMyBooking,
         setCurrentBooking,

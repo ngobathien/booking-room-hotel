@@ -32,17 +32,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     // Có token → gọi API lấy thông tin user
     try {
-      const res = await getProfile();
-      // console.log("getProfile: ", res);
-
-      // Lưu user vào state
-      setUsers(res);
+      const profile = await getProfile(); // fetch user đầy đủ
+      setUsers(profile); // chỉ set vào AuthContext
 
       // Đánh dấu đã đăng nhập
       setIsLoggedIn(true);
     } catch {
       // Token sai / hết hạn
-      localStorage.removeItem("token");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
       setUsers(null);
     } finally {
       // Kết thúc loading dù thành công hay thất bại
@@ -52,7 +50,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     async function fetchProfile() {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("accessToken");
       // console.log(token);
 
       // chưa có token
@@ -68,16 +66,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   //=========================== Hàm đăng nhập, cập nhật trạng thái và lưu token ===========================
-  const login = async (token: string) => {
+  const login = async (accessToken: string) => {
     // Lưu token vào localStorage
-    localStorage.setItem("token", token);
+    localStorage.setItem("accessToken", accessToken);
 
     loadProfile();
   };
 
   // đăng xuất
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
+
     setUsers(null);
     setIsLoggedIn(false);
   };

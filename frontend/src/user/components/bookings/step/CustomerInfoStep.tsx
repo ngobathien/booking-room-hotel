@@ -6,14 +6,12 @@ import { useAuth } from "../../../../hooks/auth/useAuth";
 type CustomerInfo = {
   fullName: string;
   email: string;
-  phone_number: string;
+  phoneNumber: string;
+  specialRequest?: string;
 };
+
 interface Props {
-  customerInfo: {
-    fullName: string;
-    email: string;
-    phone_number: string;
-  };
+  customerInfo: CustomerInfo;
   setCustomerInfo: React.Dispatch<React.SetStateAction<CustomerInfo>>;
   onNext: () => void;
 }
@@ -80,11 +78,11 @@ const CustomerInfoStep = ({ customerInfo, setCustomerInfo, onNext }: Props) => {
                 <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                 <input
                   type="tel"
-                  value={customerInfo.phone_number}
+                  value={customerInfo.phoneNumber}
                   onChange={(e) =>
                     setCustomerInfo((prev: any) => ({
                       ...prev,
-                      phone_number: e.target.value,
+                      phoneNumber: e.target.value,
                     }))
                   }
                   placeholder="090 123 4567"
@@ -92,26 +90,22 @@ const CustomerInfoStep = ({ customerInfo, setCustomerInfo, onNext }: Props) => {
                 />
               </div>
             </div>
-            {/* <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Quốc tịch
-              </label>
-              <div className="relative">
-                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
-                <select className="w-full rounded-xl border-slate-100 bg-slate-50 pl-12 py-3 text-sm focus:ring-primary">
-                  <option>Việt Nam</option>
-                  <option>Mỹ</option>
-                  <option>Hàn Quốc</option>
-                </select>
-              </div>
-            </div> */}
           </div>
+
+          {/* Yêu cầu đặc biệt */}
           <div className="mt-8 space-y-2">
             <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Yêu cầu đặc biệt
             </label>
             <textarea
               rows={4}
+              value={customerInfo.specialRequest || ""}
+              onChange={(e) =>
+                setCustomerInfo((prev) => ({
+                  ...prev,
+                  specialRequest: e.target.value,
+                }))
+              }
               placeholder="Ví dụ: Phòng không hút thuốc, tầng cao..."
               className="w-full rounded-xl border-slate-100 bg-slate-50 p-4 text-sm focus:ring-primary"
             />

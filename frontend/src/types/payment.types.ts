@@ -4,20 +4,6 @@ export type CheckRoomAvailabilityParams = {
   checkOutDate: string;
 };
 
-export interface BookingContextType {
-  checkInDate: string;
-  checkOutDate: string;
-  guests: number;
-  available: boolean | null;
-  loading: boolean;
-
-  setCheckInDate: (value: string) => void;
-  setCheckOutDate: (value: string) => void;
-  setGuests: (value: number) => void;
-  setAvailable: (value: boolean | null) => void;
-  setLoading: (value: boolean) => void;
-}
-
 export type MethodPayments = "vnpay" | "momo" | "cod";
 
 export type CreatePaymentPayload = {
@@ -33,3 +19,47 @@ export interface PaymentContextType {
   setLoading: (value: boolean) => void;
   // setPaymentUrl: (value: string) => void;
 }
+
+export type PaymentStatus = "PENDING" | "SUCCESS" | "FAILED" | "sEXPIRED";
+
+export interface BookingInfo {
+  _id: string;
+  fullName: string;
+  email: string;
+  bookingCode: string;
+  phoneNumber: string;
+  totalPrice: number;
+  checkInDate: string;
+  checkOutDate: string;
+}
+
+export interface Payment {
+  _id: string;
+  booking: BookingInfo;
+  amount: number;
+  method: string;
+  status: PaymentStatus;
+  expiryAt?: string;
+  createdAt: string;
+}
+
+export interface PaymentListResponse {
+  payments: Payment[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface RevenueByMethod {
+  _id: string; // method
+  totalRevenue: number;
+  count: number;
+}
+
+export type AdminQueryPaymentParams = {
+  status?: string;
+  bookingId?: string;
+  method?: string;
+  page?: number;
+  limit?: number;
+};

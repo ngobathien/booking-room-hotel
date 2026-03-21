@@ -9,13 +9,14 @@ import {
   getBookingById,
   checkInBooking,
   checkOutBooking,
+  getBookingStats,
 } from "../../common/services/bookingService";
 import { useBooking } from "./useBooking";
 
 type CustomerInfo = {
   fullName: string;
   email: string;
-  phone_number: string;
+  phoneNumber: string;
 };
 
 export const useBookingAction = () => {
@@ -23,7 +24,7 @@ export const useBookingAction = () => {
     checkInDate,
     checkOutDate,
     available,
-
+    setStats,
     setBookings,
 
     setAvailable,
@@ -32,6 +33,14 @@ export const useBookingAction = () => {
     setMyBooking,
   } = useBooking();
 
+  const fetchBookingStats = async () => {
+    try {
+      const stats = await getBookingStats();
+      setStats(stats);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   /* ================= CHECK ROOM ================= */
 
   const handleCheckRoomAvailability = async (roomId: string) => {
@@ -85,12 +94,12 @@ export const useBookingAction = () => {
         checkOutDate,
         fullName: customerInfo.fullName,
         email: customerInfo.email,
-        phone_number: customerInfo.phone_number,
+        phoneNumber: customerInfo.phoneNumber,
       });
 
       setCurrentBooking(booking);
 
-      toast.success("Đặt phòng thành công");
+      toast.info("Booking đã được tạo, chưa thanh toán.");
 
       return booking;
     } catch (error: any) {
@@ -219,5 +228,7 @@ export const useBookingAction = () => {
 
     handleCheckInBooking,
     handleCheckOutBooking,
+
+    fetchBookingStats,
   };
 };

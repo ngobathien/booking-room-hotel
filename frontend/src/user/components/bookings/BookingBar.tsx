@@ -2,26 +2,19 @@ import React, { useState } from "react";
 
 import { useNavigate } from "react-router";
 import { useBooking } from "../../../hooks/booking/useBooking";
-import { useRoomTypesAction } from "../../../hooks/roomTypes/useRoomTypesAction";
 
 const BookingBar: React.FC = () => {
   const { available, loading } = useBooking();
-
   const navigate = useNavigate();
-  const { roomTypes } = useRoomTypesAction();
-
-  console.log("roomTypes", roomTypes);
 
   const today = new Date().toISOString().split("T")[0];
 
-  //
   const [searchParams, setSearchParams] = useState({
     checkIn: "",
     checkOut: "",
     guests: "",
   });
 
-  //
   const handleSearch = () => {
     const params = new URLSearchParams({
       checkInDate: searchParams.checkIn,
@@ -38,7 +31,7 @@ const BookingBar: React.FC = () => {
         {/* Check-In */}
         <div className="flex-1 w-full space-y-2">
           <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">
-            Check-In
+            Nhận phòng
           </label>
 
           <div className="relative">
@@ -50,7 +43,7 @@ const BookingBar: React.FC = () => {
               value={searchParams.checkIn}
               min={today}
               className="w-full pl-10 pr-4 py-3 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-primary outline-none transition-all"
-              placeholder="Select Date"
+              placeholder="Chọn ngày"
               type="text"
               onFocus={(e) => (e.target.type = "date")}
               onBlur={(e) =>
@@ -66,7 +59,7 @@ const BookingBar: React.FC = () => {
         {/* Check-Out */}
         <div className="flex-1 w-full space-y-2">
           <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">
-            Check-Out
+            Trả phòng
           </label>
 
           <div className="relative">
@@ -78,7 +71,7 @@ const BookingBar: React.FC = () => {
               value={searchParams.checkOut}
               min={searchParams.checkIn || today}
               className="w-full pl-10 pr-4 py-3 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-primary outline-none transition-all"
-              placeholder="Select Date"
+              placeholder="Chọn ngày"
               type="text"
               onFocus={(e) => (e.target.type = "date")}
               onBlur={(e) =>
@@ -91,10 +84,10 @@ const BookingBar: React.FC = () => {
           </div>
         </div>
 
-        {/* Guests, capicity */}
+        {/* Guests */}
         <div className="flex-1 w-full space-y-2">
           <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">
-            Guests
+            Số khách
           </label>
 
           <div className="relative">
@@ -133,9 +126,7 @@ const BookingBar: React.FC = () => {
       {available !== null && (
         <div className="mt-4 text-center">
           {available ? (
-            <p className="text-green-600 font-semibold">
-              {/* ✅ Còn {remainingRooms} phòng khả dụng */}
-            </p>
+            <p className="text-green-600 font-semibold">✅ Phòng còn trống</p>
           ) : (
             <p className="text-red-600 font-semibold">
               ❌ Hết phòng trong khoảng thời gian này

@@ -23,7 +23,7 @@ export default function CustomerInfoCard({ booking }: any) {
 
           <div className="flex items-center gap-2 font-semibold text-slate-800">
             <Phone className="w-4 h-4 text-slate-400" />
-            {booking.phone_number}
+            {booking.phoneNumber}
           </div>
         </div>
 

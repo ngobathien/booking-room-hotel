@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = process.env.PORT || 3000;
@@ -13,8 +12,11 @@ async function bootstrap() {
   app.setGlobalPrefix(api_url || '/api/v1');
 
   app.useGlobalPipes(new ValidationPipe());
-  app.enableCors();
-
+  // app.enableCors();
+  app.enableCors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  });
   // await app.listen(port, () => {
   //   console.log(`Example app listening at http://localhost:${port}${api_url}/`);
   // });

@@ -1,19 +1,25 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
   Param,
-  Delete,
-  Req,
+  Patch,
+  Post,
   Query,
+  Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
-import { PaymentsService } from './payments.service';
-import { CreatePaymentDto } from './dto/create-payment.dto';
 import type { Request, Response } from 'express';
+import { CreatePaymentDto } from './dto/create-payment.dto';
 import { VnpayService } from './gateways/vnpay/vnpay.service';
+import { PaymentsService } from './payments.service';
+import { AdminQueryPaymentDto } from './dto/admin-query-payment.dto';
+import { PaymentStatus } from './enums/payment-status.enum';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserRole } from 'src/users/schemas/user.schema';
+import { RevenueByMethodDto } from './dto/revenue-by-method.dto';
 
 @Controller('payments')
 export class PaymentsController {
@@ -21,6 +27,35 @@ export class PaymentsController {
     private readonly paymentsService: PaymentsService,
     private vnpayService: VnpayService,
   ) {}
+
+  // ========== Admin APIs ==========
+  @UseGuards(AuthGuard)
+  @Roles(UserRole.ADMIN)
+  @Get('admin/total-revenue')
+  getTotalRevenue() {
+    return this.paymentsService.getTotalRevenue();
+  }
+
+  @UseGuards(AuthGuard)
+  @Roles(UserRole.ADMIN)
+  @Get('admin/revenue-by-method')
+  getRevenueByMethod(): Promise<RevenueByMethodDto[]> {
+    return this.paymentsService.getRevenueByMethod();
+  }
+
+  @UseGuards(AuthGuard)
+  @Roles(UserRole.ADMIN)
+  @Get('admin') // dynamic query + pagination
+  adminFindAll(@Query() query: AdminQueryPaymentDto) {
+    return this.paymentsService.adminFindAll(query);
+  }
+
+  @UseGuards(AuthGuard)
+  @Roles(UserRole.ADMIN)
+  @Get('admin/:id') // phải để cuối cùng
+  adminFindOne(@Param('id') id: string) {
+    return this.paymentsService.adminFindOne(id);
+  }
 
   @Post('create')
   createPayment(
@@ -43,15 +78,5 @@ export class PaymentsController {
   @Get('vnpay-return')
   vnpayReturn(@Query() query: Record<string, string>, @Res() res: Response) {
     return this.vnpayService.vnpayReturn(query, res);
-  }
-
-  @Get()
-  findAll() {
-    return this.paymentsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.paymentsService.findOne(+id);
   }
 }
