@@ -35,6 +35,14 @@ export class UsersController {
     return { success: true, avatarUrl };
   }
 
+  // API thống kê
+  @Get('stats')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN) // chỉ admin mới xem được
+  async getStats() {
+    return this.usersService.getUserStats();
+  }
+
   // tạo user mới
   @Post()
   create(@Body() createUserDto: CreateUserDto) {

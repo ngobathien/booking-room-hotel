@@ -1,7 +1,11 @@
 import React from "react";
 
 import { useNavigate } from "react-router";
-import { STATUS_ROOM_STYLE, type Room } from "../../../../types/room.types";
+import {
+  STATUS_ROOM_LABEL,
+  STATUS_ROOM_STYLE,
+  type Room,
+} from "../../../../types/room.types";
 
 interface RoomCardProps {
   room: Room;
@@ -44,7 +48,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room }) => {
               STATUS_ROOM_STYLE[room.status]
             }`}
           >
-            {room.status}
+            {STATUS_ROOM_LABEL[room.status]}
           </span>
         </div>
 

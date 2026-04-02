@@ -32,10 +32,22 @@ export function formatDateVN(dateInput: string | Date): string {
   return `${dayName}, ${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
+// export const formatDateDDMMYY = (dateStr: string) => {
+//   const date = new Date(dateStr);
+//   const day = String(date.getDate()).padStart(2, "0");
+//   const month = String(date.getMonth() + 1).padStart(2, "0");
+//   const year = String(date.getFullYear()).slice(-2); // lấy 2 số cuối năm
+//   return `${day}/${month}/${year}`;
+// };
 export const formatDateDDMMYY = (dateStr: string) => {
-  const date = new Date(dateStr);
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = String(date.getFullYear()).slice(-2); // lấy 2 số cuối năm
-  return `${day}/${month}/${year}`;
+  if (!dateStr) return "";
+
+  const [year, month, day] = dateStr.split("-");
+  const date = new Date(Number(year), Number(month) - 1, Number(day));
+
+  const d = String(date.getDate()).padStart(2, "0");
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const y = String(date.getFullYear()).slice(-2);
+
+  return `${d}/${m}/${y}`;
 };

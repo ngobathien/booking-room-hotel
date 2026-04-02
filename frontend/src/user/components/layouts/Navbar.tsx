@@ -1,18 +1,12 @@
-import React, { useState } from "react";
+import { Hotel, Menu, User, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import {
-  ChevronRight,
-  ShoppingBag,
-  Bell,
-  User,
-  Menu,
-  X,
-  Hotel,
-} from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
 import LoadingSkeleton from "../../../common/LoadingSkeleton";
 import { useAuth } from "../../../hooks/auth/useAuth";
-import { useBooking } from "../../../hooks/booking/useBooking";
+import type { Hotel as Hoteltype } from "../../../types/hotel.types";
+import { getHotelInfo } from "../../../common/services/hotelService";
+import { useHotel } from "../../../hooks/hotel/useHotel";
 
 interface NavLink {
   label: string;
@@ -24,9 +18,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   const { isLoggedIn, user, logout, loading } = useAuth();
-
+  const { hotel, loading: hotelLoading } = useHotel();
   if (loading) return <LoadingSkeleton />;
 
   const handleLogout = () => {
@@ -58,7 +51,7 @@ const Navbar = () => {
           <Link to="/" className="flex items-center gap-2 text-primary">
             <Hotel className="h-8 w-8" />
             <span className="text-xl font-extrabold tracking-tight text-slate-900">
-              LUXURY HOTEL
+              {hotelLoading ? "Loading..." : hotel?.name || "Hotel"}
             </span>
           </Link>
 
@@ -96,11 +89,11 @@ const Navbar = () => {
             {/* Cart Button */}
 
             {/* Notifications */}
-            {isLoggedIn && (
+            {/* {isLoggedIn && (
               <button className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-all hover:bg-primary/20">
                 <Bell className="h-5 w-5" />
               </button>
-            )}
+            )} */}
 
             {/* User Avatar */}
             {isLoggedIn && (
@@ -167,19 +160,6 @@ const Navbar = () => {
                         {link.label}
                       </Link>
                     ))}
-
-                {isLoggedIn && (
-                  <button
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      navigate("/my-carts");
-                    }}
-                    className="flex items-center gap-2 text-sm font-semibold text-emerald-600"
-                  >
-                    <ShoppingBag className="h-5 w-5" />
-                    Giỏ hàng ({selectedRooms.length})
-                  </button>
-                )}
 
                 {!isLoggedIn && (
                   <>

@@ -22,6 +22,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@google/genai": "^1.48.0",
     "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
@@ -31,7 +32,9 @@
     "@nestjs/mongoose": "^11.0.4",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/platform-socket.io": "^11.1.17",
     "@nestjs/schedule": "^6.1.1",
+    "@nestjs/websockets": "^11.1.17",
     "@supabase/supabase-js": "^2.94.1",
     "@types/passport-google-oauth20": "^2.0.17",
     "@vendia/serverless-express": "^4.12.6",
@@ -42,10 +45,12 @@
     "cookie-parser": "^1.4.7",
     "mongoose": "^8.21.0",
     "nodemailer": "^7.0.12",
+    "openai": "^6.33.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "socket.io": "^4.8.3",
     "uuid": "^13.0.0"
   },
   "devDependencies": {

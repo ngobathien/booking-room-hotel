@@ -7,11 +7,14 @@ import { cn } from "../../../lib/utils";
 import RoomSort from "../rooms/RoomSort";
 import { RoomGridView } from "../rooms/view/RoomGridView";
 import { RoomListView } from "../rooms/view/RoomListView";
+import { formatDateDDMMYY } from "../../../utils/formatDateVN";
 
 const RoomLayout = () => {
   const { rooms, loading } = useRoomContext();
   const [searchParams, setSearchParams] = useSearchParams();
-
+  const checkIn = searchParams.get("checkInDate");
+  const checkOut = searchParams.get("checkOutDate");
+  const capacityParam = searchParams.get("capacity") || "2";
   const [viewMode, setViewMode] = React.useState<"grid" | "list">("list");
 
   // Filter UI state (chỉ UI, logic filter xử lý ở context/backend)
@@ -42,6 +45,7 @@ const RoomLayout = () => {
 
     setSearchParams(params);
   };
+
   return (
     <>
       {/* <Outlet /> */}
@@ -57,9 +61,14 @@ const RoomLayout = () => {
               <div>
                 <h2 className="text-lg font-bold">Thông tin lưu trú</h2>
                 <p className="text-sm text-slate-500">
-                  {searchParams.get("checkIn") || "15/10/2023"} -{" "}
-                  {searchParams.get("checkOut") || "17/10/2023"} |{" "}
-                  {searchParams.get("capacity") || "2"} Khách | 1 Phòng
+                  {checkIn && checkOut ? (
+                    <>
+                      {formatDateDDMMYY(checkIn)} - {formatDateDDMMYY(checkOut)}
+                    </>
+                  ) : (
+                    "Chưa chọn ngày"
+                  )}{" "}
+                  | {capacityParam} Khách | 1 Phòng
                 </p>
               </div>
             </div>

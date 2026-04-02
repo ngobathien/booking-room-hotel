@@ -10,10 +10,10 @@ import AddRoomForm from "../../admin/components/rooms/AddRoomForm";
 import EditRoomForm from "../../admin/components/rooms/EditRooForm";
 import BookingDetailPage from "../../admin/pages/bookings/BookingDetailPage";
 import BookingManagement from "../../admin/pages/bookings/BookingManagement";
-import DashboardPage from "../../admin/pages/DashboardPage";
+import DashboardPage from "../../admin/pages/dashboard/DashboardPage";
 import ManageHotelPage from "../../admin/pages/hotel/ManageHotelPage";
 import ManageRoomPage from "../../admin/pages/ManageRoomPage";
-import ManageUsersPage from "../../admin/pages/ManageUsersPage";
+import ManageUsersPage from "../../admin/pages/user/ManageUsersPage";
 import PaymentManagement from "../../admin/pages/payment/PaymentManagement";
 import AdminProfilePage from "../../admin/pages/profile/AdminProfilePage";
 import ReviewManagement from "../../admin/pages/reviews/ReviewManagement";
@@ -24,7 +24,7 @@ import MainLayout from "../../user/components/layouts/MainLayout";
 import RoomLayout from "../../user/components/layouts/RoomLayout";
 import { CheckoutPage } from "../../user/pages/Booking/CheckOutPage";
 import MyBookingsPage from "../../user/pages/Booking/MyBookingsPage";
-import { CartPage } from "../../user/pages/Cart/CartPage";
+
 import HomePage from "../../user/pages/Home/HomePage";
 import { PaymentBookingPage } from "../../user/pages/Payments/PaymentBookingPage";
 import { PaymentResultPage } from "../../user/pages/Payments/PaymentResultPage";
@@ -57,7 +57,6 @@ const AppRoutes = () => (
       {/* <Route path="/rooms" element={<RoomList />} />
 
       <Route path="/rooms/:roomId" element={<RoomDetailPage />} /> */}
-      <Route path="my-carts" element={<CartPage />} />
 
       {/* checkout */}
       <Route path="checkout/:roomId" element={<CheckoutPage />} />

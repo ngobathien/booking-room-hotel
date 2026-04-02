@@ -27,6 +27,31 @@ export class UsersService {
     this.bucketName = process.env.SUPABASE_BUCKET_AVATARS;
   }
 
+  // Thống kê user
+  async getUserStats() {
+    // Lấy tổng số user
+    const total = await this.userModel.countDocuments();
+
+    // Lấy số user theo role
+    const roles = await this.userModel.aggregate([
+      {
+        $group: {
+          _id: '$role', // role field trong schema
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // khởi tạo result với tất cả role mặc định = 0
+    const result: Record<string, number> = { total };
+
+    roles.forEach((r) => {
+      result[r._id] = r.count;
+    });
+
+    return result; // ví dụ: { total: 10, ADMIN: 2, USER: 8 }
+  }
+
   // Upload avatar cho user
   async uploadAvatar(
     userId: string,

@@ -1,5 +1,6 @@
 import React from "react";
 import * as ReactRouterDom from "react-router-dom";
+import { useAuth } from "../../hooks/auth/useAuth";
 
 const { Link, useLocation } = ReactRouterDom;
 
@@ -28,7 +29,7 @@ const NavbarAdmin: React.FC<NavbarProps> = ({
   };
 
   const currentTitle = pageTitles[location.pathname] || "Chi tiết";
-
+  const { user } = useAuth();
   return (
     <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 sm:px-8 py-3 flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -88,12 +89,13 @@ const NavbarAdmin: React.FC<NavbarProps> = ({
             className="flex items-center gap-3 p-1 pr-3 rounded-full hover:bg-slate-100 transition-all border border-transparent hover:border-slate-200"
           >
             <img
-              src="https://i.pravatar.cc/150?u=admin"
+              src={user?.avatar || "https://i.pravatar.cc/150"}
               className="w-8 h-8 rounded-full object-cover border-2 border-primary/20"
-              alt="Admin"
+              alt="User"
             />
-            <span className="hidden sm:block text-xs font-black text-slate-700 dark:text-slate-300">
-              Admin
+
+            <span className="hidden sm:block text-xs font-black text-slate-700">
+              {user?.fullName || "Loading..."}
             </span>
           </Link>
         </div>

@@ -1,11 +1,13 @@
 import { useEffect } from "react";
 
-import { useUserActions } from "../../hooks/user/useUserActions";
-import UserListTable from "../components/users/UserListTable";
+import { useUserActions } from "../../../hooks/user/useUserActions";
+import UserListTable from "../../components/users/UserListTable";
+import UserStats from "../../components/users/UserStats";
+import { useUsers } from "../../../hooks/user/useUser";
 
 const ManageUsersPage = () => {
   const { fetchUsers } = useUserActions();
-  // const { users } = useUsers();
+  const { users } = useUsers();
   // const [editingUserId, setEditingUserId] = useState<string | null>(null);
   // const [editData, setEditData] = useState<Partial<User>>({});
 
@@ -21,20 +23,15 @@ const ManageUsersPage = () => {
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h2 className="text-2xl font-black text-gray-900 tracking-tight">
-                Quản ly người dùng
+                Quản lý người dùng
               </h2>
-              <p className="text-gray-500 text-sm mt-1">
-                Manage and monitor hotel inventory status in real-time.
-              </p>
             </div>
-
-            <button className=" inline-flex items-center gap-2 px-5 h-11 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-sm shadow-sm transition-all">
-              <span className="material-symbols-outlined">add</span>
-              Thêm phòng mới
-            </button>
           </div>
         </header>
         <div className="p-8 max-w-7xl mx-auto w-full">
+          {/* stats */}
+          <UserStats users={users} />
+          {/* list data user */}
           <UserListTable />
         </div>
       </div>

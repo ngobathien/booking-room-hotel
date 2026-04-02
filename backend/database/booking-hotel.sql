@@ -1,0 +1,120 @@
+---- Tạo database
+--CREATE DATABASE HotelBooking;
+--GO
+
+--USE HotelBooking;
+--GO
+
+-- USERS
+CREATE TABLE users (
+  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+  full_name NVARCHAR(255) NOT NULL,
+  email NVARCHAR(255) NOT NULL UNIQUE,
+  phone_number NVARCHAR(20),
+  password NVARCHAR(255),
+  avatar NVARCHAR(MAX),
+  role NVARCHAR(20) NOT NULL DEFAULT 'USER' CHECK (role IN ('USER','ADMIN')),
+  status NVARCHAR(20) NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE','INACTIVE','BLOCKED')),
+  refresh_token NVARCHAR(MAX),
+  is_verified BIT DEFAULT 0,
+  provider NVARCHAR(20) DEFAULT 'local' CHECK (provider IN ('local','google')),
+  created_at DATETIME2 DEFAULT GETDATE(),
+  updated_at DATETIME2 DEFAULT GETDATE()
+);
+
+-- HOTELS
+CREATE TABLE hotels (
+  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+  name NVARCHAR(255) NOT NULL,
+  phone NVARCHAR(20),
+  email NVARCHAR(255),
+  address NVARCHAR(MAX),
+  description NVARCHAR(MAX),
+  policy NVARCHAR(MAX),
+  images NVARCHAR(MAX), -- JSON dạng string
+  created_at DATETIME2 DEFAULT GETDATE(),
+  updated_at DATETIME2 DEFAULT GETDATE()
+);
+
+-- ROOM TYPES
+CREATE TABLE room_types (
+  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+  type_name NVARCHAR(255) NOT NULL UNIQUE,
+  capacity INT NOT NULL CHECK (capacity > 0),
+  price_per_night DECIMAL(10,2) NOT NULL CHECK (price_per_night >= 0),
+  created_at DATETIME2 DEFAULT GETDATE(),
+  updated_at DATETIME2 DEFAULT GETDATE()
+);
+
+-- ROOMS
+CREATE TABLE rooms (
+  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+  room_number NVARCHAR(50) NOT NULL UNIQUE,
+  thumbnail NVARCHAR(MAX),
+  images NVARCHAR(MAX),
+  hotel_id UNIQUEIDENTIFIER NOT NULL,
+  room_type_id UNIQUEIDENTIFIER NOT NULL,
+  status NVARCHAR(20) DEFAULT 'AVAILABLE' CHECK (status IN ('AVAILABLE','BOOKED','MAINTENANCE')),
+  description NVARCHAR(MAX),
+  created_at DATETIME2 DEFAULT GETDATE(),
+  updated_at DATETIME2 DEFAULT GETDATE(),
+
+  CONSTRAINT FK_rooms_hotels FOREIGN KEY (hotel_id) REFERENCES hotels(id),
+  CONSTRAINT FK_rooms_room_types FOREIGN KEY (room_type_id) REFERENCES room_types(id)
+);
+
+-- BOOKINGS
+CREATE TABLE bookings (
+  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+  booking_code NVARCHAR(100) UNIQUE,
+  room_id UNIQUEIDENTIFIER NOT NULL,
+  user_id UNIQUEIDENTIFIER NOT NULL,
+  full_name NVARCHAR(255) NOT NULL,
+  email NVARCHAR(255) NOT NULL,
+  phone_number NVARCHAR(20),
+  special_request NVARCHAR(MAX),
+  check_in_date DATETIME2 NOT NULL,
+  check_out_date DATETIME2 NOT NULL,
+  total_price DECIMAL(10,2) NOT NULL,
+  booking_status NVARCHAR(20) DEFAULT 'PENDING' CHECK (booking_status IN ('PENDING','CONFIRMED','CANCELLED')),
+  stay_status NVARCHAR(30) DEFAULT 'NOT_CHECKED_IN' CHECK (stay_status IN ('NOT_CHECKED_IN','CHECKED_IN','CHECKED_OUT')),
+  confirmed_at DATETIME2,
+  checked_in_at DATETIME2,
+  checked_out_at DATETIME2,
+  created_at DATETIME2 DEFAULT GETDATE(),
+  updated_at DATETIME2 DEFAULT GETDATE(),
+
+  CONSTRAINT FK_bookings_rooms FOREIGN KEY (room_id) REFERENCES rooms(id),
+  CONSTRAINT FK_bookings_users FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- PAYMENTS
+CREATE TABLE payments (
+  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+  booking_id UNIQUEIDENTIFIER NOT NULL,
+  amount DECIMAL(10,2) NOT NULL,
+  method NVARCHAR(20) DEFAULT 'VNPAY' CHECK (method IN ('VNPAY','CASH')),
+  status NVARCHAR(20) DEFAULT 'PENDING' CHECK (status IN ('PENDING','SUCCESS','FAILED')),
+  payment_url NVARCHAR(MAX),
+  transaction_id NVARCHAR(255),
+  expiry_at DATETIME2 NOT NULL,
+  created_at DATETIME2 DEFAULT GETDATE(),
+  updated_at DATETIME2 DEFAULT GETDATE(),
+
+  CONSTRAINT FK_payments_bookings FOREIGN KEY (booking_id) REFERENCES bookings(id)
+);
+
+-- REVIEWS
+CREATE TABLE reviews (
+  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+  user_id UNIQUEIDENTIFIER NOT NULL,
+  room_id UNIQUEIDENTIFIER NOT NULL,
+  rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  comment NVARCHAR(MAX),
+  is_deleted BIT DEFAULT 0,
+  created_at DATETIME2 DEFAULT GETDATE(),
+  updated_at DATETIME2 DEFAULT GETDATE(),
+
+  CONSTRAINT FK_reviews_users FOREIGN KEY (user_id) REFERENCES users(id),
+  CONSTRAINT FK_reviews_rooms FOREIGN KEY (room_id) REFERENCES rooms(id)
+);
