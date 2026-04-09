@@ -1,6 +1,11 @@
 export type UserStatus = "ACTIVE" | "INACTIVE" | "BLOCKED";
 export type UserRole = "USER" | "ADMIN";
 
+export const ROLE_LABEL: Record<UserRole, string> = {
+  USER: "Người dùng",
+  ADMIN: "Quản trị viên",
+};
+
 export interface User {
   _id: string;
   fullName: string;
@@ -22,6 +27,12 @@ export const STATUS_USER_STYLE: Record<UserStatus, string> = {
   ACTIVE: "bg-green-100 text-green-700",
   INACTIVE: "bg-yellow-100 text-yellow-700",
   BLOCKED: "bg-red-100 text-red-700",
+};
+
+export const STATUS_USER_LABEL: Record<UserStatus, string> = {
+  ACTIVE: "Đang hoạt động",
+  INACTIVE: "Không hoạt động",
+  BLOCKED: "Bị chặn",
 };
 
 export type CreateUserPayload = Omit<User, "_id">;

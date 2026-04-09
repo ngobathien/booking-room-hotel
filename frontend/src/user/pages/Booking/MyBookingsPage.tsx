@@ -1,111 +1,197 @@
-import { useEffect } from "react";
-
-import { useBookingAction } from "../../../hooks/booking/useBookingAction";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-
-import { Calendar, ChevronRight, History } from "lucide-react";
+import {
+  Calendar,
+  ChevronRight,
+  History,
+  Eye,
+  XCircle,
+  CheckCircle2,
+  Clock,
+} from "lucide-react";
+import { useBookingAction } from "../../../hooks/booking/useBookingAction";
 import { useBooking } from "../../../hooks/booking/useBooking";
+import {
+  BOOKING_STATUS,
+  BOOKING_STAY_STATUS,
+  type Booking,
+} from "../../../types/booking.types";
 
 const MyBookingsPage = () => {
   const { myBooking, loading } = useBooking();
   const { fetchMyBookings, cancelBookingAction } = useBookingAction();
 
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+
   useEffect(() => {
     fetchMyBookings();
+
+    // realtime nhẹ (polling)
+    const interval = setInterval(() => {
+      fetchMyBookings();
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
-  const mapStatus = (status: string) => {
-    if (status === "pending" || status === "confirmed") return "upcoming";
-    if (status === "completed") return "completed";
-    if (status === "cancelled") return "cancelled";
-    return status;
+  // ===== MAP STATUS CHUẨN (có stayStatus) =====
+  const mapDisplayStatus = (booking: Booking) => {
+    if (booking.bookingStatus === BOOKING_STATUS.CANCELLED) {
+      return "cancelled";
+    }
+
+    if (booking.bookingStatus === BOOKING_STATUS.COMPLETED) {
+      return "completed";
+    }
+
+    if (booking.stayStatus === BOOKING_STAY_STATUS.CHECKED_OUT) {
+      return "checked_out";
+    }
+
+    if (booking.stayStatus === BOOKING_STAY_STATUS.CHECKED_IN) {
+      return "checked_in";
+    }
+
+    if (
+      booking.bookingStatus === BOOKING_STATUS.CONFIRMED &&
+      booking.stayStatus === BOOKING_STAY_STATUS.NOT_CHECKED_IN
+    ) {
+      return "upcoming";
+    }
+
+    return "pending";
   };
 
-  const getStatusLabel = (status: string) => {
+  // ===== UI CONFIG =====
+  const getStatusConfig = (status: string) => {
     switch (status) {
       case "upcoming":
-        return "Sắp tới";
+        return {
+          label: "Sắp tới",
+          className: "bg-blue-50 text-blue-600 border-blue-200",
+          icon: <Clock className="h-4 w-4" />,
+        };
+
+      case "checked_in":
+        return {
+          label: "Đã nhận phòng",
+          className: "bg-indigo-50 text-indigo-600 border-indigo-200",
+          icon: <CheckCircle2 className="h-4 w-4" />,
+        };
+
+      case "checked_out":
+        return {
+          label: "Đã trả phòng",
+          className: "bg-emerald-50 text-emerald-600 border-emerald-200",
+          icon: <CheckCircle2 className="h-4 w-4" />,
+        };
+
       case "completed":
-        return "Đã hoàn thành";
+        return {
+          label: "Hoàn thành",
+          className: "bg-green-50 text-green-600 border-green-200",
+          icon: <CheckCircle2 className="h-4 w-4" />,
+        };
+
       case "cancelled":
-        return "Đã hủy";
+        return {
+          label: "Đã hủy",
+          className: "bg-slate-100 text-slate-500 border-slate-200",
+          icon: <XCircle className="h-4 w-4" />,
+        };
+
       default:
-        return status;
+        return {
+          label: status,
+          className: "bg-gray-100 text-gray-600",
+          icon: null,
+        };
     }
   };
 
-  const getStatusStyles = (status: string) => {
-    switch (status) {
-      case "upcoming":
-        return "bg-blue-100 text-blue-600";
-      case "completed":
-        return "bg-emerald-100 text-emerald-600";
-      case "cancelled":
-        return "bg-slate-100 text-slate-500";
-      default:
-        return "bg-slate-100 text-slate-600";
+  const handleCancel = async (id: string) => {
+    const ok = window.confirm("Bạn có chắc muốn hủy booking này không?");
+    if (!ok) return;
+
+    try {
+      setCancellingId(id);
+      await cancelBookingAction(id);
+      await fetchMyBookings(); // refresh sau khi hủy
+    } finally {
+      setCancellingId(null);
     }
   };
+
+  const bookings = useMemo(() => myBooking ?? [], [myBooking]);
 
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <main className="mx-auto max-w-[1000px] px-6 py-12">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <main className="mx-auto max-w-5xl px-4 py-10">
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-gray-500">
-          <Link to="/" className="text-sm font-medium hover:text-blue-500">
+        <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <Link to="/" className="hover:text-blue-600 font-medium">
             Trang chủ
           </Link>
           <ChevronRight className="h-4 w-4" />
-          <span className="text-sm font-bold text-black">
-            Lịch sử đặt phòng
-          </span>
+          <span className="text-gray-800 font-semibold">Lịch sử đặt phòng</span>
         </div>
 
-        {/* Title */}
-        <div className="mt-8">
-          <h1 className="text-4xl font-extrabold">Lịch sử đặt phòng</h1>
-          <p className="text-gray-500 mt-2">
-            Quản lý các lần đặt phòng của bạn.
-          </p>
+        {/* Header */}
+        <div className="mt-8 flex items-end justify-between">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-black">
+              Lịch sử đặt phòng
+            </h1>
+            <p className="text-gray-500 mt-2">
+              Theo dõi và quản lý các booking của bạn
+            </p>
+          </div>
+
+          <div className="hidden md:flex items-center gap-2 text-gray-400">
+            <History className="h-5 w-5" />
+          </div>
         </div>
 
-        {/* Booking List */}
-        <div className="mt-8 flex flex-col gap-6">
-          {myBooking?.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-2xl bg-white p-20 text-center shadow-sm">
-              <History className="h-16 w-16 text-gray-200" />
-              <p className="mt-6 text-xl font-bold text-gray-400">
-                Không có booking nào
+        {/* List */}
+        <div className="mt-10 space-y-6">
+          {bookings.length === 0 ? (
+            <div className="bg-white rounded-2xl shadow-sm border p-16 text-center">
+              <History className="mx-auto h-14 w-14 text-gray-300" />
+              <h3 className="mt-4 text-xl font-bold text-gray-600">
+                Chưa có booking nào
+              </h3>
+              <p className="text-gray-400 mt-2">
+                Hãy đặt phòng để bắt đầu trải nghiệm
               </p>
-
               <Link
                 to="/rooms"
-                className="mt-4 text-blue-500 font-bold hover:underline"
+                className="inline-block mt-6 px-6 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700"
               >
                 Đặt phòng ngay
               </Link>
             </div>
           ) : (
-            myBooking?.map((booking: any) => {
-              const status = mapStatus(booking.bookingStatus);
+            bookings.map((booking: any) => {
+              const status = mapDisplayStatus(booking);
+              const cfg = getStatusConfig(status);
 
               return (
                 <div
-                  className={`flex flex-col md:flex-row gap-6 rounded-2xl bg-white p-5 shadow-sm border ${
-                    status === "cancelled" && "opacity-70 grayscale"
+                  key={booking._id}
+                  className={`bg-white border rounded-2xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col md:flex-row gap-4 p-4 ${
+                    status === "cancelled" ? "opacity-70 grayscale" : ""
                   }`}
                 >
                   {/* Image */}
-                  {/* Image */}
-                  <div className="w-full md:w-64 aspect-video md:aspect-square rounded-xl overflow-hidden">
+                  <div className="md:w-56 h-40 md:h-auto rounded-xl overflow-hidden">
                     <img
                       src={booking.room?.images?.[0]}
                       alt={booking.room?.name}
@@ -114,17 +200,17 @@ const MyBookingsPage = () => {
                   </div>
 
                   {/* Content */}
-                  <div className="flex flex-1 flex-col justify-between">
-                    <div className="flex flex-col gap-4">
-                      <div className="flex justify-between">
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-start justify-between">
                         <div>
-                          <h3 className="text-xl font-bold">
+                          <h2 className="text-lg font-bold">
                             #{booking.bookingCode}
-                          </h3>
+                          </h2>
 
-                          <div className="flex items-center gap-2 text-gray-500">
+                          <div className="flex items-center gap-2 text-gray-500 text-sm mt-1">
                             <Calendar className="h-4 w-4" />
-                            <p className="text-sm">
+                            <span>
                               {new Date(
                                 booking.checkInDate,
                               ).toLocaleDateString()}{" "}
@@ -132,57 +218,75 @@ const MyBookingsPage = () => {
                               {new Date(
                                 booking.checkOutDate,
                               ).toLocaleDateString()}
-                            </p>
+                            </span>
                           </div>
                         </div>
 
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusStyles(
-                            status,
-                          )}`}
+                          className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${cfg.className}`}
                         >
-                          {getStatusLabel(status)}
+                          {cfg.icon}
+                          {cfg.label}
                         </span>
                       </div>
 
-                      <div>
+                      <div className="mt-4">
                         <p className="text-xs text-gray-400 uppercase">
                           Tổng thanh toán
                         </p>
-
-                        <p className="text-2xl font-black">
+                        <p className="text-xl font-black text-gray-900">
                           {(booking.totalPrice ?? 0).toLocaleString()} VND
                         </p>
                       </div>
                     </div>
 
                     {/* Actions */}
-                    <div className="flex gap-3 mt-6">
+                    <div className="mt-5 flex flex-wrap gap-3">
                       {status === "upcoming" && (
                         <>
-                          <button className="rounded-xl bg-blue-500 px-6 py-2 text-white font-bold hover:bg-blue-600">
+                          <button className="flex items-center gap-2 px-5 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">
+                            <Eye className="h-4 w-4" />
                             Xem chi tiết
                           </button>
 
-                          {booking.bookingStatus === "pending" && (
+                          {booking.bookingStatus === BOOKING_STATUS.PENDING && (
                             <button
-                              onClick={() => cancelBookingAction(booking._id)}
-                              className="rounded-xl border px-6 py-2 font-bold text-gray-600 hover:bg-gray-50"
+                              onClick={() => handleCancel(booking._id)}
+                              disabled={cancellingId === booking._id}
+                              className="flex items-center gap-2 px-5 py-2 rounded-xl border font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50"
                             >
-                              Hủy đặt phòng
+                              <XCircle className="h-4 w-4" />
+                              {cancellingId === booking._id
+                                ? "Đang hủy..."
+                                : "Hủy"}
                             </button>
                           )}
                         </>
                       )}
 
+                      {status === "checked_in" && (
+                        <button className="px-5 py-2 rounded-xl bg-indigo-600 text-white font-semibold">
+                          Đang ở
+                        </button>
+                      )}
+
+                      {status === "checked_out" && (
+                        <button className="px-5 py-2 rounded-xl bg-emerald-600 text-white font-semibold">
+                          Đã trả phòng
+                        </button>
+                      )}
+
                       {status === "completed" && (
-                        <button className="rounded-xl bg-black px-6 py-2 text-white font-bold">
-                          Xem lại đơn
+                        <button className="px-5 py-2 rounded-xl bg-black text-white font-semibold">
+                          Xem lại
                         </button>
                       )}
 
                       {status === "cancelled" && (
-                        <button className="rounded-xl bg-gray-200 px-6 py-2 text-gray-400 font-bold cursor-not-allowed">
+                        <button
+                          disabled
+                          className="px-5 py-2 rounded-xl bg-gray-200 text-gray-400 font-semibold cursor-not-allowed"
+                        >
                           Đã hủy
                         </button>
                       )}
@@ -193,9 +297,6 @@ const MyBookingsPage = () => {
             })
           )}
         </div>
-
-        {/* Load more */}
-        <div className="mt-12 flex justify-center"></div>
       </main>
     </div>
   );

@@ -17,6 +17,7 @@ import {
 import { SupabaseService } from '../config/supabase.config';
 import { BookingsModule } from '../bookings/bookings.module';
 import { Booking, BookingSchema } from '../bookings/schemas/booking.schema';
+import { RoomAmenitiesModule } from 'src/room-amenities/room-amenities.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { Booking, BookingSchema } from '../bookings/schemas/booking.schema';
     UsersModule,
     ConfigModule,
     BookingsModule,
+    RoomAmenitiesModule,
 
     MongooseModule.forFeature([
       { name: Room.name, schema: RoomSchema },

@@ -39,11 +39,8 @@ const ManageRoomTypesPage = () => {
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-black tracking-tight">
-            Danh mục Loại phòng
+            Danh mục loại phòng
           </h1>
-          <p className="text-slate-500">
-            Quản lý cấu hình, giá và tiện ích cho từng hạng phòng khách sạn.
-          </p>
         </div>
 
         {/* view ô hoặc danh sách */}

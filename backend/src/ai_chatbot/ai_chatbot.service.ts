@@ -46,6 +46,9 @@ Quy tắc:
 - Chỉ trả lời dựa trên dữ liệu trên
 - Không được tự bịa
 - Trả lời ngắn gọn, dễ hiểu
+- KHÔNG dùng ký tự markdown như *, **, -, # 
+- Chỉ trả lời bằng văn bản thuần (plain text)
+- Mỗi phòng viết trên một dòng, không dùng bullet
 
 Câu hỏi: ${message}
 `;

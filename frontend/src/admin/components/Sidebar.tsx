@@ -21,6 +21,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { label: "Booking", path: "/dashboard/bookings", icon: "calendar_month" },
     { label: "Người dùng", path: "/dashboard/users", icon: "manage_accounts" },
     { label: "Đánh giá", path: "/dashboard/reviews", icon: "star" },
+    { label: "Tiện ích", path: "/dashboard/amenities", icon: "tungsten" },
     {
       label: "Giao dịch",
       path: "/dashboard/payments",

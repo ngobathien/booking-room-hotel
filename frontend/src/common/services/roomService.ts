@@ -99,16 +99,43 @@ export const updateRoom = async (
 
   Object.entries(data).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
-      formData.append(key, String(value));
+      if (key === "images" && Array.isArray(value)) {
+        // 🔥 QUAN TRỌNG: Gửi từng item trong mảng để NestJS nhận diện được đây là array
+        value.forEach((url) => formData.append("images[]", url));
+      } else {
+        formData.append(key, String(value));
+      }
     }
   });
 
-  files?.forEach((file) => {
-    formData.append("images", file);
-  });
+  // 🔥 Sửa tên field từ "images" thành "files" để khớp với @UploadedFiles() ở Backend
+  if (files && files.length > 0) {
+    files.forEach((file) => {
+      formData.append("files", file);
+    });
+  }
 
-  const response = await api.patch(`/rooms/${roomId}`, formData);
+  const response = await api.patch(`/rooms/${roomId}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
   return response.data;
 };
 export const deleteAllRooms = () => {};
+
+// Lấy chi tiết phòng kèm amenities
+export const getDetailRoomWithAmenitiesById = async (roomId: string) => {
+  try {
+    const response = await api.get(`/rooms/${roomId}/with-amenities`);
+    // server trả về:
+    // {
+    //   _id, roomNumber, roomType, status, images, thumbnail, description, amenities: []
+    // }
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy phòng kèm tiện ích:", error);
+    throw error;
+  }
+};

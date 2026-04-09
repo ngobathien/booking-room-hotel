@@ -42,12 +42,14 @@ export function formatDateVN(dateInput: string | Date): string {
 export const formatDateDDMMYY = (dateStr: string) => {
   if (!dateStr) return "";
 
-  const [year, month, day] = dateStr.split("-");
-  const date = new Date(Number(year), Number(month) - 1, Number(day));
+  const date = new Date(dateStr);
+
+  // check lỗi date
+  if (isNaN(date.getTime())) return "";
 
   const d = String(date.getDate()).padStart(2, "0");
   const m = String(date.getMonth() + 1).padStart(2, "0");
-  const y = String(date.getFullYear()).slice(-2);
+  const y = String(date.getFullYear());
 
   return `${d}/${m}/${y}`;
 };

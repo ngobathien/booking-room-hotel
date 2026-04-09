@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useBookingAction } from "../../../../hooks/booking/useBookingAction";
 import type { Room } from "../../../../types/room.types";
 import { formatDateDDMMYY } from "../../../../utils/formatDateVN";
+import { formatVND } from "../../../../lib/utils";
 
 interface CustomerInfo {
   fullName: string;
@@ -141,13 +142,13 @@ const ConfirmationStep = ({
                     {room.bedType} • {room.view}
                   </div>
                   <div className="text-[10px] text-slate-400 mt-1">
-                    {nights} đêm x{" "}
-                    {room.roomType.pricePerNight.toLocaleString()}đ / đêm
+                    {nights} đêm x {formatVND(room.roomType.pricePerNight)} /
+                    đêm
                   </div>
                 </div>
               </div>
               <div className="text-right font-bold text-primary">
-                {totalPrice.toLocaleString()}đ
+                {formatVND(totalPrice)}
               </div>
             </div>
           </div>

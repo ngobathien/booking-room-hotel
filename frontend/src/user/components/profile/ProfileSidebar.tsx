@@ -36,7 +36,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
             <span className="text-sm">Thông tin cá nhân</span>
           </button>
 
-          <button
+          {/* <button
             onClick={() => setActiveTab("history")}
             className={cn(
               "flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left",
@@ -47,7 +47,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
           >
             <History className="h-5 w-5" />
             <span className="text-sm">Lịch sử đặt phòng</span>
-          </button>
+          </button> */}
 
           <button
             onClick={() => setActiveTab("security")}

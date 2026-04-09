@@ -12,7 +12,7 @@ import BookingDetailPage from "../../admin/pages/bookings/BookingDetailPage";
 import BookingManagement from "../../admin/pages/bookings/BookingManagement";
 import DashboardPage from "../../admin/pages/dashboard/DashboardPage";
 import ManageHotelPage from "../../admin/pages/hotel/ManageHotelPage";
-import ManageRoomPage from "../../admin/pages/ManageRoomPage";
+import ManageRoomPage from "../../admin/pages/room/ManageRoomPage";
 import ManageUsersPage from "../../admin/pages/user/ManageUsersPage";
 import PaymentManagement from "../../admin/pages/payment/PaymentManagement";
 import AdminProfilePage from "../../admin/pages/profile/AdminProfilePage";
@@ -39,6 +39,11 @@ import Register from "../pages/auth/Register";
 import ResetPassword from "../pages/auth/ResetPassword";
 import VerifyOtpEmail from "../pages/auth/VerifyOtpEmail";
 import ProtectedRoute from "../ProtectedRoute";
+import AdminAmenityLayout from "../../admin/components/layouts/AdminAmenityLayout";
+
+import EditAmenityForm from "../../admin/components/amenities/EditAmenityForm";
+import { ManageAmenitiesPage } from "../../admin/pages/amenities/ManageAmenitiesPage";
+import { AddAmenityForm } from "../../admin/components/amenities/AddAmenityForm";
 
 const AppRoutes = () => (
   <Routes>
@@ -104,6 +109,12 @@ const AppRoutes = () => (
           <Route index element={<ManageRoomPage />} />
           <Route path="create" element={<AddRoomForm />} />
           <Route path="edit/:id" element={<EditRoomForm />} />
+        </Route>
+        {/* ================= amenities =============== */}
+        <Route path="amenities" element={<AdminAmenityLayout />}>
+          <Route index element={<ManageAmenitiesPage />} />
+          <Route path="create" element={<AddAmenityForm />} />
+          <Route path="edit/:id" element={<EditAmenityForm />} />
         </Route>
         <Route path="room-types" element={<AdminRoomTypesLayout />}>
           <Route index element={<ManageRoomTypesPage />} />

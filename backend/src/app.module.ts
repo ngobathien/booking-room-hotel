@@ -18,6 +18,9 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { DashboardsModule } from './dashboards/dashboards.module';
 import { AiChatbotModule } from './ai_chatbot/ai_chatbot.module';
 import { ContactsModule } from './contacts/contacts.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { AmenitiesModule } from './amenities/amenities.module';
+import { RoomAmenitiesModule } from './room-amenities/room-amenities.module';
 
 @Module({
   imports: [
@@ -56,6 +59,9 @@ import { ContactsModule } from './contacts/contacts.module';
     DashboardsModule,
     AiChatbotModule,
     ContactsModule,
+    NotificationsModule,
+    AmenitiesModule,
+    RoomAmenitiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

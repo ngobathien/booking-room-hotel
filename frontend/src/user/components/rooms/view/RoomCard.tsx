@@ -6,6 +6,7 @@ import {
   STATUS_ROOM_STYLE,
   type Room,
 } from "../../../../types/room.types";
+import { formatVND } from "../../../../lib/utils";
 
 interface RoomCardProps {
   room: Room;
@@ -67,7 +68,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room }) => {
         {/* Footer */}
         <div className="mt-4 flex justify-between items-center">
           <p className="text-lg font-bold text-blue-600">
-            {room.roomType.pricePerNight.toLocaleString()} ₫ / đêm
+            {formatVND(room.roomType.pricePerNight)} / đêm
           </p>
 
           <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">

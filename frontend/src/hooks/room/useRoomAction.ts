@@ -3,6 +3,7 @@ import {
   createNewRoom,
   deleteRoomById,
   getDetailRoomById,
+  getDetailRoomWithAmenitiesById,
   updateRoom,
 } from "../../common/services/roomService";
 import type { CreateRoomPayload } from "../../types/room.types";
@@ -31,9 +32,9 @@ const useRoomAction = () => {
   ) => {
     try {
       const newRoom = await createNewRoom(data, files);
-      toast.success("Thêm phòng thành công");
 
       setRooms((prev) => [...prev, newRoom]); // add vào list
+      return newRoom;
     } catch (error) {
       console.error("Thêm phòng thất bại", error);
       throw error;
@@ -49,7 +50,7 @@ const useRoomAction = () => {
     try {
       const updatedRoom = await updateRoom(roomId, data, files);
 
-      toast.success("Cập nhật phòng thành công");
+      // toast.success("Cập nhật phòng thành công");
 
       setRooms((prev) =>
         prev.map((room) => (room._id === roomId ? updatedRoom : room)),
@@ -57,7 +58,8 @@ const useRoomAction = () => {
 
       return updatedRoom;
     } catch (error) {
-      toast.error("Cập nhật phòng thất bại");
+      console.error("Cập nhật phòng thất bại", error);
+      // toast.error("Cập nhật phòng thất bại");
       throw error;
     }
   };
@@ -77,6 +79,20 @@ const useRoomAction = () => {
     }
   };
 
+  // Lấy chi tiết một phòng + amenities
+  const getRoomWithAmenitiesById = async (roomId: string) => {
+    try {
+      setLoading(true);
+      const room = await getDetailRoomWithAmenitiesById(roomId); // API trả về room + amenities
+      setCurrentRoom(room);
+      return room;
+    } catch (error) {
+      console.error("Fetch room detail failed", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
   // xóa một phòng
   const handleDeleteRoom = async (id: string) => {
     const confirmDelete = window.confirm(
@@ -96,6 +112,7 @@ const useRoomAction = () => {
   return {
     getRoomById,
     handleCreateNewRoom,
+    getRoomWithAmenitiesById,
     handleUpdateRoom,
     handleDeleteRoom,
   };

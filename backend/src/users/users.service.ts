@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './schemas/user.schema';
+import { User, UserDocument, UserStatus } from './schemas/user.schema';
 import { Model, Types } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -126,6 +126,12 @@ export class UsersService {
       .exec();
   }
 
+  async updateUserStatus(id: string, status: UserStatus) {
+    return this.userModel
+      .findByIdAndUpdate(id, { status }, { new: true })
+      .select('-password')
+      .exec();
+  }
   async removeUser(id: string): Promise<User | null> {
     return this.userModel.findByIdAndDelete(id).exec();
   }

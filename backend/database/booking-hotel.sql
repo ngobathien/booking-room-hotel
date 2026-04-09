@@ -5,116 +5,197 @@
 --USE HotelBooking;
 --GO
 
--- USERS
-CREATE TABLE users (
-  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-  full_name NVARCHAR(255) NOT NULL,
-  email NVARCHAR(255) NOT NULL UNIQUE,
-  phone_number NVARCHAR(20),
-  password NVARCHAR(255),
-  avatar NVARCHAR(MAX),
-  role NVARCHAR(20) NOT NULL DEFAULT 'USER' CHECK (role IN ('USER','ADMIN')),
-  status NVARCHAR(20) NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE','INACTIVE','BLOCKED')),
-  refresh_token NVARCHAR(MAX),
-  is_verified BIT DEFAULT 0,
-  provider NVARCHAR(20) DEFAULT 'local' CHECK (provider IN ('local','google')),
-  created_at DATETIME2 DEFAULT GETDATE(),
-  updated_at DATETIME2 DEFAULT GETDATE()
+-- ==========================================
+-- 1️⃣ USERS
+-- ==========================================
+CREATE TABLE Users (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    FullName NVARCHAR(255) NOT NULL,
+    Email NVARCHAR(255) NOT NULL UNIQUE,
+    PhoneNumber NVARCHAR(50) NULL,
+    Password NVARCHAR(255) NULL,
+    Avatar NVARCHAR(MAX) NULL,
+    Role NVARCHAR(50) NOT NULL DEFAULT 'USER', -- USER, ADMIN
+    Status NVARCHAR(50) NOT NULL DEFAULT 'ACTIVE', -- ACTIVE, INACTIVE, BLOCKED
+    RefreshToken NVARCHAR(MAX) NULL,
+    IsVerified BIT NOT NULL DEFAULT 0,
+    Provider NVARCHAR(50) NOT NULL DEFAULT 'local', -- local, google
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+    UpdatedAt DATETIME2 NOT NULL DEFAULT GETDATE()
 );
 
--- HOTELS
-CREATE TABLE hotels (
-  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-  name NVARCHAR(255) NOT NULL,
-  phone NVARCHAR(20),
-  email NVARCHAR(255),
-  address NVARCHAR(MAX),
-  description NVARCHAR(MAX),
-  policy NVARCHAR(MAX),
-  images NVARCHAR(MAX), -- JSON dạng string
-  created_at DATETIME2 DEFAULT GETDATE(),
-  updated_at DATETIME2 DEFAULT GETDATE()
+-- ==========================================
+-- 2️⃣ HOTELS
+-- ==========================================
+CREATE TABLE Hotels (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    Name NVARCHAR(255) NOT NULL,
+    Phone NVARCHAR(50) NULL,
+    Email NVARCHAR(255) NULL,
+    Address NVARCHAR(500) NULL,
+    Description NVARCHAR(MAX) NULL,
+    Policy NVARCHAR(MAX) NULL,
+    Images NVARCHAR(MAX) NULL, -- JSON array
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+    UpdatedAt DATETIME2 NOT NULL DEFAULT GETDATE()
 );
 
--- ROOM TYPES
-CREATE TABLE room_types (
-  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-  type_name NVARCHAR(255) NOT NULL UNIQUE,
-  capacity INT NOT NULL CHECK (capacity > 0),
-  price_per_night DECIMAL(10,2) NOT NULL CHECK (price_per_night >= 0),
-  created_at DATETIME2 DEFAULT GETDATE(),
-  updated_at DATETIME2 DEFAULT GETDATE()
+-- ==========================================
+-- 3️⃣ ROOM TYPES
+-- ==========================================
+CREATE TABLE RoomTypes (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    TypeName NVARCHAR(255) NOT NULL UNIQUE,
+    Capacity INT NOT NULL CHECK (Capacity > 0),
+    PricePerNight DECIMAL(18,2) NOT NULL CHECK (PricePerNight >= 0),
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+    UpdatedAt DATETIME2 NOT NULL DEFAULT GETDATE()
 );
 
--- ROOMS
-CREATE TABLE rooms (
-  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-  room_number NVARCHAR(50) NOT NULL UNIQUE,
-  thumbnail NVARCHAR(MAX),
-  images NVARCHAR(MAX),
-  hotel_id UNIQUEIDENTIFIER NOT NULL,
-  room_type_id UNIQUEIDENTIFIER NOT NULL,
-  status NVARCHAR(20) DEFAULT 'AVAILABLE' CHECK (status IN ('AVAILABLE','BOOKED','MAINTENANCE')),
-  description NVARCHAR(MAX),
-  created_at DATETIME2 DEFAULT GETDATE(),
-  updated_at DATETIME2 DEFAULT GETDATE(),
+-- ==========================================
+-- 4️⃣ ROOMS
+-- ==========================================
+CREATE TABLE Rooms (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    RoomNumber NVARCHAR(50) NOT NULL UNIQUE,
+    Thumbnail NVARCHAR(MAX) NULL,
+    Images NVARCHAR(MAX) NULL, -- JSON array
+    HotelId UNIQUEIDENTIFIER NOT NULL,
+    RoomTypeId UNIQUEIDENTIFIER NOT NULL,
+    Status NVARCHAR(50) NOT NULL DEFAULT 'AVAILABLE', -- AVAILABLE, OCCUPIED, MAINTENANCE
+    Description NVARCHAR(MAX) NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+    UpdatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
 
-  CONSTRAINT FK_rooms_hotels FOREIGN KEY (hotel_id) REFERENCES hotels(id),
-  CONSTRAINT FK_rooms_room_types FOREIGN KEY (room_type_id) REFERENCES room_types(id)
+    CONSTRAINT FK_Room_Hotel FOREIGN KEY (HotelId) REFERENCES Hotels(Id),
+    CONSTRAINT FK_Room_RoomType FOREIGN KEY (RoomTypeId) REFERENCES RoomTypes(Id)
 );
 
--- BOOKINGS
-CREATE TABLE bookings (
-  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-  booking_code NVARCHAR(100) UNIQUE,
-  room_id UNIQUEIDENTIFIER NOT NULL,
-  user_id UNIQUEIDENTIFIER NOT NULL,
-  full_name NVARCHAR(255) NOT NULL,
-  email NVARCHAR(255) NOT NULL,
-  phone_number NVARCHAR(20),
-  special_request NVARCHAR(MAX),
-  check_in_date DATETIME2 NOT NULL,
-  check_out_date DATETIME2 NOT NULL,
-  total_price DECIMAL(10,2) NOT NULL,
-  booking_status NVARCHAR(20) DEFAULT 'PENDING' CHECK (booking_status IN ('PENDING','CONFIRMED','CANCELLED')),
-  stay_status NVARCHAR(30) DEFAULT 'NOT_CHECKED_IN' CHECK (stay_status IN ('NOT_CHECKED_IN','CHECKED_IN','CHECKED_OUT')),
-  confirmed_at DATETIME2,
-  checked_in_at DATETIME2,
-  checked_out_at DATETIME2,
-  created_at DATETIME2 DEFAULT GETDATE(),
-  updated_at DATETIME2 DEFAULT GETDATE(),
-
-  CONSTRAINT FK_bookings_rooms FOREIGN KEY (room_id) REFERENCES rooms(id),
-  CONSTRAINT FK_bookings_users FOREIGN KEY (user_id) REFERENCES users(id)
+-- ==========================================
+-- 5️⃣ AMENITIES
+-- ==========================================
+CREATE TABLE Amenities (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    Name NVARCHAR(255) NOT NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+    UpdatedAt DATETIME2 NOT NULL DEFAULT GETDATE()
 );
 
--- PAYMENTS
-CREATE TABLE payments (
-  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-  booking_id UNIQUEIDENTIFIER NOT NULL,
-  amount DECIMAL(10,2) NOT NULL,
-  method NVARCHAR(20) DEFAULT 'VNPAY' CHECK (method IN ('VNPAY','CASH')),
-  status NVARCHAR(20) DEFAULT 'PENDING' CHECK (status IN ('PENDING','SUCCESS','FAILED')),
-  payment_url NVARCHAR(MAX),
-  transaction_id NVARCHAR(255),
-  expiry_at DATETIME2 NOT NULL,
-  created_at DATETIME2 DEFAULT GETDATE(),
-  updated_at DATETIME2 DEFAULT GETDATE(),
+-- ==========================================
+-- 6️⃣ ROOM AMENITIES (many-to-many)
+-- ==========================================
+CREATE TABLE RoomAmenities (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    RoomId UNIQUEIDENTIFIER NOT NULL,
+    AmenityId UNIQUEIDENTIFIER NOT NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+    UpdatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
 
-  CONSTRAINT FK_payments_bookings FOREIGN KEY (booking_id) REFERENCES bookings(id)
+    CONSTRAINT FK_RoomAmenities_Room FOREIGN KEY (RoomId) REFERENCES Rooms(Id),
+    CONSTRAINT FK_RoomAmenities_Amenity FOREIGN KEY (AmenityId) REFERENCES Amenities(Id),
+    CONSTRAINT UQ_RoomAmenity UNIQUE(RoomId, AmenityId)
 );
 
--- REVIEWS
-CREATE TABLE reviews (
-  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-  user_id UNIQUEIDENTIFIER NOT NULL,
-  room_id UNIQUEIDENTIFIER NOT NULL,
-  rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
-  comment NVARCHAR(MAX),
-  is_deleted BIT DEFAULT 0,
-  created_at DATETIME2 DEFAULT GETDATE(),
-  updated_at DATETIME2 DEFAULT GETDATE(),
+-- ==========================================
+-- 7️⃣ BOOKINGS
+-- ==========================================
+CREATE TABLE Bookings (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    BookingCode NVARCHAR(50) UNIQUE,
+    RoomId UNIQUEIDENTIFIER NOT NULL,
+    UserId UNIQUEIDENTIFIER NOT NULL,
+    FullName NVARCHAR(255) NOT NULL,
+    Email NVARCHAR(255) NOT NULL,
+    PhoneNumber NVARCHAR(50) NULL,
+    SpecialRequest NVARCHAR(MAX) NULL,
+    CheckInDate DATETIME2 NOT NULL,
+    CheckOutDate DATETIME2 NOT NULL,
+    TotalPrice DECIMAL(18,2) NOT NULL,
+    BookingStatus NVARCHAR(50) NOT NULL DEFAULT 'PENDING', -- PENDING, CONFIRMED, CANCELLED
+    StayStatus NVARCHAR(50) NOT NULL DEFAULT 'NOT_CHECKED_IN', -- NOT_CHECKED_IN, CHECKED_IN, CHECKED_OUT
+    ConfirmedAt DATETIME2 NULL,
+    CheckedInAt DATETIME2 NULL,
+    CheckedOutAt DATETIME2 NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+    UpdatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
 
-  CONSTRAINT FK_reviews_users FOREIGN KEY (user_id) REFERENCES users(id),
-  CONSTRAINT FK_reviews_rooms FOREIGN KEY (room_id) REFERENCES rooms(id)
+    CONSTRAINT FK_Booking_Room FOREIGN KEY (RoomId) REFERENCES Rooms(Id),
+    CONSTRAINT FK_Booking_User FOREIGN KEY (UserId) REFERENCES Users(Id)
+);
+
+-- ==========================================
+-- 8️⃣ PAYMENTS
+-- ==========================================
+CREATE TABLE Payments (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    BookingId UNIQUEIDENTIFIER NOT NULL,
+    Amount DECIMAL(18,2) NOT NULL,
+    Method NVARCHAR(50) NOT NULL DEFAULT 'VNPAY', -- VNPAY, CREDIT_CARD, ...
+    Status NVARCHAR(50) NOT NULL DEFAULT 'PENDING', -- PENDING, SUCCESS, FAILED
+    PaymentUrl NVARCHAR(MAX) NULL,
+    TransactionId NVARCHAR(MAX) NULL,
+    ExpiryAt DATETIME2 NOT NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+    UpdatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+
+    CONSTRAINT FK_Payment_Booking FOREIGN KEY (BookingId) REFERENCES Bookings(Id)
+);
+
+-- ==========================================
+-- 9️⃣ REVIEWS
+-- ==========================================
+CREATE TABLE Reviews (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    UserId UNIQUEIDENTIFIER NOT NULL,
+    RoomId UNIQUEIDENTIFIER NOT NULL,
+    Rating INT NOT NULL CHECK (Rating BETWEEN 1 AND 5),
+    Comment NVARCHAR(1000) NULL,
+    IsDeleted BIT NOT NULL DEFAULT 0,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+    UpdatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+
+    CONSTRAINT FK_Review_User FOREIGN KEY (UserId) REFERENCES Users(Id),
+    CONSTRAINT FK_Review_Room FOREIGN KEY (RoomId) REFERENCES Rooms(Id)
+);
+
+-- ==========================================
+-- 🔟 REFRESH TOKENS
+-- ==========================================
+CREATE TABLE RefreshTokens (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    UserId UNIQUEIDENTIFIER NOT NULL,
+    RefreshToken NVARCHAR(MAX) NOT NULL,
+    ExpiresAt DATETIME2 NOT NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+
+    CONSTRAINT FK_RefreshToken_User FOREIGN KEY (UserId) REFERENCES Users(Id)
+);
+
+-- ==========================================
+-- 11️⃣ RESET TOKENS
+-- ==========================================
+CREATE TABLE ResetTokens (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    UserId UNIQUEIDENTIFIER NOT NULL,
+    ResetPasswordToken NVARCHAR(MAX) NOT NULL,
+    ResetPasswordExpires DATETIME2 NOT NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+
+    CONSTRAINT FK_ResetToken_User FOREIGN KEY (UserId) REFERENCES Users(Id)
+);
+
+-- ==========================================
+-- 12️⃣ OTPS
+-- ==========================================
+CREATE TABLE Otps (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    UserId UNIQUEIDENTIFIER NULL,
+    Email NVARCHAR(255) NOT NULL,
+    FullName NVARCHAR(255) NOT NULL,
+    Otp NVARCHAR(255) NOT NULL,
+    IsUsed BIT NOT NULL DEFAULT 0,
+    ExpiresAt DATETIME2 NOT NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+
+    CONSTRAINT FK_Otp_User FOREIGN KEY (UserId) REFERENCES Users(Id)
 );

@@ -77,6 +77,11 @@ export class RoomsController {
     return this.roomsService.removeRoomById(id);
   }
 
+  @Get(':roomId/with-amenities')
+  async getRoomWithAmenities(@Param('roomId') roomId: string) {
+    return this.roomsService.findRoomWithAmenities(roomId);
+  }
+
   // xóa tất cả phòng
   // @Delete(':id')
   // removeAllRooms(@Param('id') id: string) {

@@ -56,6 +56,10 @@ const RoomListTable: React.FC<RoomTableProps> = ({ rooms, onDelete }) => {
               <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
                 Loại phòng
               </th>
+              {/* Tiện ích */}
+              <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                Tiện ích
+              </th>
 
               {/* status */}
               <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
@@ -100,6 +104,24 @@ const RoomListTable: React.FC<RoomTableProps> = ({ rooms, onDelete }) => {
                   </div>
                 </td>
 
+                {/* amenities */}
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex flex-wrap gap-1">
+                    {room.amenities && room.amenities.length > 0 ? (
+                      room.amenities.map((a) => (
+                        <span
+                          key={a._id}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-xs"
+                        >
+                          {a.name}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-xs text-gray-400">--</span>
+                    )}
+                  </div>
+                </td>
+
                 {/* status */}
                 <td className="px-6 py-4 whitespace-nowrap">
                   {getStatusBadge(room.status)}
@@ -108,9 +130,7 @@ const RoomListTable: React.FC<RoomTableProps> = ({ rooms, onDelete }) => {
                 {/* pricePerNight */}
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className="text-sm font-semibold text-gray-900">
-                    {room.roomType
-                      ? `${room.roomType?.pricePerNight.toLocaleString()} đ`
-                      : "--"}
+                    {room.roomType?.pricePerNight?.toLocaleString() ?? "--"} đ
                   </span>
                 </td>
 

@@ -13,6 +13,7 @@ import { sanitizeFileName } from '../common/utils/sanitizeFileName.utils';
 import { Booking, BookingDocument } from '../bookings/schemas/booking.schema';
 import { SearchRoomDto } from './dto/search-room.dto';
 import { FindRoomsDto } from './dto/find-rooms.dto';
+import { RoomAmenitiesService } from 'src/room-amenities/room-amenities.service';
 
 @Injectable()
 export class RoomsService {
@@ -20,7 +21,7 @@ export class RoomsService {
   constructor(
     @InjectModel(Room.name) private roomModel: Model<RoomDocument>,
     private readonly supabaseService: SupabaseService,
-
+    private readonly roomAmenitiesService: RoomAmenitiesService,
     //
     @InjectModel(Booking.name)
     private bookingModel: Model<BookingDocument>,
@@ -170,6 +171,98 @@ export class RoomsService {
   }
 
   // tìm all dữ liệu phòng
+  // async findAllRooms(query: FindRoomsDto) {
+  //   const {
+  //     keyword,
+  //     status,
+  //     roomType,
+  //     capacity,
+  //     minPrice,
+  //     maxPrice,
+  //     page = 1,
+  //     limit = 10,
+  //     sort,
+  //   } = query;
+
+  //   const filter: Record<string, any> = {};
+
+  //   /* ======================
+  //    1️⃣ SEARCH
+  // ====================== */
+  //   if (keyword) {
+  //     filter.roomNumber = { $regex: keyword, $options: 'i' };
+  //   }
+
+  //   /* ======================
+  //    2️⃣ FILTER
+  // ====================== */
+
+  //   if (status) {
+  //     filter.status = status;
+  //   }
+
+  //   if (roomType) {
+  //     if (!isValidObjectId(roomType)) {
+  //       throw new BadRequestException('Room type id không hợp lệ');
+  //     }
+  //     filter.roomType = roomType;
+  //   }
+
+  //   /* ======================
+  //    3️⃣ QUERY BUILDER
+  // ====================== */
+
+  //   let queryBuilder = this.roomModel.find(filter).populate({
+  //     path: 'roomType',
+  //     match: {
+  //       ...(capacity && { capacity: Number(capacity) }),
+  //       ...(minPrice && { pricePerNight: { $gte: Number(minPrice) } }),
+  //       ...(maxPrice && { pricePerNight: { $lte: Number(maxPrice) } }),
+  //     },
+  //   });
+
+  //   /* ======================
+  //    4️⃣ SORT
+  // ====================== */
+
+  //   if (sort) {
+  //     switch (sort) {
+  //       case 'price_asc':
+  //         queryBuilder = queryBuilder.sort({ 'roomType.pricePerNight': 1 });
+  //         break;
+
+  //       case 'price_desc':
+  //         queryBuilder = queryBuilder.sort({ 'roomType.pricePerNight': -1 });
+  //         break;
+  //     }
+  //   }
+
+  //   /* ======================
+  //    5️⃣ PAGINATION
+  // ====================== */
+
+  //   const skip = (Number(page) - 1) * Number(limit);
+
+  //   queryBuilder = queryBuilder.skip(skip).limit(Number(limit));
+
+  //   const rooms = await queryBuilder.exec();
+
+  //   // Loại những room bị null do match populate
+  //   const filteredRooms = rooms.filter((room) => room.roomType !== null);
+
+  //   const total = await this.roomModel.countDocuments(filter);
+
+  //   return {
+  //     total,
+  //     page: Number(page),
+  //     limit: Number(limit),
+  //     data: filteredRooms,
+  //   };
+  // }
+
+  // ===========================
+  // Tìm tất cả phòng + amenities
+  // ===========================
   async findAllRooms(query: FindRoomsDto) {
     const {
       keyword,
@@ -184,32 +277,13 @@ export class RoomsService {
     } = query;
 
     const filter: Record<string, any> = {};
-
-    /* ======================
-     1️⃣ SEARCH
-  ====================== */
-    if (keyword) {
-      filter.roomNumber = { $regex: keyword, $options: 'i' };
-    }
-
-    /* ======================
-     2️⃣ FILTER
-  ====================== */
-
-    if (status) {
-      filter.status = status;
-    }
-
+    if (keyword) filter.roomNumber = { $regex: keyword, $options: 'i' };
+    if (status) filter.status = status;
     if (roomType) {
-      if (!isValidObjectId(roomType)) {
+      if (!isValidObjectId(roomType))
         throw new BadRequestException('Room type id không hợp lệ');
-      }
       filter.roomType = roomType;
     }
-
-    /* ======================
-     3️⃣ QUERY BUILDER
-  ====================== */
 
     let queryBuilder = this.roomModel.find(filter).populate({
       path: 'roomType',
@@ -220,34 +294,31 @@ export class RoomsService {
       },
     });
 
-    /* ======================
-     4️⃣ SORT
-  ====================== */
-
-    if (sort) {
-      switch (sort) {
-        case 'price_asc':
-          queryBuilder = queryBuilder.sort({ 'roomType.pricePerNight': 1 });
-          break;
-
-        case 'price_desc':
-          queryBuilder = queryBuilder.sort({ 'roomType.pricePerNight': -1 });
-          break;
-      }
-    }
-
-    /* ======================
-     5️⃣ PAGINATION
-  ====================== */
+    if (sort === 'price_asc')
+      queryBuilder = queryBuilder.sort({ 'roomType.pricePerNight': 1 });
+    if (sort === 'price_desc')
+      queryBuilder = queryBuilder.sort({ 'roomType.pricePerNight': -1 });
 
     const skip = (Number(page) - 1) * Number(limit);
-
     queryBuilder = queryBuilder.skip(skip).limit(Number(limit));
 
     const rooms = await queryBuilder.exec();
-
-    // Loại những room bị null do match populate
     const filteredRooms = rooms.filter((room) => room.roomType !== null);
+
+    // 🔹 Sửa ở đây: dùng findByRoomIds
+    const roomIds = filteredRooms.map((room) => room._id.toString());
+    const allRoomAmenities =
+      await this.roomAmenitiesService.findByRoomIds(roomIds);
+
+    const roomsWithAmenities = filteredRooms.map((room) => {
+      const amenities = allRoomAmenities
+        .filter((ra) => ra.roomId.toString() === room._id.toString())
+        .map((ra) => ra.amenityId); // chỉ lấy object amenity
+      return {
+        ...room.toObject(),
+        amenities,
+      };
+    });
 
     const total = await this.roomModel.countDocuments(filter);
 
@@ -255,7 +326,7 @@ export class RoomsService {
       total,
       page: Number(page),
       limit: Number(limit),
-      data: filteredRooms,
+      data: roomsWithAmenities,
     };
   }
 
@@ -383,8 +454,17 @@ export class RoomsService {
     };
   }
 
-  // xóa tất cả phòng được chọn
-  // removeAllRooms(id: number) {
-  //   return this.roomModel.findByIdAndDelete(id);
-  // }
+  // method mới: lấy room kèm amenities
+
+  async findRoomWithAmenities(roomId: string) {
+    const room = await this.roomModel.findById(roomId).populate('roomType');
+
+    // Lấy amenities của phòng
+    const roomAmenities = await this.roomAmenitiesService.findByRoom(roomId);
+
+    return {
+      ...room.toObject(),
+      amenities: roomAmenities.map((ra) => ra.amenityId), // array chỉ gồm các amenity object
+    };
+  }
 }

@@ -147,4 +147,54 @@ export class DashboardsService {
       },
     };
   }
+
+  // dashboards.service.ts
+  async getRevenueChart(from?: string, to?: string) {
+    const fromDate = from ? new Date(from) : new Date();
+    fromDate.setDate(fromDate.getDate() - 14);
+
+    const toDate = to ? new Date(to) : new Date();
+
+    return this.paymentModel.aggregate([
+      {
+        $match: {
+          status: 'SUCCESS',
+          createdAt: { $gte: fromDate, $lte: toDate },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: '%Y-%m-%d', date: '$createdAt' },
+          },
+          revenue: { $sum: '$amount' },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+  }
+
+  async getBookingChart(from?: string, to?: string) {
+    const fromDate = from ? new Date(from) : new Date();
+    fromDate.setDate(fromDate.getDate() - 14);
+
+    const toDate = to ? new Date(to) : new Date();
+
+    return this.bookingModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: fromDate, $lte: toDate },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: '%Y-%m-%d', date: '$createdAt' },
+          },
+          bookings: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+  }
 }

@@ -8,6 +8,7 @@ import { useBookingAction } from "../../../../hooks/booking/useBookingAction";
 import { useAuth } from "../../../../hooks/auth/useAuth";
 import { useBooking } from "../../../../hooks/booking/useBooking";
 import { useRoomContext } from "../../../../hooks/room/useRoom";
+import { formatVND } from "../../../../lib/utils";
 
 interface Props {
   room: Room;
@@ -78,9 +79,8 @@ const RoomBookingCard: React.FC<Props> = ({ room }) => {
             </div>
             <div className="mt-1 flex items-baseline gap-1">
               <span className="text-3xl font-black">
-                {room.roomType.pricePerNight.toLocaleString()}
+                {formatVND(room.roomType.pricePerNight)}
               </span>
-              <span className="text-sm font-bold">VNĐ</span>
             </div>
           </div>
 
@@ -156,16 +156,14 @@ const RoomBookingCard: React.FC<Props> = ({ room }) => {
                       Giá phòng ({nights} đêm)
                     </span>
                     <span className="font-bold">
-                      {(room.roomType.pricePerNight * nights).toLocaleString()}{" "}
-                      VNĐ
+                      {formatVND(room.roomType.pricePerNight * nights)}
                     </span>
                   </div>
 
                   <div className="flex justify-between pt-2 text-xl font-black">
                     <span>Tổng cộng</span>
                     <span className="text-primary">
-                      {(room.roomType.pricePerNight * nights).toLocaleString()}{" "}
-                      VNĐ
+                      {formatVND(room.roomType.pricePerNight * nights)}
                     </span>
                   </div>
                 </div>
