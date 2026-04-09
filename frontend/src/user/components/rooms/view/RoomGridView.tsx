@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import type { Room } from "../../../../types/room.types";
+import { formatVND } from "../../../../lib/utils";
 
 interface RoomGridViewProps {
   rooms: Room[];
@@ -58,7 +59,7 @@ export const RoomGridView: React.FC<RoomGridViewProps> = ({ rooms }) => {
               </div>
 
               <div className="font-black text-primary text-xl mt-1">
-                {room.roomType.pricePerNight.toLocaleString()}đ
+                {formatVND(room.roomType.pricePerNight)}
               </div>
 
               <div className="mt-6 flex gap-3">

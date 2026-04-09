@@ -1,6 +1,5 @@
+import { Edit2, Star, Trash2, User } from "lucide-react";
 import React from "react";
-import { Star, Edit2, Trash2, User } from "lucide-react";
-import { format } from "date-fns";
 import type { Review } from "../../../types/review.types";
 import { formatDateVN } from "../../../utils/formatDateVN";
 

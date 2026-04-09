@@ -185,7 +185,9 @@ export class AuthService {
 
     // tạo để lưu vào db
     await this.otpModel.create({
+      userId: user._id,
       email,
+      fullName: user.fullName,
       otp: hashedOtp,
       expiresAt,
     });
@@ -196,42 +198,118 @@ export class AuthService {
     return { message: 'OTP đã gửi tới email', email: user.email };
   }
 
-  // ============================= verify OTP  =============================
+  // // ============================= verify OTP  =============================
+  // async verifyOtp(verifyOtpDto: VerifyOtpDto) {
+  //   // nhận email và otp từ client
+  //   const { email, otp } = verifyOtpDto;
+
+  //   // tìm và xóa toàn bộ OTP của email đó
+  //   const record = await this.otpModel
+  //     .findOne({ email })
+  //     .sort({ createdAt: -1 });
+
+  //   if (!record) {
+  //     throw new BadRequestException('OTP không hợp lệ hoặc đã hết hạn');
+  //   }
+
+  //   // mã hóa otp từ db
+  //   const isOtpValid = await bcrypt.compare(otp, record.otp);
+
+  //   if (!isOtpValid) {
+  //     throw new BadRequestException('OTP không đúng');
+  //   }
+
+  //   // check OTP hết hạn
+  //   if (record.expiresAt < new Date()) {
+  //     throw new BadRequestException('OTP đã hết hạn');
+  //   }
+
+  //   await this.userModel.updateOne({ email }, { isVerified: true });
+
+  //   await this.otpModel.deleteMany({ email });
+
+  //   return {
+  //     message: 'Xác thực email thành công',
+  //   };
+  // }
+
+  // // ============================= resendOTP =============================
+  // async resendOtp(email: string) {
+  //   const user = await this.usersService.findByEmail(email);
+
+  //   if (!user) {
+  //     throw new NotFoundException('User không tồn tại');
+  //   }
+
+  //   if (user.isVerified) {
+  //     throw new BadRequestException('Email đã được xác thực');
+  //   }
+
+  //   // xoá OTP cũ
+  //   await this.otpModel.deleteMany({ email });
+
+  //   // tạo OTP mới
+  //   const otp = this.generateOtp();
+
+  //   const expiresAt = new Date();
+  //   expiresAt.setMinutes(expiresAt.getMinutes() + 5);
+
+  //   const hashedOtp = await bcrypt.hash(otp, 10);
+
+  //   await this.otpModel.create({
+  //     userId: user._id,
+  //     email,
+  //     otp: hashedOtp,
+  //     expiresAt,
+  //   });
+  //   await this.mailService.sendOtpEmail(email, otp);
+
+  //   return {
+  //     message: 'OTP mới đã được gửi',
+  //   };
+  // }
+
+  // =====================
+  // ============================= verify OTP =============================
   async verifyOtp(verifyOtpDto: VerifyOtpDto) {
-    // nhận email và otp từ client
     const { email, otp } = verifyOtpDto;
 
-    // tìm và xóa toàn bộ OTP của email đó
+    // tìm OTP hợp lệ
     const record = await this.otpModel
-      .findOne({ email })
+      .findOne({
+        email,
+        isUsed: false,
+        expiresAt: { $gt: new Date() },
+      })
       .sort({ createdAt: -1 });
 
     if (!record) {
       throw new BadRequestException('OTP không hợp lệ hoặc đã hết hạn');
     }
 
-    // mã hóa otp từ db
+    // so sánh OTP
     const isOtpValid = await bcrypt.compare(otp, record.otp);
 
     if (!isOtpValid) {
       throw new BadRequestException('OTP không đúng');
     }
 
-    // check OTP hết hạn
-    if (record.expiresAt < new Date()) {
-      throw new BadRequestException('OTP đã hết hạn');
-    }
+    // mark đã dùng
+    record.isUsed = true;
+    await record.save();
 
-    await this.userModel.updateOne({ email }, { isVerified: true });
-
-    await this.otpModel.deleteMany({ email });
+    // verify user (dùng userId chuẩn hơn email)
+    await this.userModel.updateOne(
+      { _id: record.userId },
+      { isVerified: true },
+    );
 
     return {
       message: 'Xác thực email thành công',
     };
   }
 
-  // ============================= resendOTP =============================
+  // ============================= resend OTP =============================
   async resendOtp(email: string) {
     const user = await this.usersService.findByEmail(email);
 
@@ -243,8 +321,11 @@ export class AuthService {
       throw new BadRequestException('Email đã được xác thực');
     }
 
-    // xoá OTP cũ
-    await this.otpModel.deleteMany({ email });
+    // xoá OTP chưa dùng cũ (chuẩn hơn xoá all)
+    await this.otpModel.deleteMany({
+      userId: user._id,
+      isUsed: false,
+    });
 
     // tạo OTP mới
     const otp = this.generateOtp();
@@ -255,11 +336,14 @@ export class AuthService {
     const hashedOtp = await bcrypt.hash(otp, 10);
 
     await this.otpModel.create({
-      email,
+      userId: user._id,
+      email: user.email,
+      fullName: user.fullName, // nếu có field này
       otp: hashedOtp,
       expiresAt,
     });
-    await this.mailService.sendOtpEmail(email, otp);
+
+    await this.mailService.sendOtpEmail(user.email, otp);
 
     return {
       message: 'OTP mới đã được gửi',

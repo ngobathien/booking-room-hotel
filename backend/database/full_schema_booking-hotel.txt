@@ -1,0 +1,414 @@
+// room-amenities/schemas/room-amenity.schema.ts
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Types } from 'mongoose';
+
+// 👇 TYPE DOCUMENT CHUẨN
+export type RoomAmenityDocument = HydratedDocument<RoomAmenity>;
+
+@Schema({ timestamps: true })
+export class RoomAmenity {
+  @Prop({ type: Types.ObjectId, ref: 'Room', required: true })
+  roomId: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, ref: 'Amenity', required: true })
+  amenityId: Types.ObjectId;
+}
+
+export const RoomAmenitySchema = SchemaFactory.createForClass(RoomAmenity);
+
+
+
+// backend/src/auth/schemas/refresh-token.schema.ts
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
+
+@Schema({ versionKey: false, timestamps: true })
+export class ResetToken {
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
+
+  @Prop({ required: true })
+  resetPasswordToken: string; // hash
+
+  @Prop({ required: true })
+  resetPasswordExpires: Date;
+}
+
+export const ResetTokenSchema = SchemaFactory.createForClass(ResetToken);
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
+
+export type OtpDocument = Otp & Document;
+
+@Schema({ timestamps: true })
+export class Otp {
+  @Prop({ type: Types.ObjectId, ref: 'User', required: false })
+  userId?: Types.ObjectId;
+
+  @Prop()
+  email: string;
+
+  @Prop()
+  fullName: string;
+
+  @Prop({ required: true })
+  otp: string; // nên hash
+
+  @Prop({ default: false })
+  isUsed: boolean;
+
+  // OTP hết hạn tự xóa
+  @Prop({ expires: 300 }) // 300 = 300 giây = 5 phút
+  expiresAt: Date;
+}
+
+export const OtpSchema = SchemaFactory.createForClass(Otp);
+
+export const OtpSchema = SchemaFactory.createForClass(Otp);
+// backend/src/auth/schemas/refresh-token.schema.ts
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
+
+@Schema({ timestamps: true })
+export class RefreshToken {
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
+
+  @Prop({ required: true })
+  refreshToken: string; // hash
+
+  @Prop({ required: true })
+  expiresAt: Date;
+}
+
+export const RefreshTokenSchema = SchemaFactory.createForClass(RefreshToken);
+
+
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
+// backend/src/users/schemas/user.schema.ts
+export type UserDocument = HydratedDocument<User>;
+
+// role
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+}
+
+// status
+export enum UserStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  BLOCKED = 'BLOCKED',
+}
+
+export enum AuthProvider {
+  LOCAL = 'local',
+  GOOGLE = 'google',
+}
+@Schema({ timestamps: true })
+export class User {
+  @Prop({ required: true })
+  fullName: string;
+
+  @Prop({ required: true, unique: true, lowercase: true })
+  email: string;
+
+  // @Prop({ required: false, unique: true })
+  @Prop()
+  phoneNumber: string;
+
+  @Prop({
+    required: false,
+  })
+  password?: string;
+
+  @Prop()
+  avatar: string;
+
+  @Prop({
+    type: String,
+    enum: UserRole,
+    default: UserRole.USER,
+    required: true,
+  })
+  role: UserRole;
+
+  @Prop({
+    type: String,
+    enum: UserStatus,
+    default: UserStatus.ACTIVE,
+    required: true,
+  })
+  status: UserStatus;
+
+  @Prop()
+  refreshToken: string;
+
+  @Prop({ default: false })
+  isVerified: boolean;
+
+  @Prop({
+    type: String,
+    enum: AuthProvider,
+    default: AuthProvider.LOCAL,
+  })
+  provider: AuthProvider;
+}
+
+export const UserSchema = SchemaFactory.createForClass(User);
+
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Types } from 'mongoose';
+
+import { RoomStatus } from '../enums/room-status.enum';
+import { RoomType } from '../../room-types/schemas/room-type.schema';
+
+export type RoomDocument = HydratedDocument<Room>;
+
+@Schema({ timestamps: true })
+export class Room {
+  @Prop({ required: true, trim: true, unique: true })
+  roomNumber: string;
+
+  @Prop({ default: null })
+  thumbnail?: string;
+
+  @Prop({ type: [String], default: [] })
+  images: string[];
+
+  // hotel_id  ref sang Hotel schema
+  @Prop({
+    type: Types.ObjectId,
+    // ref: Hotel.name, // ✅ giống RoomType.name
+    required: true,
+  })
+  hotelId: Types.ObjectId;
+  // room_type_id  ref sang RoomType schema tham chiếu đến room_types
+  @Prop({
+    type: Types.ObjectId,
+    ref: RoomType.name,
+    required: true,
+  })
+  roomType: Types.ObjectId;
+
+  @Prop({
+    type: String,
+    enum: RoomStatus,
+    default: RoomStatus.AVAILABLE,
+  })
+  status: RoomStatus;
+
+  @Prop({ default: '' })
+  description?: string;
+}
+
+export const RoomSchema = SchemaFactory.createForClass(Room);
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
+
+export type RoomTypeDocument = HydratedDocument<RoomType>;
+
+@Schema({ timestamps: true })
+export class RoomType {
+  @Prop({ required: true, unique: true, trim: true })
+  typeName: string;
+
+  @Prop({ required: true, min: 1 })
+  capacity: number;
+
+  @Prop({ required: true, min: 0 })
+  // basePrice: number;
+  pricePerNight: number;
+}
+
+export const RoomTypeSchema = SchemaFactory.createForClass(RoomType);
+
+// src/reviews/schemas/review.schema.ts
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Types } from 'mongoose';
+
+export type ReviewDocument = HydratedDocument<Review>;
+
+@Schema({ timestamps: true })
+export class Review {
+  @Prop({
+    type: Types.ObjectId,
+    ref: 'User',
+    required: true,
+  })
+  userId: Types.ObjectId;
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: 'Room',
+    required: true,
+  })
+  roomId: Types.ObjectId;
+
+  @Prop({
+    min: 1,
+    max: 5,
+    required: true,
+  })
+  rating: number;
+
+  @Prop({
+    trim: true,
+    maxlength: 1000,
+  })
+  comment: string;
+
+  @Prop({ default: false })
+  isDeleted: boolean;
+}
+
+export const ReviewSchema = SchemaFactory.createForClass(Review);
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
+import { PaymentMethod } from '../enums/payment-method.enum';
+import { PaymentStatus } from '../enums/payment-status.enum';
+
+export type PaymentDocument = Payment & Document;
+
+@Schema({ timestamps: true })
+export class Payment {
+  @Prop({
+    type: Types.ObjectId,
+    ref: 'Booking',
+    required: true,
+  })
+  booking: Types.ObjectId;
+
+  @Prop({ required: true })
+  amount: number;
+
+  @Prop({
+    enum: PaymentMethod,
+    default: PaymentMethod.VNPAY,
+  })
+  method: string;
+
+  @Prop({
+    enum: PaymentStatus,
+    default: PaymentStatus.PENDING,
+  })
+  status: PaymentStatus;
+
+  @Prop()
+  paymentUrl: string;
+
+  @Prop()
+  transactionId: string;
+
+  // thời điểm mà payment sẽ hết hạn
+  @Prop({ required: true })
+  expiryAt: Date;
+
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export const PaymentSchema = SchemaFactory.createForClass(Payment);
+
+// hotel.schema.ts
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+
+export type HotelDocument = Hotel & Document;
+
+@Schema({ timestamps: true })
+export class Hotel {
+  @Prop({ required: true })
+  name: string;
+
+  @Prop()
+  phone: string;
+
+  @Prop()
+  email: string;
+
+  @Prop()
+  address: string;
+
+  @Prop()
+  description: string;
+
+  @Prop()
+  policy: string;
+
+  @Prop({ type: [String], default: [] })
+  images: string[];
+}
+
+export const HotelSchema = SchemaFactory.createForClass(Hotel);
+
+// bookings/schemas/booking.schema.ts
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
+import { BookingStatus } from '../enums/booking-status.enum';
+import { BookingStayStatus } from '../enums/booking-stay-status.enum';
+
+export type BookingDocument = Booking & Document;
+
+@Schema({ timestamps: true })
+export class Booking {
+  @Prop({ unique: true })
+  bookingCode: string;
+
+  @Prop({ type: Types.ObjectId, ref: 'Room', required: true })
+  room: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  user: Types.ObjectId;
+
+  // snapshot tại thời điểm đặt booking
+  @Prop({ required: true })
+  fullName: string;
+
+  @Prop({ required: true })
+  email: string;
+
+  @Prop({ required: false })
+  phoneNumber: string;
+
+  @Prop()
+  specialRequest?: string;
+
+  @Prop({ required: true })
+  checkInDate: Date;
+
+  @Prop({ required: true })
+  checkOutDate: Date;
+
+  @Prop({ required: true })
+  totalPrice: number;
+
+  @Prop({ enum: BookingStatus, default: BookingStatus.PENDING })
+  bookingStatus: BookingStatus;
+
+  @Prop({ enum: BookingStayStatus, default: BookingStayStatus.NOT_CHECKED_IN })
+  stayStatus: BookingStayStatus;
+
+  // @Prop({ type: String, unique: true, sparse: true, default: null })
+  // idempotencyKey?: string;
+
+  // timeline khi checkin, checkout theo time thực tế
+  @Prop()
+  confirmedAt?: Date;
+
+  @Prop()
+  checkedInAt?: Date;
+
+  @Prop()
+  checkedOutAt?: Date;
+}
+
+export const BookingSchema = SchemaFactory.createForClass(Booking);
+

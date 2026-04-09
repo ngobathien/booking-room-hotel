@@ -20,7 +20,14 @@ export interface PaymentContextType {
   // setPaymentUrl: (value: string) => void;
 }
 
-export type PaymentStatus = "PENDING" | "SUCCESS" | "FAILED" | "sEXPIRED";
+export const STATUS_LABELS: Record<string, string> = {
+  SUCCESS: "Thành công",
+  PENDING: "Đang chờ",
+  FAILED: "Thất bại",
+  EXPIRED: "Hết hạn",
+};
+
+export type PaymentStatus = "PENDING" | "SUCCESS" | "FAILED" | "EXPIRED";
 
 export interface BookingInfo {
   _id: string;

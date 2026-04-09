@@ -2,7 +2,7 @@ import React from "react";
 
 import { useNavigate, useParams } from "react-router";
 import { ArrowLeft, CreditCard, MapPin, ShieldCheck } from "lucide-react";
-import { cn } from "../../../lib/utils";
+import { cn, formatVND } from "../../../lib/utils";
 import { usePaymentAction } from "../../../hooks/payment/usePaymentAction";
 import { toast } from "react-toastify";
 import { useBooking } from "../../../hooks/booking/useBooking";
@@ -90,7 +90,7 @@ export const PaymentBookingPage = () => {
         >
           {isSubmitting
             ? "Đang xử lý..."
-            : `Thanh toán ngay ${currentBooking?.totalPrice.toLocaleString()} VNĐ`}
+            : `Thanh toán ngay ${formatVND(currentBooking?.totalPrice)}`}
           $
         </button>
       </div>

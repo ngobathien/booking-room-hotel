@@ -16,10 +16,11 @@ import {
   Hash,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import type {
-  AdminQueryPaymentParams,
-  Payment,
-  PaymentListResponse,
+import {
+  STATUS_LABELS,
+  type AdminQueryPaymentParams,
+  type Payment,
+  type PaymentListResponse,
 } from "../../../types/payment.types";
 import {
   getPayments,
@@ -147,10 +148,10 @@ const PaymentManagement: React.FC = () => {
             Theo dõi và quản lý các giao dịch tài chính của hệ thống.
           </p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-700 font-semibold hover:bg-slate-50 transition-all shadow-sm active:scale-95">
+        {/* <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-700 font-semibold hover:bg-slate-50 transition-all shadow-sm active:scale-95">
           <Download className="w-4 h-4" />
           <span>Xuất báo cáo CSV</span>
-        </button>
+        </button> */}
       </div>
 
       {/* Stats Grid */}
@@ -319,11 +320,12 @@ const PaymentManagement: React.FC = () => {
                         <span
                           className={cn(
                             "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border",
-                            getStatusStyles(payment.status),
+                            getStatusStyles(payment.status), // ✅ đúng
                           )}
                         >
                           {getStatusIcon(payment.status)}
-                          {payment.status}
+                          {STATUS_LABELS[payment.status] || payment.status}{" "}
+                          {/* ✅ tiếng Việt */}
                         </span>
                       </td>
                       <td className="px-6 py-4">

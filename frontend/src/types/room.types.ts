@@ -45,6 +45,7 @@ export interface Room {
   status: RoomStatusType;
   images: string[];
   description: string;
+  amenities?: { _id: string; name: string }[];
 }
 
 export interface FilterParams {
@@ -81,4 +82,11 @@ export const STATUS_ROOM_STYLE: Record<RoomStatusType, string> = {
   BOOKED: "bg-amber-100 text-amber-700 border border-amber-200",
   OCCUPIED: "bg-blue-100 text-blue-700 border border-blue-200",
   MAINTENANCE: "bg-rose-100 text-rose-700 border border-rose-200",
+};
+
+export const STATUS_ROOM_LABEL: Record<RoomStatusType, string> = {
+  AVAILABLE: "Còn trống",
+  BOOKED: "Đã đặt",
+  OCCUPIED: "Đang sử dụng",
+  MAINTENANCE: "Bảo trì",
 };

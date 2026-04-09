@@ -11,17 +11,10 @@ interface ProfileSidebarProps {
   userRole?: UserRole;
 }
 
-const roleLabelMap: Record<UserRole, string> = {
-  ADMIN: "Quản trị viên",
-  USER: "Thành viên Silver",
-};
-
 const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
   activeTab,
   setActiveTab,
-  userRole = "USER",
 }) => {
-  const isAdmin = userRole === "ADMIN";
   const { logout } = useAuth();
   return (
     <aside className="w-full lg:w-72 flex-shrink-0">
@@ -43,7 +36,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
             <span className="text-sm">Thông tin cá nhân</span>
           </button>
 
-          <button
+          {/* <button
             onClick={() => setActiveTab("history")}
             className={cn(
               "flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left",
@@ -54,7 +47,7 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
           >
             <History className="h-5 w-5" />
             <span className="text-sm">Lịch sử đặt phòng</span>
-          </button>
+          </button> */}
 
           <button
             onClick={() => setActiveTab("security")}
@@ -79,11 +72,6 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
             <span className="text-sm font-bold">Đăng xuất</span>
           </button>
         </nav>
-
-        <button className="w-full flex items-center justify-center gap-2 rounded-xl h-12 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all">
-          <Headset className="h-5 w-5" />
-          <span>Hỗ trợ khách hàng</span>
-        </button>
       </div>
     </aside>
   );

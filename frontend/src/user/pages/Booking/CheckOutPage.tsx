@@ -24,8 +24,10 @@ export const CheckoutPage = () => {
 
   const [searchParams] = useSearchParams();
 
-  const queryCheckIn = searchParams.get("checkIn");
-  const queryCheckOut = searchParams.get("checkOut");
+  const queryCheckIn =
+    searchParams.get("checkIn") || searchParams.get("checkInDate");
+  const queryCheckOut =
+    searchParams.get("checkOut") || searchParams.get("checkOutDate");
 
   const {
     checkInDate,

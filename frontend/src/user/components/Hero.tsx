@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router";
 
 const Hero: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <section className="relative w-full h-[600px] flex items-center justify-center overflow-hidden">
       <div
@@ -18,8 +20,11 @@ const Hero: React.FC = () => {
           thời gian tại điểm đến ven biển hàng đầu của chúng tôi.
         </p>
         <div className="flex justify-center gap-4">
-          <button className="h-12 px-8 rounded-lg bg-primary text-white font-bold text-base hover:bg-blue-700 transition-all transform hover:-translate-y-1 shadow-xl shadow-blue-900/40">
-            Khám Phá Các Phòng Suite
+          <button
+            onClick={() => navigate("/rooms")}
+            className="h-12 px-8 rounded-lg bg-primary text-white font-bold text-base hover:bg-blue-700 transition-all transform hover:-translate-y-1 shadow-xl shadow-blue-900/40"
+          >
+            Khám phá phòng cao cấp
           </button>
         </div>
       </div>

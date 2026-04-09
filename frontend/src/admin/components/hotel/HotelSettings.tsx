@@ -85,13 +85,6 @@ const HotelSettings = () => {
 
         <div className="flex items-center gap-3">
           <button
-            onClick={handleReset}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-all"
-          >
-            <RefreshCcw className="w-4 h-4" />
-            Hoàn tác
-          </button>
-          <button
             onClick={handleSave}
             className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all"
           >
@@ -214,8 +207,7 @@ const HotelSettings = () => {
         </div>
 
         {/* RIGHT */}
-        <div className="space-y-8">
-          {/* Images */}
+        {/* <div className="space-y-8">
           <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm space-y-6">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
               <ImageIcon className="w-5 h-5 text-emerald-600" />
@@ -256,32 +248,7 @@ const HotelSettings = () => {
               </button>
             </div>
           </div>
-
-          {/* Status */}
-          <div className="bg-emerald-600 p-8 rounded-2xl shadow-lg shadow-emerald-100 text-white space-y-6">
-            <h3 className="text-lg font-bold">Trạng thái hiển thị</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-emerald-100">Website công khai</span>
-                <span className="px-2 py-1 bg-emerald-500 rounded text-xs font-bold">
-                  Đang bật
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-emerald-100">Đặt phòng trực tuyến</span>
-                <span className="px-2 py-1 bg-emerald-500 rounded text-xs font-bold">
-                  Đang bật
-                </span>
-              </div>
-              <div className="pt-4 border-t border-emerald-500">
-                <p className="text-xs text-emerald-200 leading-relaxed">
-                  Thông tin này sẽ được hiển thị trên trang chủ và các kênh đặt
-                  phòng trực tuyến.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -10,10 +10,10 @@ import AddRoomForm from "../../admin/components/rooms/AddRoomForm";
 import EditRoomForm from "../../admin/components/rooms/EditRooForm";
 import BookingDetailPage from "../../admin/pages/bookings/BookingDetailPage";
 import BookingManagement from "../../admin/pages/bookings/BookingManagement";
-import DashboardPage from "../../admin/pages/DashboardPage";
+import DashboardPage from "../../admin/pages/dashboard/DashboardPage";
 import ManageHotelPage from "../../admin/pages/hotel/ManageHotelPage";
-import ManageRoomPage from "../../admin/pages/ManageRoomPage";
-import ManageUsersPage from "../../admin/pages/ManageUsersPage";
+import ManageRoomPage from "../../admin/pages/room/ManageRoomPage";
+import ManageUsersPage from "../../admin/pages/user/ManageUsersPage";
 import PaymentManagement from "../../admin/pages/payment/PaymentManagement";
 import AdminProfilePage from "../../admin/pages/profile/AdminProfilePage";
 import ReviewManagement from "../../admin/pages/reviews/ReviewManagement";
@@ -24,7 +24,7 @@ import MainLayout from "../../user/components/layouts/MainLayout";
 import RoomLayout from "../../user/components/layouts/RoomLayout";
 import { CheckoutPage } from "../../user/pages/Booking/CheckOutPage";
 import MyBookingsPage from "../../user/pages/Booking/MyBookingsPage";
-import { CartPage } from "../../user/pages/Cart/CartPage";
+
 import HomePage from "../../user/pages/Home/HomePage";
 import { PaymentBookingPage } from "../../user/pages/Payments/PaymentBookingPage";
 import { PaymentResultPage } from "../../user/pages/Payments/PaymentResultPage";
@@ -39,6 +39,11 @@ import Register from "../pages/auth/Register";
 import ResetPassword from "../pages/auth/ResetPassword";
 import VerifyOtpEmail from "../pages/auth/VerifyOtpEmail";
 import ProtectedRoute from "../ProtectedRoute";
+import AdminAmenityLayout from "../../admin/components/layouts/AdminAmenityLayout";
+
+import EditAmenityForm from "../../admin/components/amenities/EditAmenityForm";
+import { ManageAmenitiesPage } from "../../admin/pages/amenities/ManageAmenitiesPage";
+import { AddAmenityForm } from "../../admin/components/amenities/AddAmenityForm";
 
 const AppRoutes = () => (
   <Routes>
@@ -57,7 +62,6 @@ const AppRoutes = () => (
       {/* <Route path="/rooms" element={<RoomList />} />
 
       <Route path="/rooms/:roomId" element={<RoomDetailPage />} /> */}
-      <Route path="my-carts" element={<CartPage />} />
 
       {/* checkout */}
       <Route path="checkout/:roomId" element={<CheckoutPage />} />
@@ -105,6 +109,12 @@ const AppRoutes = () => (
           <Route index element={<ManageRoomPage />} />
           <Route path="create" element={<AddRoomForm />} />
           <Route path="edit/:id" element={<EditRoomForm />} />
+        </Route>
+        {/* ================= amenities =============== */}
+        <Route path="amenities" element={<AdminAmenityLayout />}>
+          <Route index element={<ManageAmenitiesPage />} />
+          <Route path="create" element={<AddAmenityForm />} />
+          <Route path="edit/:id" element={<EditAmenityForm />} />
         </Route>
         <Route path="room-types" element={<AdminRoomTypesLayout />}>
           <Route index element={<ManageRoomTypesPage />} />

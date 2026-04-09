@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './schemas/user.schema';
+import { User, UserDocument, UserStatus } from './schemas/user.schema';
 import { Model, Types } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -25,6 +25,31 @@ export class UsersService {
     }
 
     this.bucketName = process.env.SUPABASE_BUCKET_AVATARS;
+  }
+
+  // Thống kê user
+  async getUserStats() {
+    // Lấy tổng số user
+    const total = await this.userModel.countDocuments();
+
+    // Lấy số user theo role
+    const roles = await this.userModel.aggregate([
+      {
+        $group: {
+          _id: '$role', // role field trong schema
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // khởi tạo result với tất cả role mặc định = 0
+    const result: Record<string, number> = { total };
+
+    roles.forEach((r) => {
+      result[r._id] = r.count;
+    });
+
+    return result; // ví dụ: { total: 10, ADMIN: 2, USER: 8 }
   }
 
   // Upload avatar cho user
@@ -101,6 +126,12 @@ export class UsersService {
       .exec();
   }
 
+  async updateUserStatus(id: string, status: UserStatus) {
+    return this.userModel
+      .findByIdAndUpdate(id, { status }, { new: true })
+      .select('-password')
+      .exec();
+  }
   async removeUser(id: string): Promise<User | null> {
     return this.userModel.findByIdAndDelete(id).exec();
   }

@@ -4,6 +4,8 @@ import { toast } from "react-toastify";
 import useRoomAction from "../../../hooks/room/useRoomAction";
 import AddUploadImages from "./AddUploadImages";
 import { useRoomTypesAction } from "../../../hooks/roomTypes/useRoomTypesAction";
+import { useAmenitiesAction } from "../../../hooks/amenities/useAmenitiesAction";
+import { useRoomAmenities } from "../../../hooks/roomAmenities/useRoomAmenities";
 
 const { useNavigate } = ReactRouterDom;
 
@@ -13,12 +15,12 @@ interface RoomFormData {
   status: "AVAILABLE" | "OCCUPIED" | "BOOKED" | "MAINTENANCE";
   thumbnail?: string;
   description: string;
+  amenityIds: string[];
 }
 
 const AddRoomForm: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
-
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const [formData, setFormData] = useState<RoomFormData>({
@@ -27,16 +29,22 @@ const AddRoomForm: React.FC = () => {
     status: "AVAILABLE",
     thumbnail: "",
     description: "",
+    amenityIds: [],
   });
+
   const { handleCreateNewRoom } = useRoomAction();
+  const { amenities } = useAmenitiesAction();
+  const { assignAmenities } = useRoomAmenities();
   const { roomTypes } = useRoomTypesAction();
-  //
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (loading) return; // tránh double click
+    if (loading) return;
+
     try {
       setLoading(true);
-      await handleCreateNewRoom(
+
+      const createdRoom = await handleCreateNewRoom(
         {
           roomNumber: formData.roomNumber,
           hotelId: "65b8f300a1d9c8e1a9999999",
@@ -44,166 +52,120 @@ const AddRoomForm: React.FC = () => {
           status: formData.status,
           thumbnail: formData.thumbnail,
           description: formData.description,
-          // images: [],
         },
-        selectedFiles, // 🔥 truyền file vào đây
+        selectedFiles,
       );
 
+      if (formData.amenityIds.length > 0) {
+        await assignAmenities(createdRoom._id, formData.amenityIds);
+      }
+
+      toast.success("Thêm phòng thành công");
       navigate("/dashboard/rooms");
     } catch (error) {
+      console.error(error);
       toast.error("Thêm phòng thất bại");
     } finally {
       setLoading(false);
     }
   };
 
-  // if (loading)
-  //   return (
-  //     <div className="flex flex-col items-center justify-center p-20 gap-4">
-  //       <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-  //       <p className="font-black text-slate-400 animate-pulse uppercase tracking-widest text-xs">
-  //         Đang tải dữ liệu phòng...
-  //       </p>
-  //     </div>
-  //   );
-
   return (
-    <div className="max-w-3xl mx-auto space-y-8 animate-in slide-in-from-bottom-4 duration-500 pb-20">
+    <div className="max-w-6xl mx-auto space-y-8 pb-20">
+      {/* Header */}
       <div className="flex items-center gap-4">
-        {/* nút quay lại */}
         <button
           onClick={() => navigate("/dashboard/rooms")}
-          className="group p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-100 rounded-xl transition-all shadow-sm flex items-center justify-center active:scale-90"
+          className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-blue-600 rounded-xl transition"
         >
-          <span className="material-symbols-outlined transition-transform group-hover:-translate-x-1">
-            arrow_back
-          </span>
+          <span className="material-symbols-outlined">arrow_back</span>
         </button>
 
-        {/*  */}
-        <div className="flex flex-col">
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
-            Thêm Phòng mới
-          </h1>
-          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">
-            Quản lý chi tiết từng đơn vị lưu trú
+        <div>
+          <h1 className="text-3xl font-black text-slate-900">Thêm Phòng mới</h1>
+          <p className="text-slate-400 text-xs uppercase mt-1">
+            Quản lý chi tiết từng phòng
           </p>
         </div>
       </div>
 
-      {/* form tạo phòng mới */}
+      {/* FORM */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-[2.5rem] border border-slate-200 p-8 sm:p-12 shadow-2xl shadow-slate-200/50 space-y-10"
+        className="bg-white rounded-3xl p-10 shadow-xl space-y-10"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
-          {/* Số phòng */}
-          <div className="group">
-            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-blue-600 transition-colors">
-              Số phòng <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              className="w-full px-5 h-14 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-600/20 focus:bg-white focus:ring-4 focus:ring-blue-600/5 transition-all font-bold text-slate-900 placeholder:text-slate-300"
-              placeholder="VD: 405"
-              value={formData.roomNumber}
-              onChange={(e) =>
-                setFormData({ ...formData, roomNumber: e.target.value })
-              }
-              required
-            />
-          </div>
-
-          {/* trạng thái */}
-          <div className="group">
-            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-blue-600 transition-colors">
-              Trạng thái hiện tại
-            </label>
-            <select
-              value={formData.status}
-              onChange={(e) =>
-                setFormData({ ...formData, status: e.target.value as any })
-              }
-            >
-              <option value="AVAILABLE">Sẵn sàng (Trống)</option>
-              <option value="BOOKED">Đã đặt</option>
-              <option value="OCCUPIED">Đang ở</option>
-              <option value="MAINTENANCE">Bảo trì</option>
-            </select>
-          </div>
-
-          {/* Loại phòng */}
-          <div className="md:col-span-2 group">
-            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-blue-600 transition-colors">
-              Loại phòng
-            </label>
-            <select
-              className="w-full px-5 h-14 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-600/20 focus:bg-white focus:ring-4 focus:ring-blue-600/5 transition-all font-bold text-slate-900 appearance-none"
-              value={formData.roomTypeId}
-              onChange={(e) =>
-                setFormData({ ...formData, roomTypeId: e.target.value })
-              }
-            >
-              {/* render dữ liệu của roomTypes */}
-              <option value="">-- Chọn loại phòng --</option>
-              {roomTypes.map((rt) => (
-                <option key={rt._id} value={rt._id}>
-                  {rt.typeName} -{rt.pricePerNight.toLocaleString()}/đêm
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Thumbnail, Ảnh đại diện phòng (URL) */}
-          <div className="md:col-span-2 group">
-            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-primary transition-colors">
-              Ảnh đại diện phòng (URL)
-            </label>
-
-            <div className="flex flex-col sm:flex-row gap-6">
-              <div
-                className={`w-full sm:w-40 h-32 rounded-3xl overflow-hidden border-2 transition-all flex items-center justify-center bg-slate-50 shrink-0 ${formData.thumbnail ? "border-primary/20 shadow-lg" : "border-dashed border-slate-200"}`}
-              >
-                {formData.thumbnail ? (
-                  <img
-                    src={formData.thumbnail}
-                    className="w-full h-full object-cover animate-in fade-in zoom-in-95"
-                    alt="Room preview"
-                  />
-                ) : (
-                  <div className="flex flex-col items-center text-slate-300">
-                    <span className="material-symbols-outlined text-4xl">
-                      bed
-                    </span>
-                    <span className="text-[8px] font-black uppercase mt-1">
-                      Chưa có ảnh
-                    </span>
-                  </div>
-                )}
-              </div>
-              <div className="flex-1 space-y-3">
-                <input
-                  type="text"
-                  className="w-full px-5 h-14 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-primary/20 focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all font-bold text-slate-900 placeholder:text-slate-300 text-xs shadow-inner"
-                  placeholder="https://ik.imagekit.io/..."
-                  value={formData.thumbnail}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      thumbnail: e.target.value as any,
-                    })
-                  }
-                />
-                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider leading-relaxed">
-                  Ảnh này sẽ hiển thị ở trang sơ đồ phòng. Khuyên dùng tỉ lệ
-                  4:3.
-                </p>
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          {/* LEFT */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Room Number */}
+            <div>
+              <label className="label">Số phòng *</label>
+              <input
+                type="text"
+                className="input"
+                placeholder="VD: 405"
+                value={formData.roomNumber}
+                onChange={(e) =>
+                  setFormData({ ...formData, roomNumber: e.target.value })
+                }
+                required
+              />
             </div>
-          </div>
 
-          {/* upload ảnh từ file */}
-          <div className="md:col-span-2">
+            {/* Status */}
+            <div>
+              <label className="label">Trạng thái</label>
+              <select
+                className="input"
+                value={formData.status}
+                onChange={(e) =>
+                  setFormData({ ...formData, status: e.target.value as any })
+                }
+              >
+                <option value="AVAILABLE">Sẵn sàng</option>
+                <option value="BOOKED">Đã đặt</option>
+                <option value="OCCUPIED">Đang ở</option>
+                <option value="MAINTENANCE">Bảo trì</option>
+              </select>
+            </div>
+
+            {/* Room Type */}
+            <div>
+              <label className="label">Loại phòng</label>
+              <select
+                className="input"
+                value={formData.roomTypeId}
+                onChange={(e) =>
+                  setFormData({ ...formData, roomTypeId: e.target.value })
+                }
+              >
+                <option value="">-- Chọn loại phòng --</option>
+                {roomTypes.map((rt) => (
+                  <option key={rt._id} value={rt._id}>
+                    {rt.typeName} - {rt.pricePerNight.toLocaleString()}đ
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Thumbnail */}
+            <div>
+              <label className="label">Ảnh đại diện</label>
+              <input
+                type="text"
+                className="input"
+                placeholder="https://..."
+                value={formData.thumbnail}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    thumbnail: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            {/* Upload Images */}
             <AddUploadImages
               files={selectedFiles}
               setFiles={setSelectedFiles}
@@ -211,63 +173,158 @@ const AddRoomForm: React.FC = () => {
             />
           </div>
 
-          {/* Mô tả */}
-          <div className="md:col-span-2 group">
-            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 group-focus-within:text-primary transition-colors">
-              Mô tả bổ sung
-            </label>
-            <textarea
-              className="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-primary/20 focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all font-bold text-slate-900 placeholder:text-slate-300 text-sm shadow-inner"
-              placeholder="VD: View hướng biển, tầng cao yên tĩnh..."
-              rows={4}
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-            />
+          {/* RIGHT */}
+          <div className="space-y-8">
+            {/* Amenities */}
+            <div>
+              <label className="label">Tiện ích</label>
+
+              <div className="grid grid-cols-2 gap-3">
+                {amenities.map((a) => {
+                  const checked = formData.amenityIds.includes(a._id);
+
+                  return (
+                    <label
+                      key={a._id}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition border
+                        ${
+                          checked
+                            ? "bg-blue-50 border-blue-200"
+                            : "bg-white hover:bg-slate-50 border-slate-200"
+                        }`}
+                    >
+                      <input
+                        type="checkbox"
+                        value={a._id}
+                        checked={checked}
+                        onChange={(e) => {
+                          const id = e.target.value;
+                          setFormData((prev) => {
+                            const current = prev.amenityIds;
+                            if (e.target.checked) {
+                              return {
+                                ...prev,
+                                amenityIds: [...current, id],
+                              };
+                            } else {
+                              return {
+                                ...prev,
+                                amenityIds: current.filter((x) => x !== id),
+                              };
+                            }
+                          });
+                        }}
+                        className="hidden"
+                      />
+
+                      <div
+                        className={`w-5 h-5 rounded-md flex items-center justify-center border
+                          ${
+                            checked
+                              ? "bg-blue-600 border-blue-600 text-white"
+                              : "border-slate-300"
+                          }`}
+                      >
+                        {checked && (
+                          <span className="material-symbols-outlined text-sm">
+                            check
+                          </span>
+                        )}
+                      </div>
+
+                      <span className="text-sm font-semibold text-slate-700">
+                        {a.name}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="label">Mô tả</label>
+              <textarea
+                className="input min-h-[120px]"
+                placeholder="VD: View biển..."
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    description: e.target.value,
+                  })
+                }
+              />
+            </div>
           </div>
         </div>
 
-        {/* nút Hủy bỏ*/}
-        <div className="pt-10 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-4">
+        {/* BUTTONS */}
+        <div className="flex justify-end gap-4 pt-6">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="px-8 h-12 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-all active:scale-95"
+            className="btn-secondary"
           >
-            Hủy bỏ
+            Hủy
           </button>
 
-          {/* nút submit thêm phòng mới  */}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`px-10 h-12 rounded-2xl 
-    ${
-      loading
-        ? "bg-blue-400 cursor-not-allowed"
-        : "bg-blue-600 hover:bg-blue-700"
-    }
-    text-white font-black text-xs uppercase tracking-widest 
-    shadow-xl shadow-blue-600/20 transition-all 
-    active:scale-95 flex items-center justify-center gap-2`}
-          >
-            {loading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Đang thêm...
-              </>
-            ) : (
-              <>
-                <span className="material-symbols-outlined text-lg">
-                  check_circle
-                </span>
-                Thêm phòng vào hệ thống
-              </>
-            )}
+          <button type="submit" disabled={loading} className="btn-primary">
+            {loading ? "Đang thêm..." : "Thêm phòng"}
           </button>
         </div>
       </form>
+
+      {/* Tailwind reusable classes */}
+      <style>
+        {`
+        .label {
+          display: block;
+          font-size: 10px;
+          font-weight: 800;
+          color: #94a3b8;
+          margin-bottom: 6px;
+          text-transform: uppercase;
+        }
+
+        .input {
+          width: 100%;
+          height: 48px;
+          padding: 0 16px;
+          border-radius: 14px;
+          background: #f8fafc;
+          outline: none;
+          transition: 0.2s;
+        }
+
+        .input:focus {
+          background: white;
+          box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+
+        textarea.input {
+          padding: 12px 16px;
+          height: auto;
+        }
+
+        .btn-primary {
+          background: #2563eb;
+          color: white;
+          padding: 0 20px;
+          height: 44px;
+          border-radius: 12px;
+          font-weight: 700;
+        }
+
+        .btn-secondary {
+          background: #f1f5f9;
+          padding: 0 20px;
+          height: 44px;
+          border-radius: 12px;
+          font-weight: 700;
+        }
+        `}
+      </style>
     </div>
   );
 };

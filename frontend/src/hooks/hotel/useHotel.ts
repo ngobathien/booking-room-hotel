@@ -4,37 +4,41 @@ import type {
   Hotel,
   UpdateHotelDto,
 } from "../../types/hotel.types";
-import { hotelService } from "../../common/services/hotelService";
+import {
+  createHotel as createHotelApi,
+  updateHotel as updateHotelApi,
+  deleteHotel as deleteHotelApi,
+  getHotelInfo,
+} from "../../common/services/hotelService";
 
 export const useHotel = () => {
   const [hotel, setHotel] = useState<Hotel | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // GET FIRST HOTEL (vì thường chỉ có 1 hotel)
   const fetchHotel = async () => {
     try {
       setLoading(true);
-      const data = await hotelService.getAll();
-      setHotel(data[0]); // thường hệ thống chỉ 1 hotel
+      const data = await getHotelInfo();
+      setHotel(data);
     } finally {
       setLoading(false);
     }
   };
 
   const createHotel = async (payload: CreateHotelDto) => {
-    const data = await hotelService.create(payload);
+    const data = await createHotelApi(payload);
     setHotel(data);
     return data;
   };
 
   const updateHotel = async (id: string, payload: UpdateHotelDto) => {
-    const data = await hotelService.update(id, payload);
+    const data = await updateHotelApi(id, payload);
     setHotel(data);
     return data;
   };
 
   const deleteHotel = async (id: string) => {
-    await hotelService.delete(id);
+    await deleteHotelApi(id);
     setHotel(null);
   };
 

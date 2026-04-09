@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { useRoomContext } from "../../hooks/room/useRoom";
-import useRoomAction from "../../hooks/room/useRoomAction";
-import RoomGrid from "../components/rooms/RoomGrid";
-import RoomListTable from "../components/rooms/RoomListTable";
+import { useRoomContext } from "../../../hooks/room/useRoom";
+import useRoomAction from "../../../hooks/room/useRoomAction";
+import RoomGrid from "../../components/rooms/RoomGrid";
+import RoomListTable from "../../components/rooms/RoomListTable";
 
 const ManageRoomPage = () => {
   const navigate = useNavigate();
@@ -20,11 +20,8 @@ const ManageRoomPage = () => {
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-black tracking-tight text-slate-900">
-            Sơ đồ & Danh sách phòng
+            Quản lý phòng
           </h1>
-          <p className="text-slate-500">
-            Giám sát và vận hành hệ thống phòng theo thời gian thực.
-          </p>
         </div>
         <div className="flex gap-4">
           <div className="flex p-1 bg-slate-100 rounded-xl border border-slate-200">

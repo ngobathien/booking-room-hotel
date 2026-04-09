@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/auth/useAuth";
+import { useHotel } from "../../hooks/hotel/useHotel";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -9,8 +10,9 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
+  const { hotel, loading } = useHotel();
 
   const navItems = [
     { label: "Tổng quan", path: "/dashboard", icon: "dashboard" },
@@ -19,6 +21,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { label: "Booking", path: "/dashboard/bookings", icon: "calendar_month" },
     { label: "Người dùng", path: "/dashboard/users", icon: "manage_accounts" },
     { label: "Đánh giá", path: "/dashboard/reviews", icon: "star" },
+    { label: "Tiện ích", path: "/dashboard/amenities", icon: "tungsten" },
     {
       label: "Giao dịch",
       path: "/dashboard/payments",
@@ -61,12 +64,19 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               apartment
             </span>
           </div>
-          <div className="flex flex-col">
-            <h1 className="text-slate-900 text-base font-black leading-tight">
-              HotelAdmin
-            </h1>
-            <p className="text-primary text-[10px] font-bold uppercase tracking-widest">
-              Pro System
+
+          {/*  */}
+          <div className="flex flex-col gap-1 mb-2">
+            <p className="text-[10px] text-slate-400 font-bold uppercase">
+              Khách sạn
+            </p>
+
+            <p className="text-slate-900 text-base font-black leading-tight truncate">
+              {hotel?.name || "Loading..."}
+            </p>
+
+            <p className="text-primary text-[10px] font-bold  tracking-widest truncate">
+              {hotel?.email || hotel?.phone || ""}
             </p>
           </div>
         </div>
@@ -107,15 +117,16 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               <div
                 className="w-10 h-10 rounded-full bg-cover bg-center border-2 border-white shadow-sm shrink-0"
                 style={{
-                  backgroundImage: "url('https://i.pravatar.cc/150?u=admin')",
+                  backgroundImage: `url(${user?.avatar || "https://i.pravatar.cc/150"})`,
                 }}
               ></div>
+
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-black text-slate-900 truncate">
-                  Admin Manager
+                  {user?.fullName || "Loading..."}
                 </p>
                 <p className="text-[10px] text-slate-500 font-bold uppercase">
-                  Super User
+                  {user?.role || "User"}
                 </p>
               </div>
             </div>

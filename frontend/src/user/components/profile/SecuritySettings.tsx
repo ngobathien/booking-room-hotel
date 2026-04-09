@@ -66,7 +66,7 @@ const SecuritySettings = () => {
         ))}
       </div>
 
-      <div className="flex justify-end mt-4">
+      <div className="px-8 pb-6 border-t border-slate-100 flex justify-end">
         <button
           onClick={handleSubmit}
           disabled={loading}

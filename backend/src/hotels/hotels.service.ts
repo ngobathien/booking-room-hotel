@@ -17,6 +17,15 @@ export class HotelsService {
     return this.hotelModel.find().sort({ createdAt: -1 });
   }
 
+  async getHotelInfo() {
+    const hotel = await this.hotelModel.findOne();
+
+    if (!hotel) {
+      throw new NotFoundException('Hotel not found');
+    }
+
+    return hotel;
+  }
   async findOne(id: string) {
     const hotel = await this.hotelModel.findById(id);
     if (!hotel) throw new NotFoundException('Không tìm thấy hotel');

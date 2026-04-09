@@ -5,6 +5,7 @@ import { CheckCircle2, ArrowRight, Home, User, Download } from "lucide-react";
 
 import { getBookingById } from "../../../common/services/bookingService";
 import { useBooking } from "../../../hooks/booking/useBooking";
+import { formatVND } from "../../../lib/utils";
 
 export const PaymentResultPage = () => {
   const [searchParams] = useSearchParams();
@@ -107,7 +108,7 @@ export const PaymentResultPage = () => {
                     </label>
 
                     <div className="text-lg font-black text-slate-900">
-                      {currentBooking.totalPrice.toLocaleString()} VNĐ
+                      {formatVND(currentBooking.totalPrice)}
                     </div>
                   </div>
                 </div>

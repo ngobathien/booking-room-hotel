@@ -3,6 +3,7 @@ import {
   getAllUsers,
   updateUser,
   deleteUser,
+  changeUserStatus,
 } from "../../common/services/userService";
 import { useUsers } from "./useUser";
 
@@ -47,9 +48,25 @@ export const useUserActions = () => {
     }
   };
 
+  const handleChangeStatus = async (id: string, status: string) => {
+    try {
+      const updated = await changeUserStatus(id, status);
+
+      setUsers((prev) => prev.map((u) => (u._id === id ? updated : u)));
+
+      if (currentUser?._id === id) {
+        setCurrentUser(updated);
+      }
+
+      toast.success("Cập nhật trạng thái thành công");
+    } catch {
+      toast.error("Cập nhật trạng thái thất bại");
+    }
+  };
   return {
     fetchUsers,
     handleUpdateUser,
     handleDeleteUser,
+    handleChangeStatus,
   };
 };

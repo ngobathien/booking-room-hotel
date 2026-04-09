@@ -20,6 +20,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateUserStatusDto } from './dto/update-user-status.dto';
 
 @Controller('users')
 export class UsersController {
@@ -33,6 +34,14 @@ export class UsersController {
   ) {
     const avatarUrl = await this.usersService.uploadAvatar(id, file);
     return { success: true, avatarUrl };
+  }
+
+  // API thống kê
+  @Get('stats')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN) // chỉ admin mới xem được
+  async getStats() {
+    return this.usersService.getUserStats();
   }
 
   // tạo user mới
@@ -52,6 +61,16 @@ export class UsersController {
   @Get(':id')
   getUserById(@Param('id') id: string) {
     return this.usersService.findByIdPublic(id);
+  }
+
+  @Patch(':id/status')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async changeUserStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdateUserStatusDto,
+  ) {
+    return this.usersService.updateUserStatus(id, dto.status);
   }
 
   @Patch(':id')

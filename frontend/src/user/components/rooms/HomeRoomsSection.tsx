@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getAllRooms } from "../../../common/services/roomService";
 import RoomCard from "./view/RoomCard";
 import type { Room } from "../../../types/room.types";
+import { Link } from "react-router";
 
 interface HomeRoomsSectionProps {
   limit: number;
@@ -55,9 +56,9 @@ const HomeRoomsSection: React.FC<HomeRoomsSectionProps> = ({ limit }) => {
           </p>
         </div>
 
-        <a className="text-primary font-bold hover:underline" href="#">
+        <Link to="/rooms" className="text-primary font-bold hover:underline">
           Xem tất cả phòng →
-        </a>
+        </Link>
       </div>
 
       {/* Grid */}

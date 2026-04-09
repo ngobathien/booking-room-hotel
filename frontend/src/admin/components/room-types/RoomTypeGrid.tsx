@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import type { RoomType } from "../../../types/room-types.types";
+import { formatVND } from "../../../lib/utils";
 
 interface Props {
   roomTypes: RoomType[];
@@ -45,7 +46,7 @@ const RoomTypeGrid: React.FC<Props> = ({ roomTypes }) => {
                 Giá từ
               </p>
               <p className="text-xl font-black text-primary leading-none">
-                {type.pricePerNight} ₫
+                {formatVND(type.pricePerNight)}
               </p>
             </div>
             <button

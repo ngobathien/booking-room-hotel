@@ -5,6 +5,8 @@ import { useBookingAction } from "../../../hooks/booking/useBookingAction";
 import BookingTable from "../../components/bookings/BookingTable";
 import BookingStats from "../../components/bookings/BookingStats";
 import { BOOKING_STATUS } from "../../../types/booking.types";
+import { CheckCircle, Clock, List, Star, XCircle } from "lucide-react";
+import { StatCard } from "../../components/commons/StatCard";
 
 export default function BookingManagement() {
   const { bookings, stats, loading } = useBooking();
@@ -34,6 +36,7 @@ export default function BookingManagement() {
     : [];
 
   if (loading) return <p>Loading bookings...</p>;
+  // console.log(stats);
 
   return (
     <div className="space-y-6 p-4">
@@ -48,8 +51,44 @@ export default function BookingManagement() {
       </div>
 
       {/* Stats */}
-      <BookingStats stats={stats} />
+      {/* <BookingStats stats={stats} /> */}
 
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        {stats && (
+          <>
+            <StatCard
+              label="Tổng đơn"
+              value={stats.total}
+              color="slate"
+              icon={List}
+            />
+            <StatCard
+              label="Đã xác nhận"
+              value={stats.confirmed}
+              color="blue"
+              icon={CheckCircle}
+            />
+            <StatCard
+              label="Đang chờ"
+              value={stats.pending}
+              color="amber"
+              icon={Clock}
+            />
+            <StatCard
+              label="Đã hủy"
+              value={stats.cancelled}
+              color="rose"
+              icon={XCircle}
+            />
+            <StatCard
+              label="Hoàn thành"
+              value={stats.completed}
+              color="emerald"
+              icon={Star}
+            />
+          </>
+        )}
+      </div>
       {/* Controls */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         {/* Search */}

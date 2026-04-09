@@ -38,3 +38,10 @@ export const deleteUser = async (userId: string) => {
   const response = await api.delete(`/users/${userId}`);
   return response.data;
 };
+
+export const changeUserStatus = async (id: string, status: string) => {
+  const response = await api.patch(`/users/${id}/status`, {
+    status,
+  });
+  return response.data;
+};

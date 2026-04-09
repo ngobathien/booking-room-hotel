@@ -19,7 +19,7 @@ export type BookingStatus =
 export const BOOKING_STAY_STATUS = {
   NOT_CHECKED_IN: "NOT_CHECKED_IN",
   CHECKED_IN: "CHECKED_IN",
-  CHECKED_OUT: "CHECKED_OUT-out",
+  CHECKED_OUT: "CHECKED_OUT",
 } as const;
 
 export type BookingStayStatus =

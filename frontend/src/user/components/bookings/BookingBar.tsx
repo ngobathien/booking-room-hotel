@@ -1,24 +1,31 @@
 import React, { useState } from "react";
-
 import { useNavigate } from "react-router";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 import { useBooking } from "../../../hooks/booking/useBooking";
 
 const BookingBar: React.FC = () => {
   const { available, loading } = useBooking();
   const navigate = useNavigate();
 
-  const today = new Date().toISOString().split("T")[0];
-
+  // STATE dùng Date (chuẩn)
   const [searchParams, setSearchParams] = useState({
-    checkIn: "",
-    checkOut: "",
+    checkIn: null as Date | null,
+    checkOut: null as Date | null,
     guests: "",
   });
 
+  // format Date → yyyy-MM-dd (gửi API)
+  const formatISO = (date: Date | null) => {
+    if (!date) return "";
+    return date.toISOString().split("T")[0];
+  };
+
   const handleSearch = () => {
     const params = new URLSearchParams({
-      checkInDate: searchParams.checkIn,
-      checkOutDate: searchParams.checkOut,
+      checkInDate: formatISO(searchParams.checkIn),
+      checkOutDate: formatISO(searchParams.checkOut),
       guests: searchParams.guests.toString(),
     });
 
@@ -28,9 +35,9 @@ const BookingBar: React.FC = () => {
   return (
     <div className="relative z-20 -mt-16 max-w-[1000px] mx-auto px-4">
       <div className="bg-white rounded-xl shadow-2xl p-6 md:p-8 flex flex-col md:flex-row gap-6 items-end border border-gray-100">
-        {/* Check-In */}
+        {/* CHECK-IN */}
         <div className="flex-1 w-full space-y-2">
-          <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">
+          <label className="block text-xs font-bold uppercase text-gray-400">
             Nhận phòng
           </label>
 
@@ -39,26 +46,25 @@ const BookingBar: React.FC = () => {
               calendar_today
             </span>
 
-            <input
-              value={searchParams.checkIn}
-              min={today}
-              className="w-full pl-10 pr-4 py-3 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-primary outline-none transition-all"
-              placeholder="Chọn ngày"
-              type="text"
-              onFocus={(e) => (e.target.type = "date")}
-              onBlur={(e) =>
-                (e.target.type = searchParams.checkIn ? "date" : "text")
+            <DatePicker
+              selected={searchParams.checkIn}
+              onChange={(date: Date | null) =>
+                setSearchParams({ ...searchParams, checkIn: date })
               }
-              onChange={(e) =>
-                setSearchParams({ ...searchParams, checkIn: e.target.value })
-              }
+              selectsStart
+              startDate={searchParams.checkIn}
+              endDate={searchParams.checkOut}
+              minDate={new Date()}
+              dateFormat="dd/MM/yy"
+              placeholderText="Chọn ngày"
+              className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-lg focus:ring-2 focus:ring-primary outline-none"
             />
           </div>
         </div>
 
-        {/* Check-Out */}
+        {/* CHECK-OUT */}
         <div className="flex-1 w-full space-y-2">
-          <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">
+          <label className="block text-xs font-bold uppercase text-gray-400">
             Trả phòng
           </label>
 
@@ -67,26 +73,25 @@ const BookingBar: React.FC = () => {
               calendar_month
             </span>
 
-            <input
-              value={searchParams.checkOut}
-              min={searchParams.checkIn || today}
-              className="w-full pl-10 pr-4 py-3 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-primary outline-none transition-all"
-              placeholder="Chọn ngày"
-              type="text"
-              onFocus={(e) => (e.target.type = "date")}
-              onBlur={(e) =>
-                (e.target.type = searchParams.checkOut ? "date" : "text")
+            <DatePicker
+              selected={searchParams.checkOut}
+              onChange={(date: Date | null) =>
+                setSearchParams({ ...searchParams, checkOut: date })
               }
-              onChange={(e) =>
-                setSearchParams({ ...searchParams, checkOut: e.target.value })
-              }
+              selectsEnd
+              startDate={searchParams.checkIn}
+              endDate={searchParams.checkOut}
+              minDate={searchParams.checkIn || new Date()}
+              dateFormat="dd/MM/yy"
+              placeholderText="Chọn ngày"
+              className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-lg focus:ring-2 focus:ring-primary outline-none"
             />
           </div>
         </div>
 
-        {/* Guests */}
+        {/* GUESTS */}
         <div className="flex-1 w-full space-y-2">
-          <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">
+          <label className="block text-xs font-bold uppercase text-gray-400">
             Số khách
           </label>
 
@@ -97,6 +102,7 @@ const BookingBar: React.FC = () => {
 
             <input
               type="number"
+              min={1}
               value={searchParams.guests}
               onChange={(e) =>
                 setSearchParams({
@@ -104,25 +110,24 @@ const BookingBar: React.FC = () => {
                   guests: e.target.value,
                 })
               }
-              className="w-full pl-10 pr-4 py-3 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-primary outline-none transition-all"
+              className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-lg focus:ring-2 focus:ring-primary outline-none"
+              placeholder="Nhập số khách"
             />
           </div>
         </div>
 
-        {/* Button */}
+        {/* BUTTON */}
         <button
           onClick={handleSearch}
           disabled={loading}
-          className="w-full md:w-auto h-12 px-8 bg-primary text-white font-bold rounded-lg hover:bg-blue-700 transition-all flex items-center justify-center gap-2 group shadow-lg shadow-blue-600/20 active:scale-95 disabled:opacity-60"
+          className="w-full md:w-auto h-12 px-8 bg-primary text-white font-bold rounded-lg hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 disabled:opacity-60"
         >
-          <span className="material-symbols-outlined group-hover:rotate-12 transition-transform">
-            search
-          </span>
+          <span className="material-symbols-outlined">search</span>
           {loading ? "Đang kiểm tra..." : "Tìm phòng"}
         </button>
       </div>
 
-      {/* Availability Result */}
+      {/* RESULT */}
       {available !== null && (
         <div className="mt-4 text-center">
           {available ? (

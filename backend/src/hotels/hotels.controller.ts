@@ -20,6 +20,10 @@ export class HotelsController {
   findAll() {
     return this.hotelsService.findAll();
   }
+  @Get('info')
+  getHotelInfo() {
+    return this.hotelsService.getHotelInfo();
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
