@@ -23,15 +23,18 @@ const MyBookingsPage = () => {
 
   const [cancellingId, setCancellingId] = useState<string | null>(null);
 
+  // useEffect(() => {
+  //   fetchMyBookings();
+
+  //   // realtime nhẹ (polling)
+  //   const interval = setInterval(() => {
+  //     fetchMyBookings();
+  //   }, 10000);
+
+  //   return () => clearInterval(interval);
+  // }, []);
   useEffect(() => {
     fetchMyBookings();
-
-    // realtime nhẹ (polling)
-    const interval = setInterval(() => {
-      fetchMyBookings();
-    }, 10000);
-
-    return () => clearInterval(interval);
   }, []);
 
   // ===== MAP STATUS CHUẨN (có stayStatus) =====
@@ -60,6 +63,14 @@ const MyBookingsPage = () => {
     }
 
     return "pending";
+  };
+
+  const canCancelBooking = (booking: Booking) => {
+    return (
+      booking.bookingStatus !== BOOKING_STATUS.CANCELLED &&
+      booking.bookingStatus !== BOOKING_STATUS.COMPLETED &&
+      booking.stayStatus !== BOOKING_STAY_STATUS.CHECKED_IN
+    );
   };
 
   // ===== UI CONFIG =====
@@ -186,7 +197,7 @@ const MyBookingsPage = () => {
               return (
                 <div
                   key={booking._id}
-                  className={`bg-white border rounded-2xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col md:flex-row gap-4 p-4 ${
+                  className={`bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 hover:shadow-md hover:-translate-y-0.5 transition overflow-hidden flex flex-col md:flex-row gap-4 p-4 ${
                     status === "cancelled" ? "opacity-70 grayscale" : ""
                   }`}
                 >
@@ -242,26 +253,22 @@ const MyBookingsPage = () => {
 
                     {/* Actions */}
                     <div className="mt-5 flex flex-wrap gap-3">
-                      {status === "upcoming" && (
-                        <>
-                          <button className="flex items-center gap-2 px-5 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">
-                            <Eye className="h-4 w-4" />
-                            Xem chi tiết
-                          </button>
+                      {/* LUÔN HIỂN THỊ */}
+                      <button className="flex items-center gap-2 px-5 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">
+                        <Eye className="h-4 w-4" />
+                        Xem chi tiết
+                      </button>
 
-                          {booking.bookingStatus === BOOKING_STATUS.PENDING && (
-                            <button
-                              onClick={() => handleCancel(booking._id)}
-                              disabled={cancellingId === booking._id}
-                              className="flex items-center gap-2 px-5 py-2 rounded-xl border font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50"
-                            >
-                              <XCircle className="h-4 w-4" />
-                              {cancellingId === booking._id
-                                ? "Đang hủy..."
-                                : "Hủy"}
-                            </button>
-                          )}
-                        </>
+                      {/* CHỈ HIỆN KHI ĐƯỢC HỦY */}
+                      {canCancelBooking(booking) && (
+                        <button
+                          onClick={() => handleCancel(booking._id)}
+                          disabled={cancellingId === booking._id}
+                          className="flex items-center gap-2 px-5 py-2 rounded-xl border font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                        >
+                          <XCircle className="h-4 w-4" />
+                          {cancellingId === booking._id ? "Đang hủy..." : "Hủy"}
+                        </button>
                       )}
 
                       {status === "checked_in" && (

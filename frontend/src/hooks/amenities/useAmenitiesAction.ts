@@ -17,13 +17,13 @@ export const useAmenitiesAction = () => {
     }
   };
 
-  const addAmenity = async (name: string) => {
-    const newAmenity = await AmenityAPI.createAmenity({ name });
+  const addAmenity = async (name: string, icon?: string) => {
+    const newAmenity = await AmenityAPI.createAmenity({ name, icon });
     setAmenities((prev) => [...prev, newAmenity]);
   };
 
-  const editAmenity = async (id: string, name: string) => {
-    const updated = await AmenityAPI.updateAmenity(id, { name });
+  const editAmenity = async (id: string, name: string, icon?: string) => {
+    const updated = await AmenityAPI.updateAmenity(id, { name, icon });
     setAmenities((prev) => prev.map((a) => (a._id === id ? updated : a)));
   };
 

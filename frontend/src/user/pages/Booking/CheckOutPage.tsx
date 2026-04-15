@@ -16,7 +16,7 @@ import { useBooking } from "../../../hooks/booking/useBooking";
 import { useRoomContext } from "../../../hooks/room/useRoom";
 
 export const CheckoutPage = () => {
-  const { id } = useParams();
+  const { roomId } = useParams<{ roomId: string }>();
   const [step, setStep] = React.useState(1);
   const { getRoomById } = useRoomAction();
   const { rooms, currentRoom } = useRoomContext();
@@ -65,9 +65,9 @@ export const CheckoutPage = () => {
   useEffect(() => {
     const fetchRoom = async () => {
       try {
-        if (!id) return;
+        if (!roomId) return;
 
-        const data = await getRoomById(id);
+        const data = await getRoomById(roomId);
         setRooms(data); // hoặc có thể dùng currentRoom luôn
       } catch (error) {
         console.error(error);
@@ -75,7 +75,7 @@ export const CheckoutPage = () => {
     };
 
     fetchRoom();
-  }, [id]);
+  }, [roomId]);
 
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);

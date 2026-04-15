@@ -4,6 +4,29 @@ import { Link } from "react-router-dom";
 export const ManageAmenitiesPage = () => {
   const { amenities, loading, removeAmenity } = useAmenitiesAction();
 
+  const renderIcon = (icon?: string) => {
+    if (!icon) return <span className="text-gray-400">—</span>;
+
+    // URL ảnh
+    if (icon.startsWith("http")) {
+      return (
+        <img
+          src={icon}
+          alt="icon"
+          className="h-6 w-6 object-contain inline-block"
+        />
+      );
+    }
+
+    // FontAwesome
+    if (icon.startsWith("fa")) {
+      return <i className={`${icon} text-lg`}></i>;
+    }
+
+    // fallback
+    return <span className="text-gray-400">🔧</span>;
+  };
+
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -28,15 +51,24 @@ export const ManageAmenitiesPage = () => {
                 <th className="px-6 py-3 text-left text-gray-700 font-medium">
                   Tên tiện ích
                 </th>
+                <th className="px-6 py-3 text-left text-gray-700 font-medium">
+                  Icon
+                </th>
                 <th className="px-6 py-3 text-center text-gray-700 font-medium">
                   Hành động
                 </th>
               </tr>
             </thead>
+
             <tbody className="divide-y divide-gray-200">
               {amenities.map((a) => (
                 <tr key={a._id} className="hover:bg-gray-50 transition">
                   <td className="px-6 py-4 text-gray-700">{a.name}</td>
+
+                  <td className="px-6 py-4 text-gray-700">
+                    {renderIcon(a.icon)}
+                  </td>
+
                   <td className="px-6 py-4 text-center space-x-4">
                     <Link
                       to={`edit/${a._id}`}

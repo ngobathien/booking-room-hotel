@@ -64,7 +64,7 @@ const RoomBookingCard: React.FC<Props> = ({ room }) => {
     }
 
     navigate(
-      `/checkout/${room._id}?checkIn=${checkInDate}&checkOut=${checkOutDate}&guests=${filterParams.guests || 1}`,
+      `/checkout/${room._id}?checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&guests=${filterParams.guests || 1}`,
     );
   };
   //

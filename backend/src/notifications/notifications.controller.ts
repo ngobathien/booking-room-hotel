@@ -1,34 +1,52 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
-import { CreateNotificationDto } from './dto/create-notification.dto';
-import { UpdateNotificationDto } from './dto/update-notification.dto';
 
 @Controller('notifications')
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
   @Post()
-  create(@Body() createNotificationDto: CreateNotificationDto) {
-    return this.notificationsService.create(createNotificationDto);
+  async create(@Body() payload: any) {
+    const doc = await this.notificationsService.create(payload);
+    return { message: 'Notification created', data: doc };
   }
 
   @Get()
-  findAll() {
-    return this.notificationsService.findAll();
+  async findAll(@Query() query: Record<string, any>) {
+    return this.notificationsService.findAll(query);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.notificationsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const data = await this.notificationsService.findOne(id);
+    return { message: 'Get notification', data };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNotificationDto: UpdateNotificationDto) {
-    return this.notificationsService.update(+id, updateNotificationDto);
+  @Patch(':id/read')
+  async markRead(@Param('id') id: string) {
+    const data = await this.notificationsService.markRead(id);
+    return { message: 'Marked read', data };
+  }
+
+  @Patch('mark-all-read')
+  async markAllRead(@Body() body: any) {
+    const recipientId = body?.recipientId;
+    const res = await this.notificationsService.markAllRead(recipientId);
+    return { message: 'All marked read', result: res };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.notificationsService.remove(+id);
+  async remove(@Param('id') id: string) {
+    const data = await this.notificationsService.remove(id);
+    return { message: 'Deleted', data };
   }
 }

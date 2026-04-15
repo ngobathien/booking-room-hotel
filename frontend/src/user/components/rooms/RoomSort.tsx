@@ -1,26 +1,29 @@
-import { useSearchParams } from "react-router";
+import { useSearchParams } from "react-router-dom";
 
 const RoomSort = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const sort = searchParams.get("sort") ?? "price_asc";
+  const sort = searchParams.get("sort") || "price_asc";
 
   const handleSortChange = (value: string) => {
-    const params = Object.fromEntries([...searchParams]);
+    const params: Record<string, string> = {};
 
-    if (value === "price_asc") {
-      delete params.sort;
-    } else {
-      params.sort = value;
-    }
+    // giữ lại các query khác (keyword, page, filter...)
+    searchParams.forEach((val, key) => {
+      params[key] = val;
+    });
+
+    // luôn set sort (KHÔNG delete nữa)
+    params.sort = value;
 
     // reset page khi đổi sort
     params.page = "1";
 
     setSearchParams(params);
   };
+
   return (
-    <div className="flex items-center gap-1 text-sm">
+    <div className="flex items-center gap-2 text-sm">
       <span className="text-slate-400">Sắp xếp:</span>
 
       <select

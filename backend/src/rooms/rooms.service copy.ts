@@ -14,27 +14,6 @@ import { Booking, BookingDocument } from '../bookings/schemas/booking.schema';
 import { SearchRoomDto } from './dto/search-room.dto';
 import { FindRoomsDto } from './dto/find-rooms.dto';
 import { RoomAmenitiesService } from 'src/room-amenities/room-amenities.service';
-import { RoomLean } from './interfaces/room-populate.type';
-import { RoomSort } from './enums/room-sort.enum';
-import { RoomStatus } from './enums/room-status.enum';
-import { PipelineStage } from 'mongoose';
-
-type RoomMatchType = {
-  'roomType.capacity'?: number;
-  'roomType.pricePerNight'?: {
-    $gte?: number;
-    $lte?: number;
-  };
-};
-
-type RoomMatchStage = {
-  roomNumber?: {
-    $regex: string;
-    $options: string;
-  };
-  status?: RoomStatus;
-  roomType?: Types.ObjectId;
-};
 
 @Injectable()
 export class RoomsService {
@@ -162,7 +141,6 @@ export class RoomsService {
         /* $nin = not in (không nằm trong mảng)
         nghĩa là: lấy các room KHÔNG nằm trong danh sách đã bị book */
         _id: { $nin: bookedRoomIds },
-        // status: RoomStatus.AVAILABLE, // chỉ tìm phòng còn trống
       })
       .populate({
         path: 'roomType',
@@ -298,96 +276,57 @@ export class RoomsService {
       sort,
     } = query;
 
-    const skip = (Number(page) - 1) * Number(limit);
-
-    const pipeline: PipelineStage[] = [];
-
-    // 1. Match Room
-    const matchRoom: RoomMatchStage = {};
-
-    if (keyword) matchRoom.roomNumber = { $regex: keyword, $options: 'i' };
-    if (status) matchRoom.status = status;
-
-    if (roomType && isValidObjectId(roomType)) {
-      matchRoom.roomType = new Types.ObjectId(roomType);
+    const filter: Record<string, any> = {};
+    if (keyword) filter.roomNumber = { $regex: keyword, $options: 'i' };
+    if (status) filter.status = status;
+    if (roomType) {
+      if (!isValidObjectId(roomType))
+        throw new BadRequestException('Room type id không hợp lệ');
+      filter.roomType = roomType;
     }
 
-    pipeline.push({ $match: matchRoom });
-
-    // 2. Lookup roomType
-    pipeline.push({
-      $lookup: {
-        from: 'roomtypes',
-        localField: 'roomType',
-        foreignField: '_id',
-        as: 'roomType',
+    let queryBuilder = this.roomModel.find(filter).populate({
+      path: 'roomType',
+      match: {
+        ...(capacity && { capacity: Number(capacity) }),
+        ...(minPrice && { pricePerNight: { $gte: Number(minPrice) } }),
+        ...(maxPrice && { pricePerNight: { $lte: Number(maxPrice) } }),
       },
     });
 
-    pipeline.push({ $unwind: '$roomType' });
+    if (sort === 'price_asc')
+      queryBuilder = queryBuilder.sort({ 'roomType.pricePerNight': 1 });
+    if (sort === 'price_desc')
+      queryBuilder = queryBuilder.sort({ 'roomType.pricePerNight': -1 });
 
-    // 3. Filter theo roomType fields
-    const matchType: RoomMatchType = {};
+    const skip = (Number(page) - 1) * Number(limit);
+    queryBuilder = queryBuilder.skip(skip).limit(Number(limit));
 
-    if (capacity) matchType['roomType.capacity'] = Number(capacity);
+    const rooms = await queryBuilder.exec();
+    const filteredRooms = rooms.filter((room) => room.roomType !== null);
 
-    if (minPrice || maxPrice) {
-      matchType['roomType.pricePerNight'] = {};
-
-      const priceFilter = matchType['roomType.pricePerNight'];
-
-      if (minPrice) priceFilter.$gte = Number(minPrice);
-      if (maxPrice) priceFilter.$lte = Number(maxPrice);
-    }
-
-    if (Object.keys(matchType).length) {
-      pipeline.push({ $match: matchType });
-    }
-
-    // 4. Sort
-    if (sort === RoomSort.PRICE_ASC) {
-      pipeline.push({
-        $sort: { 'roomType.pricePerNight': 1 },
-      });
-    } else if (sort === RoomSort.PRICE_DESC) {
-      pipeline.push({
-        $sort: { 'roomType.pricePerNight': -1 },
-      });
-    }
-
-    // 5. Pagination
-    pipeline.push({ $skip: skip });
-    pipeline.push({ $limit: Number(limit) });
-
-    // 6. Run
-    const rooms = await this.roomModel.aggregate<RoomLean>(pipeline);
-
-    // 7. Amenities (giữ như bạn đang làm)
-    const roomIds = rooms.map((r) => r._id.toString());
+    // 🔹 Sửa ở đây: dùng findByRoomIds
+    const roomIds = filteredRooms.map((room) => room._id.toString());
     const allRoomAmenities =
       await this.roomAmenitiesService.findByRoomIds(roomIds);
 
-    const data = rooms.map((room) => ({
-      ...room,
-      amenities: allRoomAmenities
+    const roomsWithAmenities = filteredRooms.map((room) => {
+      const amenities = allRoomAmenities
         .filter((ra) => ra.roomId.toString() === room._id.toString())
-        .map((ra) => ra.amenityId),
-    }));
+        .map((ra) => ra.amenityId); // chỉ lấy object amenity
+      return {
+        ...room.toObject(),
+        amenities,
+      };
+    });
 
-    // 8. COUNT đúng
-    const countPipeline: PipelineStage[] = [
-      ...pipeline.slice(0, 3),
-      { $count: 'total' },
-    ];
-    const countResult: { total: number }[] =
-      await this.roomModel.aggregate(countPipeline);
+    const total = await this.roomModel.countDocuments(filter);
 
-    const total = countResult?.[0]?.total ?? 0;
     return {
       total,
       page: Number(page),
       limit: Number(limit),
-      data,
+      data: roomsWithAmenities,
     };
   }
 

@@ -17,7 +17,8 @@ export const RoomStatusChart = ({ data }: any) => {
   };
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow w-full max-w-md mx-auto h-[280px]">
+    <>
+      {/* <div className="bg-white p-4 rounded-xl shadow w-full max-w-md mx-auto h-[280px]"> */}
       <h2 className="font-semibold mb-3 text-center">Trạng thái phòng</h2>
 
       {/* 👇 FIX SIZE */}
@@ -29,6 +30,7 @@ export const RoomStatusChart = ({ data }: any) => {
           }}
         />
       </div>
-    </div>
+      {/* </div> */}
+    </>
   );
 };
