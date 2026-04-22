@@ -37,20 +37,24 @@ const BookingSummary: React.FC<Props> = ({ room, nights, guests = 2 }) => {
         </div>
 
         <div className="space-y-4 border-t border-slate-50 pt-6">
-          <div className="flex justify-between text-sm">
+          {/* <div className="flex justify-between text-sm">
             <span className="text-slate-500">Thời gian</span>
+            <span className="font-bold">{nights} đêm</span>
+          </div> */}
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-500">Số đêm</span>
             <span className="font-bold">{nights} đêm</span>
           </div>
 
           <div className="flex justify-between text-sm">
-            <span className="text-slate-500">Người lớn</span>
-            <span className="font-bold">{guests}</span>
+            <span className="text-slate-500">Số khách</span>
+            <span className="font-bold">{guests} người</span>
           </div>
 
-          <div className="flex justify-between text-sm">
+          {/* <div className="flex justify-between text-sm">
             <span className="text-slate-500">Trẻ em</span>
             <span className="font-bold">00</span>
-          </div>
+          </div> */}
         </div>
 
         <div className="mt-6 space-y-3 border-t border-dashed border-slate-100 pt-6">
@@ -59,10 +63,10 @@ const BookingSummary: React.FC<Props> = ({ room, nights, guests = 2 }) => {
             <span className="font-bold">{formatVND(total)}</span>
           </div>
 
-          <div className="flex justify-between text-sm">
+          {/* <div className="flex justify-between text-sm">
             <span className="text-slate-500">Phí dịch vụ</span>
             <span className="font-bold text-green-600">Miễn phí</span>
-          </div>
+          </div> */}
 
           <div className="flex justify-between pt-2 text-xl font-black">
             <span>Tổng cộng</span>

@@ -131,13 +131,13 @@ const RoomBookingCard: React.FC<Props> = ({ room }) => {
 
             {!loading && available === true && (
               <div className="text-sm font-semibold text-green-600">
-                ✅ Phòng còn trống
+                Phòng còn trống
               </div>
             )}
 
             {!loading && available === false && (
               <div className="text-sm font-semibold text-red-600">
-                ❌ Phòng đã được đặt
+                Phòng đã được đặt trong thời gian này
               </div>
             )}
 

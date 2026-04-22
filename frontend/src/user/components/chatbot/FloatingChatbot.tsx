@@ -12,6 +12,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import apiClient from "../../../common/services/apiClient";
 
 interface Message {
   role: "user" | "model";
@@ -58,12 +59,16 @@ const FloatingChatbot: React.FC = () => {
     try {
       // Gọi đến API NestJS của bạn
       // URL: /api/v1/ai-chatbot/chat (Dựa trên log NestJS bạn gửi)
-      const response = await axios.post(
-        "http://localhost:3000/api/v1/ai-chatbot/chat",
-        {
-          message: userMessage,
-        },
-      );
+      // const response = await axios.post(
+      //   "http://localhost:3000/api/v1/ai-chatbot/chat",
+      //   {
+      //     message: userMessage,
+      //   },
+      // );
+
+      const response = await apiClient.post(`/ai-chatbot/chat`, {
+        message: userMessage,
+      });
 
       const aiResponse: Message = {
         role: "model",

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import type { RevenueByMethod } from "../../../types/payment.types";
+import type { RevenueByMethod as RevenueByMethodType } from "../../../types/payment.types";
 import { getRevenueByMethod } from "../../../common/services/paymentService";
 
 export const RevenueByMethod: React.FC = () => {
-  const [data, setData] = useState<RevenueByMethod[]>([]);
+  const [data, setData] = useState<RevenueByMethodType[]>([]);
 
   useEffect(() => {
     getRevenueByMethod().then(setData);

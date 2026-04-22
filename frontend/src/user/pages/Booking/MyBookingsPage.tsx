@@ -191,6 +191,7 @@ const MyBookingsPage = () => {
             </div>
           ) : (
             bookings.map((booking: any) => {
+              console.log(booking.room);
               const status = mapDisplayStatus(booking);
               const cfg = getStatusConfig(status);
 
@@ -218,6 +219,16 @@ const MyBookingsPage = () => {
                           <h2 className="text-lg font-bold">
                             #{booking.bookingCode}
                           </h2>
+
+                          <div className="flex gap-2 mt-1">
+                            <span className="px-2 py-1 text-xs rounded bg-gray-100">
+                              Phòng {booking.room?.roomNumber}
+                            </span>
+
+                            <span className="px-2 py-1 text-xs rounded bg-blue-50 text-blue-600">
+                              {booking.room?.roomType?.typeName}
+                            </span>
+                          </div>
 
                           <div className="flex items-center gap-2 text-gray-500 text-sm mt-1">
                             <Calendar className="h-4 w-4" />
@@ -254,10 +265,10 @@ const MyBookingsPage = () => {
                     {/* Actions */}
                     <div className="mt-5 flex flex-wrap gap-3">
                       {/* LUÔN HIỂN THỊ */}
-                      <button className="flex items-center gap-2 px-5 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">
+                      {/* <button className="flex items-center gap-2 px-5 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">
                         <Eye className="h-4 w-4" />
                         Xem chi tiết
-                      </button>
+                      </button> */}
 
                       {/* CHỈ HIỆN KHI ĐƯỢC HỦY */}
                       {canCancelBooking(booking) && (
@@ -283,11 +294,11 @@ const MyBookingsPage = () => {
                         </button>
                       )}
 
-                      {status === "completed" && (
+                      {/* {status === "completed" && (
                         <button className="px-5 py-2 rounded-xl bg-black text-white font-semibold">
                           Xem lại
                         </button>
-                      )}
+                      )} */}
 
                       {status === "cancelled" && (
                         <button

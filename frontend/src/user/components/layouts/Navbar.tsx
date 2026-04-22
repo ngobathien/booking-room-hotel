@@ -102,7 +102,10 @@ const Navbar = () => {
                 className="h-10 w-10 overflow-hidden rounded-full border-2 border-primary/20"
               >
                 <img
-                  src={user?.avatar || ""}
+                  src={
+                    user?.avatar ||
+                    "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
+                  }
                   alt="User"
                   className="h-full w-full object-cover"
                 />

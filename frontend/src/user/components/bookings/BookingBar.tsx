@@ -17,9 +17,19 @@ const BookingBar: React.FC = () => {
   });
 
   // format Date → yyyy-MM-dd (gửi API)
+  // const formatISO = (date: Date | null) => {
+  //   if (!date) return "";
+  //   return date.toISOString().split("T")[0];
+  // };
+
   const formatISO = (date: Date | null) => {
     if (!date) return "";
-    return date.toISOString().split("T")[0];
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
   };
 
   const handleSearch = () => {
@@ -131,10 +141,10 @@ const BookingBar: React.FC = () => {
       {available !== null && (
         <div className="mt-4 text-center">
           {available ? (
-            <p className="text-green-600 font-semibold">✅ Phòng còn trống</p>
+            <p className="text-green-600 font-semibold">Phòng còn trống</p>
           ) : (
             <p className="text-red-600 font-semibold">
-              ❌ Hết phòng trong khoảng thời gian này
+              Hết phòng trong khoảng thời gian này
             </p>
           )}
         </div>

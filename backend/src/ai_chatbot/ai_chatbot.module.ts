@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Payment, PaymentSchema } from 'src/payments/schemas/payment.schema';
 import { Booking, BookingSchema } from 'src/bookings/schemas/booking.schema';
 import { UsersModule } from 'src/users/users.module';
+import { RoomsModule } from 'src/rooms/rooms.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { UsersModule } from 'src/users/users.module';
       { name: Booking.name, schema: BookingSchema },
     ]),
     UsersModule,
+    RoomsModule,
   ],
   controllers: [AiChatbotController],
   providers: [AiChatbotService],

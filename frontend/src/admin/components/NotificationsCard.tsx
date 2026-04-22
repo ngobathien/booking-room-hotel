@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import apiClient from "../../common/services/apiClient";
 import notificationService, {
   type Notification,
 } from "../../common/services/notification.service";
-import apiClient from "../../common/services/apiClient";
 
 function timeAgo(dateStr: string) {
   const d = new Date(dateStr);

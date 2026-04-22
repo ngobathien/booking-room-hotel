@@ -123,7 +123,7 @@ export class AuthService {
       userId: user._id,
       refreshToken,
       // thời gian hết hạn của refresh token
-      // expiresAt: new Date(Date.now() + 20 * 1000), // 20s để test
+      // expiresAt: new Date(Date.now() + 10 * 1000), // 10s để test
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
 
@@ -449,11 +449,10 @@ export class AuthService {
 
       // gủi cho email này một link chứa token, gọi từ dịch vụ mail
       await this.mailService.sendPasswordResetEmail(email, resetToken);
-
-      return {
-        message: 'Nếu email hợp lệ, link đặt lại mật khẩu đã được gửi.',
-      };
     }
+    return {
+      message: 'Nếu email hợp lệ, link đặt lại mật khẩu đã được gửi.',
+    };
   }
 
   // ============================= reset mật khẩu =============================

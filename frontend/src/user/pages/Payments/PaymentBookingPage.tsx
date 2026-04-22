@@ -1,11 +1,11 @@
 import React from "react";
 
+import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
-import { ArrowLeft, CreditCard, MapPin, ShieldCheck } from "lucide-react";
-import { cn, formatVND } from "../../../lib/utils";
-import { usePaymentAction } from "../../../hooks/payment/usePaymentAction";
 import { toast } from "react-toastify";
 import { useBooking } from "../../../hooks/booking/useBooking";
+import { usePaymentAction } from "../../../hooks/payment/usePaymentAction";
+import { cn, formatVND } from "../../../lib/utils";
 import type { MethodPayments } from "../../../types/payment.types";
 
 export const PaymentBookingPage = () => {

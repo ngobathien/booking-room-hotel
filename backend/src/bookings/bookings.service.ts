@@ -57,8 +57,8 @@ export class BookingsService {
     const conflict = await this.bookingModel.findOne({
       room: roomId,
       bookingStatus: { $in: [BookingStatus.PENDING, BookingStatus.CONFIRMED] },
-      checkInDate: { $lt: checkOutDate },
-      checkOutDate: { $gt: checkInDate },
+      checkInDate: { $lt: checkOutDate }, //Ngày nhận phòng cũ < ngày trả phòng mới
+      checkOutDate: { $gt: checkInDate }, // Ngày trả phòng cũ > ngày nhận phòng mới
     });
 
     return {
@@ -395,6 +395,12 @@ export class BookingsService {
     const bookings = await this.bookingModel
       .find({ user: userId })
       .populate('room')
+      .populate({
+        path: 'room',
+        populate: {
+          path: 'roomType',
+        },
+      })
       .sort({ createdAt: -1 });
 
     const total = await this.bookingModel.countDocuments({ user: userId });

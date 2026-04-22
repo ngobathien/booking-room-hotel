@@ -1,13 +1,16 @@
+import { useState } from "react";
 import { useAmenitiesAction } from "../../../hooks/amenities/useAmenitiesAction";
 import { Link } from "react-router-dom";
 
 export const ManageAmenitiesPage = () => {
   const { amenities, loading, removeAmenity } = useAmenitiesAction();
 
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
   const renderIcon = (icon?: string) => {
     if (!icon) return <span className="text-gray-400">—</span>;
 
-    // URL ảnh
     if (icon.startsWith("http")) {
       return (
         <img
@@ -18,13 +21,29 @@ export const ManageAmenitiesPage = () => {
       );
     }
 
-    // FontAwesome
     if (icon.startsWith("fa")) {
       return <i className={`${icon} text-lg`}></i>;
     }
 
-    // fallback
     return <span className="text-gray-400">🔧</span>;
+  };
+
+  const handleDeleteClick = (id: string) => {
+    setSelectedId(id);
+    setOpenModal(true);
+  };
+
+  const confirmDelete = () => {
+    if (selectedId) {
+      removeAmenity(selectedId);
+    }
+    setOpenModal(false);
+    setSelectedId(null);
+  };
+
+  const cancelDelete = () => {
+    setOpenModal(false);
+    setSelectedId(null);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -76,8 +95,9 @@ export const ManageAmenitiesPage = () => {
                     >
                       Sửa
                     </Link>
+
                     <button
-                      onClick={() => removeAmenity(a._id)}
+                      onClick={() => handleDeleteClick(a._id)}
                       className="text-red-500 hover:underline font-medium"
                     >
                       Xóa
@@ -87,6 +107,43 @@ export const ManageAmenitiesPage = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Modal Confirm */}
+      {openModal && (
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+          onClick={cancelDelete}
+        >
+          <div
+            className="bg-white rounded-xl p-6 w-80 shadow-xl text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold mb-4">
+              Bạn có chắc muốn xóa?
+            </h3>
+
+            <p className="text-gray-500 mb-6">
+              Hành động này không thể hoàn tác
+            </p>
+
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 hover:border-gray-400 transition"
+              >
+                Hủy
+              </button>
+
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+              >
+                Xóa
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

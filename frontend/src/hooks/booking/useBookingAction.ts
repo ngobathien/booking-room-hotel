@@ -117,7 +117,7 @@ export const useBookingAction = () => {
 
       const bookings = await getMyBookings();
 
-      setMyBooking(bookings.data);
+      setMyBooking(bookings);
     } catch (error) {
       console.error(error);
     } finally {

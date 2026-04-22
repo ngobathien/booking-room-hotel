@@ -125,7 +125,7 @@ const ResetPassword = () => {
             )}
 
             {isPasswordMatch && (
-              <p className="text-sm text-green-600 mt-1">Mật khẩu khớp ✔</p>
+              <p className="text-sm text-green-600 mt-1">Mật khẩu khớp</p>
             )}
           </div>
           <button
@@ -134,7 +134,8 @@ const ResetPassword = () => {
             className={`w-full py-2 rounded-lg text-white transition 
     ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
           >
-            {loading ? "Đang gửi..." : "Gửi email"}
+            {/* {loading ? "Đang gửi..." : "Gửi email"} */}
+            {loading ? "Đang xử lý..." : "Đổi mật khẩu"}
           </button>
         </form>
 

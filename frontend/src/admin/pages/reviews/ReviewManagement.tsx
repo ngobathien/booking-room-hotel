@@ -118,7 +118,7 @@ const ReviewManagement = () => {
                   onClick={() => handleEdit(review)}
                   className="flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-emerald-600 transition-colors"
                 >
-                  <Edit2 className="w-3.5 h-3.5" /> Sửa
+                  {/* <Edit2 className="w-3.5 h-3.5" /> Sửa */}
                 </button>
                 <button
                   onClick={() => handleDelete(review._id)}

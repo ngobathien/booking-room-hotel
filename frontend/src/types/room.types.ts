@@ -16,7 +16,7 @@ export const RoomStatus = {
 
 export type RoomStatusType =
   | "AVAILABLE"
-  | "OCCUPIED"
+  // | "OCCUPIED"
   // | "BOOKED"
   | "MAINTENANCE";
 
@@ -64,6 +64,12 @@ export interface RoomContextType {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 
   filterParams: FilterParams;
+
+  // thêm pagination
+  page: number;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  limit: number;
+  total: number;
 }
 
 // dùng cho search phòng
@@ -75,19 +81,21 @@ export interface SearchRoomParams {
 export interface SearchRoomResponse {
   total: number;
   rooms: Room[];
+  page: number;
+  limit: number;
 }
 
 export const STATUS_ROOM_STYLE: Record<RoomStatusType, string> = {
   AVAILABLE: "bg-emerald-100 text-emerald-700 border border-emerald-200",
   // BOOKED: "bg-amber-100 text-amber-700 border border-amber-200",
-  OCCUPIED: "bg-blue-100 text-blue-700 border border-blue-200",
+  // OCCUPIED: "bg-blue-100 text-blue-700 border border-blue-200",
   MAINTENANCE: "bg-rose-100 text-rose-700 border border-rose-200",
 };
 
 export const STATUS_ROOM_LABEL: Record<RoomStatusType, string> = {
   AVAILABLE: "Còn trống",
   // BOOKED: "Đã đặt",
-  OCCUPIED: "Đang sử dụng",
+  // OCCUPIED: "Đang sử dụng",
   MAINTENANCE: "Bảo trì",
 };
 export const STATUS_ROOM_CONFIG: Record<
@@ -103,11 +111,11 @@ export const STATUS_ROOM_CONFIG: Record<
     class: "bg-emerald-500",
     faded: false,
   },
-  OCCUPIED: {
-    label: "Đang sử dụng",
-    class: "bg-blue-500",
-    faded: true,
-  },
+  // OCCUPIED: {
+  //   label: "Đang sử dụng",
+  //   class: "bg-blue-500",
+  //   faded: true,
+  // },
   MAINTENANCE: {
     label: "Bảo trì",
     class: "bg-red-500",

@@ -100,7 +100,8 @@ const PersonalInfo = ({ user, onUpdate }: PersonalInfoProps) => {
             <div
               className="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-32 h-32 border-4 border-white shadow-md transition-transform group-hover:scale-105"
               style={{
-                backgroundImage: `url(${avatarPreview || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"})`,
+                // backgroundImage: `url(${avatarPreview || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"})`,
+                backgroundImage: `url(${avatarPreview || "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg "})`,
               }}
             />
             <label

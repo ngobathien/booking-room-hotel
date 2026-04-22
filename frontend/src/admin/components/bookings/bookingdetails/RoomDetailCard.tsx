@@ -20,7 +20,7 @@ export default function RoomDetailCard({ booking }: Props) {
 
         <div className="flex-1 space-y-2">
           <h4 className="font-bold text-slate-800 text-lg">
-            Room {booking.room?.roomNumber}
+            Phòng {booking.room?.roomNumber}
           </h4>
 
           <p className="text-slate-500">Booking code: {booking.bookingCode}</p>

@@ -178,7 +178,7 @@ const RoomLayout = () => {
             )}
 
             {/* Pagination UI */}
-            <div className="mt-12 flex items-center justify-center gap-2">
+            {/* <div className="mt-12 flex items-center justify-center gap-2">
               {[1, 2, 3].map((page) => (
                 <button
                   key={page}
@@ -187,7 +187,7 @@ const RoomLayout = () => {
                   {page}
                 </button>
               ))}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

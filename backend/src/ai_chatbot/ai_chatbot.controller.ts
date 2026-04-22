@@ -16,7 +16,7 @@ export class AiChatbotController {
     console.log('📩 MESSAGE:', message);
     console.log('👤 USER FROM REQUEST:', req.user);
     // const user = req.user;
-    return this.aiChatbotService.handleChat(message);
+    return this.aiChatbotService.handleChat(message, req.user.userId);
     // return this.aiChatbotService.handleChat(message, req.user.userId);
   }
 }

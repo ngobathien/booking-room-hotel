@@ -108,8 +108,20 @@ export class RoomsService {
       throw new BadRequestException('Phải có ít nhất 1 ảnh hoặc link ảnh');
     }
 
+    // return this.roomModel.create({
+    //   ...createRoomDto,
+    //   images: uploadedUrls,
+    //   thumbnail: uploadedUrls[0],
+    // });
     return this.roomModel.create({
-      ...createRoomDto,
+      roomNumber: createRoomDto.roomNumber,
+      status: createRoomDto.status,
+      description: createRoomDto.description,
+
+      hotelId: new Types.ObjectId(createRoomDto.hotelId),
+      roomType: new Types.ObjectId(createRoomDto.roomType),
+      // roomType: createRoomDto.roomType,
+
       images: uploadedUrls,
       thumbnail: uploadedUrls[0],
     });
@@ -126,9 +138,10 @@ export class RoomsService {
     const { checkInDate, checkOutDate, guests } = query;
 
     // validate dữ liệu ngày tháng gửi lên
-    const checkIn = new Date(checkInDate);
-    const checkOut = new Date(checkOutDate);
-
+    // const checkIn = new Date(checkInDate);
+    // const checkOut = new Date(checkOutDate);
+    const checkIn = new Date(`${checkInDate}T00:00:00`);
+    const checkOut = new Date(`${checkOutDate}T00:00:00`);
     if (checkOut <= checkIn) {
       throw new BadRequestException('Ngày check-out phải sau ngày check-in');
     }
@@ -285,6 +298,113 @@ export class RoomsService {
   // ===========================
   // Tìm tất cả phòng + amenities
   // ===========================
+  // async findAllRooms(query: FindRoomsDto) {
+  //   const {
+  //     keyword,
+  //     status,
+  //     roomType,
+  //     capacity,
+  //     minPrice,
+  //     maxPrice,
+  //     page = 1,
+  //     limit = 10,
+  //     sort,
+  //   } = query;
+
+  //   const skip = (Number(page) - 1) * Number(limit);
+
+  //   const pipeline: PipelineStage[] = [];
+
+  //   // 1. Match Room
+  //   const matchRoom: RoomMatchStage = {};
+
+  //   if (keyword) matchRoom.roomNumber = { $regex: keyword, $options: 'i' };
+  //   if (status) matchRoom.status = status;
+
+  //   if (roomType && isValidObjectId(roomType)) {
+  //     matchRoom.roomType = new Types.ObjectId(roomType);
+  //   }
+
+  //   pipeline.push({ $match: matchRoom });
+
+  //   // 2. Lookup roomType
+  //   pipeline.push({
+  //     $lookup: {
+  //       from: 'roomtypes',
+  //       localField: 'roomType',
+  //       foreignField: '_id',
+  //       as: 'roomType',
+  //     },
+  //   });
+
+  //   pipeline.push({ $unwind: '$roomType' });
+
+  //   // 3. Filter theo roomType fields
+  //   const matchType: RoomMatchType = {};
+
+  //   if (capacity) matchType['roomType.capacity'] = Number(capacity);
+
+  //   if (minPrice || maxPrice) {
+  //     matchType['roomType.pricePerNight'] = {};
+
+  //     const priceFilter = matchType['roomType.pricePerNight'];
+
+  //     if (minPrice) priceFilter.$gte = Number(minPrice);
+  //     if (maxPrice) priceFilter.$lte = Number(maxPrice);
+  //   }
+
+  //   if (Object.keys(matchType).length) {
+  //     pipeline.push({ $match: matchType });
+  //   }
+
+  //   // 4. Sort
+  //   if (sort === RoomSort.PRICE_ASC) {
+  //     pipeline.push({
+  //       $sort: { 'roomType.pricePerNight': 1 },
+  //     });
+  //   } else if (sort === RoomSort.PRICE_DESC) {
+  //     pipeline.push({
+  //       $sort: { 'roomType.pricePerNight': -1 },
+  //     });
+  //   }
+
+  //   // 5. Pagination
+  //   pipeline.push({ $skip: skip });
+  //   pipeline.push({ $limit: Number(limit) });
+
+  //   // 6. Run
+  //   const rooms = await this.roomModel.aggregate<RoomLean>(pipeline);
+
+  //   // 7. Amenities (giữ như bạn đang làm)
+  //   const roomIds = rooms.map((r) => r._id.toString());
+  //   const allRoomAmenities =
+  //     await this.roomAmenitiesService.findByRoomIds(roomIds);
+
+  //   const data = rooms.map((room) => ({
+  //     ...room,
+  //     amenities: allRoomAmenities
+  //       .filter((ra) => ra.roomId.toString() === room._id.toString())
+  //       .map((ra) => ra.amenityId),
+  //   }));
+
+  //   // 8. COUNT đúng
+  //   const countPipeline: PipelineStage[] = [
+  //     ...pipeline.slice(0, 3),
+  //     { $count: 'total' },
+  //   ];
+  //   const countResult: { total: number }[] =
+  //     await this.roomModel.aggregate(countPipeline);
+
+  //   const total = countResult?.[0]?.total ?? 0;
+  //   return {
+  //     total,
+  //     page: Number(page),
+  //     limit: Number(limit),
+  //     data,
+  //   };
+  // }
+
+  // tìm phòng final
   async findAllRooms(query: FindRoomsDto) {
     const {
       keyword,
@@ -300,10 +420,12 @@ export class RoomsService {
 
     const skip = (Number(page) - 1) * Number(limit);
 
-    const pipeline: PipelineStage[] = [];
+    console.log('📥 QUERY INPUT:', query);
 
-    // 1. Match Room
-    const matchRoom: RoomMatchStage = {};
+    // =========================
+    // 1. MATCH ROOM
+    // =========================
+    const matchRoom: any = {};
 
     if (keyword) matchRoom.roomNumber = { $regex: keyword, $options: 'i' };
     if (status) matchRoom.status = status;
@@ -312,77 +434,113 @@ export class RoomsService {
       matchRoom.roomType = new Types.ObjectId(roomType);
     }
 
-    pipeline.push({ $match: matchRoom });
+    console.log('🎯 MATCH ROOM:', matchRoom);
 
-    // 2. Lookup roomType
-    pipeline.push({
-      $lookup: {
-        from: 'roomtypes',
-        localField: 'roomType',
-        foreignField: '_id',
-        as: 'roomType',
+    // =========================
+    // 2. PIPELINE INIT
+    // =========================
+    const pipeline: PipelineStage[] = [
+      { $match: matchRoom },
+
+      {
+        $lookup: {
+          from: 'roomtypes',
+          localField: 'roomType',
+          foreignField: '_id',
+          as: 'roomType',
+        },
       },
-    });
 
-    pipeline.push({ $unwind: '$roomType' });
+      {
+        $unwind: {
+          path: '$roomType',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+    ];
 
-    // 3. Filter theo roomType fields
-    const matchType: RoomMatchType = {};
+    // =========================
+    // 3. ROOMTYPE FILTER
+    // =========================
+    const matchType: any = {};
 
     if (capacity) matchType['roomType.capacity'] = Number(capacity);
 
     if (minPrice || maxPrice) {
       matchType['roomType.pricePerNight'] = {};
-
-      const priceFilter = matchType['roomType.pricePerNight'];
-
-      if (minPrice) priceFilter.$gte = Number(minPrice);
-      if (maxPrice) priceFilter.$lte = Number(maxPrice);
+      if (minPrice) matchType['roomType.pricePerNight'].$gte = Number(minPrice);
+      if (maxPrice) matchType['roomType.pricePerNight'].$lte = Number(maxPrice);
     }
 
-    if (Object.keys(matchType).length) {
+    if (Object.keys(matchType).length > 0) {
       pipeline.push({ $match: matchType });
     }
 
-    // 4. Sort
+    console.log('🏷️ MATCH TYPE:', matchType);
+
+    // =========================
+    // 4. SORT
+    // =========================
+    const sortStage: any = {};
+
     if (sort === RoomSort.PRICE_ASC) {
-      pipeline.push({
-        $sort: { 'roomType.pricePerNight': 1 },
-      });
-    } else if (sort === RoomSort.PRICE_DESC) {
-      pipeline.push({
-        $sort: { 'roomType.pricePerNight': -1 },
-      });
+      sortStage['roomType.pricePerNight'] = 1;
     }
 
-    // 5. Pagination
+    if (sort === RoomSort.PRICE_DESC) {
+      sortStage['roomType.pricePerNight'] = -1;
+    }
+
+    if (Object.keys(sortStage).length > 0) {
+      pipeline.push({ $sort: sortStage });
+    }
+
+    console.log('📊 SORT STAGE:', sortStage);
+
+    // =========================
+    // 5. COUNT PIPELINE
+    // =========================
+    const countPipeline = [...pipeline, { $count: 'total' }];
+
+    // =========================
+    // 6. PAGINATION
+    // =========================
     pipeline.push({ $skip: skip });
     pipeline.push({ $limit: Number(limit) });
 
-    // 6. Run
-    const rooms = await this.roomModel.aggregate<RoomLean>(pipeline);
+    console.log('⚙️ FINAL PIPELINE:', JSON.stringify(pipeline, null, 2));
 
-    // 7. Amenities (giữ như bạn đang làm)
-    const roomIds = rooms.map((r) => r._id.toString());
-    const allRoomAmenities =
+    // =========================
+    // 7. EXECUTE
+    // =========================
+    const rooms = await this.roomModel.aggregate(pipeline);
+
+    console.log('📦 ROOMS RESULT:', rooms);
+
+    const countResult = await this.roomModel.aggregate(countPipeline);
+
+    console.log('🔢 COUNT RESULT:', countResult);
+
+    const total = countResult[0]?.total || 0;
+
+    // =========================
+    // 8. AMENITIES
+    // =========================
+    const roomIds = rooms.map((r) => r._id);
+
+    const roomAmenities =
       await this.roomAmenitiesService.findByRoomIds(roomIds);
 
     const data = rooms.map((room) => ({
       ...room,
-      amenities: allRoomAmenities
+      amenities: roomAmenities
         .filter((ra) => ra.roomId.toString() === room._id.toString())
         .map((ra) => ra.amenityId),
     }));
 
-    // 8. COUNT đúng
-    const countPipeline: PipelineStage[] = [
-      ...pipeline.slice(0, 3),
-      { $count: 'total' },
-    ];
-    const countResult: { total: number }[] =
-      await this.roomModel.aggregate(countPipeline);
-
-    const total = countResult?.[0]?.total ?? 0;
+    // =========================
+    // 9. RESPONSE
+    // =========================
     return {
       total,
       page: Number(page),
@@ -390,7 +548,6 @@ export class RoomsService {
       data,
     };
   }
-
   // new thử nghiệm tìm all dữ liệu phòng
 
   // tìm dữ liệu phòng theo một _id cụ thể
