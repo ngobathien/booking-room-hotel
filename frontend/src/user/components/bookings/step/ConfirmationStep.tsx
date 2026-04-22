@@ -138,9 +138,9 @@ const ConfirmationStep = ({
                 />
                 <div>
                   <div className="font-bold">{room.roomNumber}</div>
-                  <div className="text-[10px] text-slate-500">
+                  {/* <div className="text-[10px] text-slate-500">
                     {room.bedType} • {room.view}
-                  </div>
+                  </div> */}
                   <div className="text-[10px] text-slate-400 mt-1">
                     {nights} đêm x {formatVND(room.roomType.pricePerNight)} /
                     đêm

@@ -1,4 +1,3 @@
-import React from "react";
 import type { BookingStats } from "../../../types/booking.types";
 
 type Props = {

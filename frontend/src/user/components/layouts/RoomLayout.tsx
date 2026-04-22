@@ -100,20 +100,6 @@ const RoomLayout = () => {
               </div>
 
               {/* Price */}
-              <div className="mb-6">
-                <label className="text-sm font-bold text-slate-700">
-                  Giá tối đa: {priceRange.toLocaleString()} VNĐ
-                </label>
-                <input
-                  type="range"
-                  min="500000"
-                  max="3000000"
-                  step="500000"
-                  value={priceRange}
-                  onChange={(e) => setPriceRange(Number(e.target.value))}
-                  className="w-full mt-3 accent-primary"
-                />
-              </div>
 
               {/* Capacity */}
               <div className="mb-6">
@@ -133,12 +119,6 @@ const RoomLayout = () => {
                 </select>
               </div>
 
-              {/* Bed Type */}
-              <div>
-                <label className="text-sm font-bold text-slate-700">
-                  Loại giường
-                </label>
-              </div>
               <button
                 onClick={handleApplyFilters}
                 className="mt-8 w-full rounded-xl bg-primary py-3 text-sm font-bold text-white hover:bg-blue-700 transition-all shadow-lg shadow-primary/20"
@@ -198,7 +178,7 @@ const RoomLayout = () => {
             )}
 
             {/* Pagination UI */}
-            <div className="mt-12 flex items-center justify-center gap-2">
+            {/* <div className="mt-12 flex items-center justify-center gap-2">
               {[1, 2, 3].map((page) => (
                 <button
                   key={page}
@@ -207,7 +187,7 @@ const RoomLayout = () => {
                   {page}
                 </button>
               ))}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

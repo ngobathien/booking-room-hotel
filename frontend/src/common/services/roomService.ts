@@ -8,7 +8,7 @@ import api from "./apiClient";
 export const getAllRooms = async (params?: any) => {
   try {
     const response = await api.get("/rooms", { params });
-    // console.log("getAllRooms:", response.data.data);
+    console.log("getAllRooms:", response.data);
     return response.data.data; // Trả về mảng rooms từ response
   } catch (error) {
     console.error("Lỗi khi lấy danh sách phòng:", error);

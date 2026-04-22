@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { getTotalRevenue } from "./api";
+import { getTotalRevenue } from "../../../common/services/paymentService";
+// import { getTotalRevenue } from "./api";
 
 export const RevenueSummary: React.FC = () => {
   const [total, setTotal] = useState<number>(0);

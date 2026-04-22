@@ -3,10 +3,16 @@ import { AppModule } from './app.module';
 
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
+import { ConfigService } from '@nestjs/config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = process.env.PORT || 3000;
   const api_url = process.env.API_URL;
+  // console.log('API URL:', process.env.GEMINI_API_KEY);
+
+  const configService = app.get(ConfigService);
+
+  console.log('API KEY:', configService.get('GEMINI_API_KEY'));
 
   app.use(cookieParser());
   app.setGlobalPrefix(api_url || '/api/v1');

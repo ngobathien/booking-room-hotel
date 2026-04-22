@@ -35,6 +35,8 @@ export class BookingSchedulerService {
     this.logger.log(`Found expired payments: ${expiredPayments.length}`);
 
     for (const payment of expiredPayments) {
+      this.logger.log(`NOW: ${now.toISOString()}`);
+      this.logger.log(`EXP: ${payment.expiryAt.toISOString()}`);
       // Chuyển trạng thái thành EXPIRED
       payment.status = PaymentStatus.EXPIRED;
       await payment.save();

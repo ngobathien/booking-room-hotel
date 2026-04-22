@@ -1,16 +1,11 @@
 import {
   Building2,
-  Edit,
-  Image as ImageIcon,
   Info,
   Mail,
   MapPin,
   Phone,
-  RefreshCcw,
   Save,
   ShieldCheck,
-  Trash2,
-  Upload,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";

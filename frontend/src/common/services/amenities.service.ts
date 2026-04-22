@@ -16,6 +16,7 @@ export const getAmenityById = async (id: string): Promise<Amenity> => {
 
 export const createAmenity = async (data: {
   name: string;
+  icon?: string;
 }): Promise<Amenity> => {
   const res = await apiClient.post(API_URL, data);
   return res.data;
@@ -23,7 +24,7 @@ export const createAmenity = async (data: {
 
 export const updateAmenity = async (
   id: string,
-  data: { name: string },
+  data: { name: string; icon?: string },
 ): Promise<Amenity> => {
   const res = await apiClient.patch(`${API_URL}/${id}`, data);
   return res.data;

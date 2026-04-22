@@ -64,7 +64,7 @@ const RoomBookingCard: React.FC<Props> = ({ room }) => {
     }
 
     navigate(
-      `/checkout/${room._id}?checkIn=${checkInDate}&checkOut=${checkOutDate}&guests=${filterParams.guests || 1}`,
+      `/checkout/${room._id}?checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&guests=${filterParams.guests || 1}`,
     );
   };
   //
@@ -131,13 +131,13 @@ const RoomBookingCard: React.FC<Props> = ({ room }) => {
 
             {!loading && available === true && (
               <div className="text-sm font-semibold text-green-600">
-                ✅ Phòng còn trống
+                Phòng còn trống
               </div>
             )}
 
             {!loading && available === false && (
               <div className="text-sm font-semibold text-red-600">
-                ❌ Phòng đã được đặt
+                Phòng đã được đặt trong thời gian này
               </div>
             )}
 

@@ -7,6 +7,9 @@ export type AmenityDocument = HydratedDocument<Amenity>;
 export class Amenity {
   @Prop({ required: true, unique: true })
   name: string;
+
+  @Prop({ default: '' })
+  icon?: string;
 }
 
 export const AmenitySchema = SchemaFactory.createForClass(Amenity);

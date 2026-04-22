@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import type { Room } from "../../../../types/room.types";
+import { STATUS_ROOM_LABEL, type Room } from "../../../../types/room.types";
 import { useRoomContext } from "../../../../hooks/room/useRoom";
 
 interface RoomListViewProps {
@@ -32,6 +32,11 @@ export const RoomListView: React.FC<RoomListViewProps> = ({ rooms }) => {
 
             <div className="absolute right-4 top-4 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-[10px] font-bold text-slate-900 shadow-sm">
               #{room.roomNumber}
+            </div>
+
+            {/* Status badge */}
+            <div className="absolute left-4 top-4 rounded-full bg-green-500 px-3 py-1 text-xs font-bold text-white">
+              {STATUS_ROOM_LABEL[room.status]}
             </div>
           </div>
 
@@ -78,10 +83,8 @@ export const RoomListView: React.FC<RoomListViewProps> = ({ rooms }) => {
               <Link
                 to={
                   hasValidDates
-                    ? //
-                      `/checkout/${room._id}`
-                    : //
-                      `/rooms/${room._id}/room-${room.roomNumber}${location.search}`
+                    ? `/checkout/${room._id}${location.search}`
+                    : `/rooms/${room._id}/room-${room.roomNumber}${location.search}`
                 }
                 className="flex-1 rounded-xl bg-primary py-3 text-center text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all"
               >

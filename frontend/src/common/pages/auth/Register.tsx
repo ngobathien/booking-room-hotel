@@ -168,7 +168,7 @@ const Register = () => {
               )}
 
               {isPasswordMatch && (
-                <p className="text-sm text-green-600 mt-1">Mật khẩu khớp ✔</p>
+                <p className="text-sm text-green-600 mt-1">Mật khẩu khớp</p>
               )}
             </div>
 

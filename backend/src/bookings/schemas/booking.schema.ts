@@ -46,9 +46,6 @@ export class Booking {
   @Prop({ enum: BookingStayStatus, default: BookingStayStatus.NOT_CHECKED_IN })
   stayStatus: BookingStayStatus;
 
-  // @Prop({ type: String, unique: true, sparse: true, default: null })
-  // idempotencyKey?: string;
-
   // timeline khi checkin, checkout theo time thực tế
   @Prop()
   confirmedAt?: Date;

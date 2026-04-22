@@ -1,10 +1,7 @@
 import { IsOptional, IsString, IsNumber, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
-
-export enum SortType {
-  PRICE_ASC = 'price_asc',
-  PRICE_DESC = 'price_desc',
-}
+import { RoomSort } from '../enums/room-sort.enum';
+import { RoomStatus } from '../enums/room-status.enum';
 
 export class FindRoomsDto {
   @IsOptional()
@@ -12,8 +9,8 @@ export class FindRoomsDto {
   keyword?: string;
 
   @IsOptional()
-  @IsString()
-  status?: string;
+  @IsEnum(RoomStatus)
+  status?: RoomStatus;
 
   @IsOptional()
   @IsString()
@@ -45,6 +42,6 @@ export class FindRoomsDto {
   limit?: number = 10;
 
   @IsOptional()
-  @IsEnum(SortType)
-  sort?: SortType;
+  @IsEnum(RoomSort)
+  sort?: RoomSort;
 }

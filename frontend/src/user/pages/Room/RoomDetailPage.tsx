@@ -5,6 +5,7 @@ import { useRoomContext } from "../../../hooks/room/useRoom";
 
 import RoomBookingCard from "../../components/rooms/detail/RoomBookingCard";
 import { RoomReviews } from "../../components/reviews/RoomReviews";
+import { STATUS_ROOM_LABEL } from "../../../types/room.types";
 
 /**
  * 🔥 Hàm bổ trợ để trích xuất 'name' từ chuỗi Object MongoDB thô
@@ -41,6 +42,23 @@ const RoomDetailPage = () => {
     }
   }, [currentRoom]);
 
+  const renderIcon = (icon?: string) => {
+    if (!icon) {
+      return <span className="text-gray-400">🔧</span>;
+    }
+
+    // URL ảnh
+    if (icon.startsWith("http")) {
+      return <img src={icon} className="w-5 h-5 object-contain" />;
+    }
+
+    // FontAwesome
+    if (icon.startsWith("fa")) {
+      return <i className={`${icon} text-lg`}></i>;
+    }
+
+    return <span className="text-gray-400">🔧</span>;
+  };
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
@@ -100,7 +118,7 @@ const RoomDetailPage = () => {
           <div>
             <div className="flex items-center gap-3 mb-3">
               <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-full">
-                {currentRoom.status}
+                {STATUS_ROOM_LABEL[currentRoom.status]}
               </span>
             </div>
             <h1 className="text-4xl font-black text-slate-900">
@@ -142,25 +160,17 @@ const RoomDetailPage = () => {
               {currentRoom.amenities && currentRoom.amenities.length > 0 ? (
                 currentRoom.amenities.map((item: any, idx: number) => {
                   const amenityName = parseAmenityName(item);
+
                   return (
                     <div
                       key={idx}
-                      className="flex items-center gap-4 group p-2 rounded-2xl transition-all hover:bg-slate-50"
+                      className="flex items-center gap-4 group p-2 rounded-2xl hover:bg-slate-50"
                     >
                       <div className="w-11 h-11 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-blue-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-200 transition-all">
-                        <span className="material-symbols-outlined text-xl">
-                          {amenityName.toLowerCase().includes("wifi")
-                            ? "wifi"
-                            : amenityName.toLowerCase().includes("lạnh")
-                              ? "ac_unit"
-                              : amenityName.toLowerCase().includes("tv")
-                                ? "tv"
-                                : amenityName.toLowerCase().includes("tắm")
-                                  ? "bathtub"
-                                  : "check_circle"}
-                        </span>
+                        {/* {renderIcon(item.icon)}  */}
                       </div>
-                      <span className="font-bold text-slate-700 text-sm italic group-hover:text-blue-600 transition-colors">
+
+                      <span className="font-bold text-slate-700 text-sm italic group-hover:text-blue-600">
                         {amenityName}
                       </span>
                     </div>

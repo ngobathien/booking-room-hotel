@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { RoomTypesModule } from '../room-types/room-types.module';
 import { UsersModule } from '../users/users.module';
 import { RoomsModule } from '../rooms/rooms.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 import { Booking, BookingSchema } from './schemas/booking.schema';
 import {
   RoomType,
@@ -22,6 +23,7 @@ import {
     RoomTypesModule,
     UsersModule,
     forwardRef(() => RoomsModule),
+    NotificationsModule,
 
     MongooseModule.forFeature([
       { name: Booking.name, schema: BookingSchema },

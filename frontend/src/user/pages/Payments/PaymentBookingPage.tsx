@@ -1,11 +1,11 @@
 import React from "react";
 
+import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
-import { ArrowLeft, CreditCard, MapPin, ShieldCheck } from "lucide-react";
-import { cn, formatVND } from "../../../lib/utils";
-import { usePaymentAction } from "../../../hooks/payment/usePaymentAction";
 import { toast } from "react-toastify";
 import { useBooking } from "../../../hooks/booking/useBooking";
+import { usePaymentAction } from "../../../hooks/payment/usePaymentAction";
+import { cn, formatVND } from "../../../lib/utils";
 import type { MethodPayments } from "../../../types/payment.types";
 
 export const PaymentBookingPage = () => {
@@ -43,12 +43,16 @@ export const PaymentBookingPage = () => {
       setIsSubmitting(false);
     }
   };
-
-  const methods: { id: MethodPayments; label: string; icon: any }[] = [
-    { id: "vnpay", label: "Thanh toán VNPay", icon: CreditCard },
-    { id: "momo", label: "Ví MoMo", icon: ShieldCheck },
-    { id: "cod", label: "Thanh toán tại khách sạn", icon: MapPin },
+  const methods: { id: MethodPayments; label: string; icon: string }[] = [
+    { id: "vnpay", label: "Thanh toán VNPay", icon: "/payment/vnpay.png" },
+    { id: "momo", label: "Ví MoMo", icon: "/payment/momo.png" },
+    // { id: "cod", label: "Thanh toán tại khách sạn", icon: "/payment/cod.png" },
   ];
+  // const methods: { id: MethodPayments; label: string; icon: any }[] = [
+  //   { id: "vnpay", label: "Thanh toán VNPay", icon: CreditCard },
+  //   { id: "momo", label: "Ví MoMo", icon: ShieldCheck },
+  //   { id: "cod", label: "Thanh toán tại khách sạn", icon: MapPin },
+  // ];
 
   return (
     <div className="space-y-8">
@@ -68,7 +72,8 @@ export const PaymentBookingPage = () => {
                   : "border-slate-100 hover:border-primary/50",
               )}
             >
-              <m.icon className="h-8 w-8" />
+              {/* <m.icon className="h-8 w-8" /> */}
+              <img src={m.icon} alt={m.label} className="w-8 h-8" />
               <span className="text-sm font-bold">{m.label}</span>
             </button>
           ))}
@@ -91,7 +96,6 @@ export const PaymentBookingPage = () => {
           {isSubmitting
             ? "Đang xử lý..."
             : `Thanh toán ngay ${formatVND(currentBooking?.totalPrice)}`}
-          $
         </button>
       </div>
     </div>

@@ -18,6 +18,9 @@ import { BookingStatus } from './enums/booking-status.enum';
 import { BookingStayStatus } from './enums/booking-stay-status.enum';
 import { Booking, BookingDocument } from './schemas/booking.schema';
 import { GetBookingsQueryDto } from './dto/get-bookings-query.dto';
+import { NotificationsGateway } from 'src/notifications/notifications.gateway';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { RoomStatus } from 'src/rooms/enums/room-status.enum';
 
 interface BookingStatsAgg {
   _id: BookingStatus;
@@ -33,6 +36,8 @@ export class BookingsService {
     @InjectModel(Room.name) private roomModel: Model<RoomDocument>,
     @InjectModel(RoomType.name) private roomTypeModel: Model<RoomTypeDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private notificationsGateway: NotificationsGateway,
+    private notificationsService: NotificationsService,
   ) {}
 
   // Kiểm tra phòng có sẵn trong khoảng thời gian hay không
@@ -52,8 +57,8 @@ export class BookingsService {
     const conflict = await this.bookingModel.findOne({
       room: roomId,
       bookingStatus: { $in: [BookingStatus.PENDING, BookingStatus.CONFIRMED] },
-      checkInDate: { $lt: checkOutDate },
-      checkOutDate: { $gt: checkInDate },
+      checkInDate: { $lt: checkOutDate }, //Ngày nhận phòng cũ < ngày trả phòng mới
+      checkOutDate: { $gt: checkInDate }, // Ngày trả phòng cũ > ngày nhận phòng mới
     });
 
     return {
@@ -100,6 +105,11 @@ export class BookingsService {
     if (!roomData) {
       throw new NotFoundException('Phòng không tồn tại');
     }
+
+    if (roomData.status === RoomStatus.MAINTENANCE) {
+      throw new BadRequestException('Phòng đang bảo trì, không thể đặt');
+    }
+
     console.log(roomData);
     console.log(roomData.roomType);
     // Kiểm tra trùng lịch
@@ -145,7 +155,7 @@ export class BookingsService {
     const bookingCode = generateBookingCode();
 
     // Tạo booking
-    return this.bookingModel.create({
+    const booking = await this.bookingModel.create({
       bookingCode: bookingCode,
       room,
       user: userId,
@@ -161,6 +171,30 @@ export class BookingsService {
       hoặc 'cancelled' nếu khách hàng hủy booking */
       bookingStatus: BookingStatus.PENDING,
     });
+
+    // Persist notification to DB and then emit real-time for admin
+    try {
+      const saved = await this.notificationsService.create({
+        title: 'Có đơn mới',
+        body: `Mã: ${booking.bookingCode}`,
+        type: 'booking',
+        data: {
+          bookingId: booking._id,
+          bookingCode: booking.bookingCode,
+          room: booking.room,
+          totalPrice: booking.totalPrice,
+          checkInDate: booking.checkInDate,
+          checkOutDate: booking.checkOutDate,
+        },
+      });
+
+      // emit created notification (including id/createdAt)
+      this.notificationsGateway.sendNewBooking(saved);
+    } catch (err) {
+      console.error('Failed to persist/emit newBooking event', err);
+    }
+
+    return booking;
   }
 
   //
@@ -361,6 +395,12 @@ export class BookingsService {
     const bookings = await this.bookingModel
       .find({ user: userId })
       .populate('room')
+      .populate({
+        path: 'room',
+        populate: {
+          path: 'roomType',
+        },
+      })
       .sort({ createdAt: -1 });
 
     const total = await this.bookingModel.countDocuments({ user: userId });

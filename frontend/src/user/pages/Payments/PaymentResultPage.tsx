@@ -132,9 +132,9 @@ export const PaymentResultPage = () => {
             </Link>
           </div>
 
-          <button className="mt-8 inline-flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-primary transition-colors">
+          {/* <button className="mt-8 inline-flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-primary transition-colors">
             <Download className="w-4 h-4" /> Tải hóa đơn (PDF)
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

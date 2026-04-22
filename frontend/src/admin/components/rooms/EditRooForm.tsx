@@ -13,7 +13,7 @@ const { useParams, useNavigate } = ReactRouterDom;
 interface RoomFormData {
   roomNumber: string;
   roomTypeId: string;
-  status: "AVAILABLE" | "OCCUPIED" | "BOOKED" | "MAINTENANCE";
+  status: "AVAILABLE" | "MAINTENANCE";
   thumbnail?: string;
   description: string;
 }

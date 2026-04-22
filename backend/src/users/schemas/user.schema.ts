@@ -20,6 +20,7 @@ export enum AuthProvider {
   LOCAL = 'local',
   GOOGLE = 'google',
 }
+
 @Schema({ timestamps: true })
 export class User {
   @Prop({ required: true })

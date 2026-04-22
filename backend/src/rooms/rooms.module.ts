@@ -42,5 +42,6 @@ import { RoomAmenitiesModule } from 'src/room-amenities/room-amenities.module';
   ],
   controllers: [RoomsController],
   providers: [RoomsService, SupabaseService],
+  exports: [RoomsService],
 })
 export class RoomsModule {}

@@ -48,6 +48,92 @@ export class MailService {
   }
 
   // gửi mail cho user sau khi đặt phòng thành công
+  //   async sendBookingSuccessEmail(
+  //     to: string,
+  //     bookingId: string,
+  //     bookingCode: string,
+  //     hotelName: string,
+  //     checkIn: string,
+  //     checkOut: string,
+  //     totalPrice: number,
+  //   ) {
+  //     const mailOptions = {
+  //       from: 'Booking Service',
+  //       to: to,
+  //       subject: 'Booking Confirmation',
+
+  //       html: `
+  // <div style="font-family: Arial, sans-serif; background:#f5f7fa; padding:20px;">
+  //   <div style="max-width:600px; margin:auto; background:white; border-radius:10px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+
+  //     <div style="background:#0d6efd; color:white; padding:20px; text-align:center;">
+  //       <h2 style="margin:0;">Booking Confirmation 🎉</h2>
+  //       <p style="margin:5px 0 0;">Cảm ơn bạn đã đặt phòng</p>
+  //     </div>
+
+  //     <div style="padding:25px;">
+
+  //       <p>Xin chào,</p>
+  //       <p>Đặt phòng của bạn đã được <b>xác nhận thành công</b>. Dưới đây là thông tin chi tiết:</p>
+
+  //       <table style="width:100%; border-collapse:collapse; margin-top:15px;">
+  //         <tr>
+  //           <td style="padding:8px; border-bottom:1px solid #eee;"><b>Booking ID</b></td>
+  //           <td style="padding:8px; border-bottom:1px solid #eee;">${bookingId}</td>
+  //         </tr>
+
+  //         <tr>
+  //           <td style="padding:8px; border-bottom:1px solid #eee;"><b>Booking Code</b></td>
+  //           <td style="padding:8px; border-bottom:1px solid #eee;">${bookingCode}</td>
+  //         </tr>
+
+  //         <tr>
+  //           <td style="padding:8px; border-bottom:1px solid #eee;"><b>Hotel</b></td>
+  //           <td style="padding:8px; border-bottom:1px solid #eee;">${hotelName}</td>
+  //         </tr>
+
+  //         <tr>
+  //           <td style="padding:8px; border-bottom:1px solid #eee;"><b>Check-in</b></td>
+  //           <td style="padding:8px; border-bottom:1px solid #eee;">${checkIn}</td>
+  //         </tr>
+
+  //         <tr>
+  //           <td style="padding:8px; border-bottom:1px solid #eee;"><b>Check-out</b></td>
+  //           <td style="padding:8px; border-bottom:1px solid #eee;">${checkOut}</td>
+  //         </tr>
+
+  //         <tr>
+  //           <td style="padding:8px;"><b>Total Price</b></td>
+  //           <td style="padding:8px; color:#e63946; font-weight:bold;">
+  //             ${totalPrice.toLocaleString()} VND
+  //           </td>
+  //         </tr>
+  //       </table>
+
+  //       <div style="margin-top:25px; padding:15px; background:#f8f9fa; border-radius:6px;">
+  //         <p style="margin:0;">
+  //           Vui lòng giữ lại <b>Booking Code</b> để check-in tại khách sạn.
+  //         </p>
+  //       </div>
+
+  //       <p style="margin-top:25px;">
+  //         Chúc bạn có chuyến đi tuyệt vời! ✈️
+  //       </p>
+
+  //     </div>
+
+  //     <div style="background:#f1f1f1; text-align:center; padding:12px; font-size:13px; color:#777;">
+  //       © 2026 Your Hotel Booking Service
+  //     </div>
+
+  //   </div>
+  // </div>
+  // `,
+  //     };
+
+  //     await this.transporter.sendMail(mailOptions);
+  //   }
+
   async sendBookingSuccessEmail(
     to: string,
     bookingId: string,
@@ -58,17 +144,17 @@ export class MailService {
     totalPrice: number,
   ) {
     const mailOptions = {
-      from: 'Booking Service',
+      from: 'Dịch vụ đặt phòng',
       to: to,
-      subject: 'Booking Confirmation',
+      subject: 'Xác nhận đặt phòng thành công 🎉', // 👈 đổi sang tiếng Việt
 
       html: `
 <div style="font-family: Arial, sans-serif; background:#f5f7fa; padding:20px;">
   <div style="max-width:600px; margin:auto; background:white; border-radius:10px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
     
     <div style="background:#0d6efd; color:white; padding:20px; text-align:center;">
-      <h2 style="margin:0;">Booking Confirmation 🎉</h2>
-      <p style="margin:5px 0 0;">Cảm ơn bạn đã đặt phòng</p>
+      <h2 style="margin:0;">Xác nhận đặt phòng 🎉</h2> <!-- 👈 đổi tiêu đề -->
+      <p style="margin:5px 0 0;">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi</p>
     </div>
 
     <div style="padding:25px;">
@@ -78,32 +164,32 @@ export class MailService {
 
       <table style="width:100%; border-collapse:collapse; margin-top:15px;">
         <tr>
-          <td style="padding:8px; border-bottom:1px solid #eee;"><b>Booking ID</b></td>
+          <td style="padding:8px; border-bottom:1px solid #eee;"><b>Mã đặt phòng</b></td>
           <td style="padding:8px; border-bottom:1px solid #eee;">${bookingId}</td>
         </tr>
 
         <tr>
-          <td style="padding:8px; border-bottom:1px solid #eee;"><b>Booking Code</b></td>
+          <td style="padding:8px; border-bottom:1px solid #eee;"><b>Mã booking</b></td>
           <td style="padding:8px; border-bottom:1px solid #eee;">${bookingCode}</td>
         </tr>
 
         <tr>
-          <td style="padding:8px; border-bottom:1px solid #eee;"><b>Hotel</b></td>
+          <td style="padding:8px; border-bottom:1px solid #eee;"><b>Khách sạn</b></td>
           <td style="padding:8px; border-bottom:1px solid #eee;">${hotelName}</td>
         </tr>
 
         <tr>
-          <td style="padding:8px; border-bottom:1px solid #eee;"><b>Check-in</b></td>
+          <td style="padding:8px; border-bottom:1px solid #eee;"><b>Ngày nhận phòng</b></td>
           <td style="padding:8px; border-bottom:1px solid #eee;">${checkIn}</td>
         </tr>
 
         <tr>
-          <td style="padding:8px; border-bottom:1px solid #eee;"><b>Check-out</b></td>
+          <td style="padding:8px; border-bottom:1px solid #eee;"><b>Ngày trả phòng</b></td>
           <td style="padding:8px; border-bottom:1px solid #eee;">${checkOut}</td>
         </tr>
 
         <tr>
-          <td style="padding:8px;"><b>Total Price</b></td>
+          <td style="padding:8px;"><b>Tổng tiền</b></td>
           <td style="padding:8px; color:#e63946; font-weight:bold;">
             ${totalPrice.toLocaleString()} VND
           </td>
@@ -112,18 +198,18 @@ export class MailService {
 
       <div style="margin-top:25px; padding:15px; background:#f8f9fa; border-radius:6px;">
         <p style="margin:0;">
-          Vui lòng giữ lại <b>Booking Code</b> để check-in tại khách sạn.
+          Vui lòng giữ lại <b>Mã booking</b> để làm thủ tục nhận phòng.
         </p>
       </div>
 
       <p style="margin-top:25px;">
-        Chúc bạn có chuyến đi tuyệt vời! ✈️
+        Chúc bạn có chuyến đi vui vẻ! ✈️
       </p>
 
     </div>
 
     <div style="background:#f1f1f1; text-align:center; padding:12px; font-size:13px; color:#777;">
-      © 2026 Your Hotel Booking Service
+      © 2026 Hệ thống đặt phòng khách sạn
     </div>
 
   </div>
@@ -133,7 +219,6 @@ export class MailService {
 
     await this.transporter.sendMail(mailOptions);
   }
-
   //
   async sendOtpEmail(to: string, otp: string) {
     const urlClient = process.env.URL_CLIENT;

@@ -44,7 +44,7 @@ export const getBookingById = async (id: string): Promise<Booking> => {
 /* ======================= GET MY BOOKINGS ======================= */
 export const getMyBookings = async (): Promise<Booking[]> => {
   const res = await apiClient.get("/bookings/me");
-  return res.data;
+  return res.data.data;
 };
 
 /* ======================= CANCEL BOOKING ======================= */
