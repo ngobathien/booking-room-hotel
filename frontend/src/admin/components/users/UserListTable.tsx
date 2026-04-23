@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import ConfirmModal from "../../../common/components/ConfirmModal";
 import { ROLES } from "../../../common/constants/roleConstant";
 import { useUserActions } from "../../../hooks/user/useUserActions";
 import { useUsers } from "../../../hooks/user/useUser";
@@ -12,15 +13,37 @@ import {
 } from "../../../types/user.types";
 
 const UserListTable = () => {
-  const { fetchUsers, handleDeleteUser, handleUpdateUser, handleChangeStatus } =
+  const { fetchUsers, deleteUserById, handleUpdateUser, handleChangeStatus } =
     useUserActions();
   const { users } = useUsers();
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [editData, setEditData] = useState<Partial<User>>({});
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  const handleDeleteClick = (userId: string) => {
+    setSelectedUserId(userId);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!selectedUserId) return;
+    try {
+      setIsDeleting(true);
+      await deleteUserById(selectedUserId);
+      setShowDeleteConfirm(false);
+      setSelectedUserId(null);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -182,7 +205,7 @@ const UserListTable = () => {
 
                       <button
                         className="px-3 py-1 text-sm text-white bg-red-500 rounded"
-                        onClick={() => handleDeleteUser(user._id)}
+                        onClick={() => handleDeleteClick(user._id)}
                       >
                         Xóa
                       </button>
@@ -194,6 +217,22 @@ const UserListTable = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Delete User Confirm Modal */}
+      <ConfirmModal
+        open={showDeleteConfirm}
+        title="Xóa người dùng"
+        message="Bạn có chắc chắn muốn xóa người dùng này? Hành động này không thể hoàn tác."
+        onConfirm={confirmDelete}
+        onCancel={() => {
+          setShowDeleteConfirm(false);
+          setSelectedUserId(null);
+        }}
+        confirmText="Xóa"
+        cancelText="Hủy"
+        isDangerous={true}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

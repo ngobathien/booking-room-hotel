@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAmenitiesAction } from "../../../hooks/amenities/useAmenitiesAction";
+import ConfirmModal from "../../../common/components/ConfirmModal";
 import { Link } from "react-router-dom";
 
 export const ManageAmenitiesPage = () => {
@@ -110,42 +111,17 @@ export const ManageAmenitiesPage = () => {
         </div>
       )}
 
-      {/* Modal Confirm */}
-      {openModal && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
-          onClick={cancelDelete}
-        >
-          <div
-            className="bg-white rounded-xl p-6 w-80 shadow-xl text-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-lg font-semibold mb-4">
-              Bạn có chắc muốn xóa?
-            </h3>
-
-            <p className="text-gray-500 mb-6">
-              Hành động này không thể hoàn tác
-            </p>
-
-            <div className="flex justify-center gap-4">
-              <button
-                onClick={cancelDelete}
-                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 hover:border-gray-400 transition"
-              >
-                Hủy
-              </button>
-
-              <button
-                onClick={confirmDelete}
-                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
-              >
-                Xóa
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Confirm Delete Modal */}
+      <ConfirmModal
+        open={openModal}
+        title="Xóa tiện ích"
+        message="Bạn có chắc chắn muốn xóa tiện ích này? Hành động này không thể hoàn tác."
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+        confirmText="Xóa"
+        cancelText="Hủy"
+        isDangerous={true}
+      />
     </div>
   );
 };

@@ -1,4 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import ConfirmModal from "../../common/components/ConfirmModal";
 import { useAuth } from "../../hooks/auth/useAuth";
 import { useHotel } from "../../hooks/hotel/useHotel";
 
@@ -13,6 +15,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
   const { hotel, loading } = useHotel();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const navItems = [
     { label: "Tổng quan", path: "/dashboard", icon: "dashboard" },
@@ -31,10 +34,12 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   ];
 
   const handleLogout = () => {
-    if (window.confirm("Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?")) {
-      logout();
-      navigate("/login", { replace: true });
-    }
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
+    logout();
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -147,6 +152,18 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           </div>
         </div>
       </aside>
+
+      {/* Logout Confirm Modal */}
+      <ConfirmModal
+        open={showLogoutConfirm}
+        title="Đăng xuất"
+        message="Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?"
+        onConfirm={confirmLogout}
+        onCancel={() => setShowLogoutConfirm(false)}
+        confirmText="Đăng xuất"
+        cancelText="Hủy"
+        isDangerous={false}
+      />
     </>
   );
 };

@@ -12,6 +12,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import ConfirmModal from "../../../common/components/ConfirmModal";
 import apiClient from "../../../common/services/apiClient";
 
 interface Message {
@@ -23,6 +24,7 @@ interface Message {
 const FloatingChatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "model",
@@ -93,15 +95,18 @@ const FloatingChatbot: React.FC = () => {
   };
 
   const clearChat = () => {
-    if (window.confirm("Bạn có muốn xóa lịch sử trò chuyện này không?")) {
-      setMessages([
-        {
-          role: "model",
-          text: "Chào bạn, tôi đã sẵn sàng hỗ trợ lại từ đầu!",
-          timestamp: new Date(),
-        },
-      ]);
-    }
+    setShowClearConfirm(true);
+  };
+
+  const confirmClearChat = () => {
+    setMessages([
+      {
+        role: "model",
+        text: "Chào bạn, tôi đã sẵn sàng hỗ trợ lại từ đầu!",
+        timestamp: new Date(),
+      },
+    ]);
+    setShowClearConfirm(false);
   };
 
   return (
@@ -266,6 +271,18 @@ const FloatingChatbot: React.FC = () => {
           </span>
         )}
       </motion.button>
+
+      {/* Clear Chat Confirm Modal */}
+      <ConfirmModal
+        open={showClearConfirm}
+        title="Xóa lịch sử chat"
+        message="Bạn có chắc chắn muốn xóa toàn bộ lịch sử trò chuyện? Hành động này không thể hoàn tác."
+        onConfirm={confirmClearChat}
+        onCancel={() => setShowClearConfirm(false)}
+        confirmText="Xóa"
+        cancelText="Hủy"
+        isDangerous={true}
+      />
     </div>
   );
 };

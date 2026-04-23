@@ -36,15 +36,15 @@ export const useUserActions = () => {
     }
   };
 
-  const handleDeleteUser = async (id: string) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa?")) return;
-
+  const deleteUserById = async (id: string) => {
     try {
       await deleteUser(id);
       setUsers((prev) => prev.filter((u) => u._id !== id));
       toast.success("Đã xóa người dùng");
-    } catch {
+    } catch (error) {
+      console.error("Error deleting user:", error);
       toast.error("Lỗi khi xóa người dùng");
+      throw error;
     }
   };
 
@@ -66,7 +66,7 @@ export const useUserActions = () => {
   return {
     fetchUsers,
     handleUpdateUser,
-    handleDeleteUser,
+    deleteUserById,
     handleChangeStatus,
   };
 };

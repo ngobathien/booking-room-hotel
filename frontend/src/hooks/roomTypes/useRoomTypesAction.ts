@@ -37,13 +37,15 @@ export const useRoomTypesAction = () => {
   };
 
   const deleteRoomType = async (id: string) => {
-    const confirmDelete = window.confirm(
-      "Bạn có chắc chắn muốn xóa loại phòng này?",
-    );
-    if (!confirmDelete) return;
-    await deleteRoomTypeById(id);
-    toast.success("Xóa loại phòng thành công");
-    setRoomTypes((prev) => prev.filter((rt) => rt._id !== id));
+    try {
+      await deleteRoomTypeById(id);
+      toast.success("Xóa loại phòng thành công");
+      setRoomTypes((prev) => prev.filter((rt) => rt._id !== id));
+    } catch (error) {
+      console.error("Error deleting room type:", error);
+      toast.error("Lỗi khi xóa loại phòng");
+      throw error;
+    }
   };
 
   useEffect(() => {

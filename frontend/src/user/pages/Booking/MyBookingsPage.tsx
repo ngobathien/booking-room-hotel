@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   Clock,
 } from "lucide-react";
+import ConfirmModal from "../../../common/components/ConfirmModal";
 import { useBookingAction } from "../../../hooks/booking/useBookingAction";
 import { useBooking } from "../../../hooks/booking/useBooking";
 import {
@@ -22,6 +23,7 @@ const MyBookingsPage = () => {
   const { fetchMyBookings, cancelBookingAction } = useBookingAction();
 
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
   // useEffect(() => {
   //   fetchMyBookings();
@@ -121,14 +123,20 @@ const MyBookingsPage = () => {
   };
 
   const handleCancel = async (id: string) => {
-    const ok = window.confirm("Bạn có chắc muốn hủy booking này không?");
-    if (!ok) return;
+    setCancellingId(id);
+    setShowCancelConfirm(true);
+  };
+
+  const confirmCancel = async () => {
+    if (!cancellingId) return;
 
     try {
-      setCancellingId(id);
-      await cancelBookingAction(id);
+      await cancelBookingAction(cancellingId);
       await fetchMyBookings(); // refresh sau khi hủy
-    } finally {
+      setShowCancelConfirm(false);
+      setCancellingId(null);
+    } catch (error) {
+      console.error("Error cancelling booking:", error);
       setCancellingId(null);
     }
   };
@@ -316,6 +324,22 @@ const MyBookingsPage = () => {
           )}
         </div>
       </main>
+
+      {/* Cancel Booking Confirm Modal */}
+      <ConfirmModal
+        open={showCancelConfirm}
+        title="Hủy Booking"
+        message="Bạn có chắc chắn muốn hủy booking này không? Hành động này không thể hoàn tác."
+        onConfirm={confirmCancel}
+        onCancel={() => {
+          setShowCancelConfirm(false);
+          setCancellingId(null);
+        }}
+        confirmText="Hủy Booking"
+        cancelText="Thoát"
+        isDangerous={true}
+        isLoading={cancellingId !== null}
+      />
     </div>
   );
 };

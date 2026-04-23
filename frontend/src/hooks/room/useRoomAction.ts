@@ -95,16 +95,14 @@ const useRoomAction = () => {
   };
   // xóa một phòng
   const handleDeleteRoom = async (id: string) => {
-    const confirmDelete = window.confirm(
-      "Bạn có chắc chắn muốn xóa phòng này?",
-    );
-    if (!confirmDelete) return;
     try {
       await deleteRoomById(id);
       toast.success("Xóa phòng thành công");
       setRooms((prev) => prev.filter((rt) => rt._id !== id));
     } catch (error) {
       console.error("Xóa thất bại", error);
+      toast.error("Lỗi khi xóa phòng");
+      throw error;
     }
   };
 
