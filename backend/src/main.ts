@@ -23,11 +23,12 @@ async function bootstrap() {
   //   origin: 'http://localhost:5173',
   //   credentials: true,
   // });
+  console.log(process.env.URI_);
 
   const allowedOrigins = [
     'http://localhost:5173',
-    process.env.URL_CLIENT,
-  ].filter(Boolean);
+    'https://booking-room-hotel-murex.vercel.app',
+  ];
 
   app.enableCors({
     origin: allowedOrigins,
