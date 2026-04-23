@@ -17,7 +17,11 @@ async function bootstrap() {
     app.setGlobalPrefix(api_url || '/api/v1');
 
     app.useGlobalPipes(new ValidationPipe());
-    app.enableCors();
+    // app.enableCors();
+    app.enableCors({
+      origin: 'https://booking-room-hotel-murex.vercel.app',
+      credentials: true,
+    });
 
     await app.init();
   }

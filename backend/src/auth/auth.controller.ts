@@ -48,8 +48,13 @@ export class AuthController {
 
     res.cookie('refreshToken', data.refreshToken, {
       httpOnly: true,
-      secure: false, // true khi deploy https
-      sameSite: 'lax',
+      // ============== Local sẽ là: ==============
+      // secure: false
+      // sameSite: 'lax'
+      //  ============== Production sẽ là: ==============
+
+      secure: true, // true khi deploy https
+      sameSite: 'none', // 'lax' hoặc 'strict' nếu không phải cross-site
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
