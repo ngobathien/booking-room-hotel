@@ -8,7 +8,7 @@ import { User, UserDocument, UserStatus } from './schemas/user.schema';
 import { Model, Types } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { SupabaseService } from 'src/config/supabase.config';
+import { SupabaseService } from '../config/supabase.config';
 import { sanitizeFileName } from 'src/common/utils/sanitizeFileName.utils';
 
 @Injectable()
