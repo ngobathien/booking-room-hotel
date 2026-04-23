@@ -12,8 +12,8 @@ import * as crypto from 'crypto';
 import { ConfigService } from '@nestjs/config';
 import { Payment, PaymentDocument } from '../../schemas/payment.schema';
 import { MailService } from '../../../services/mail.service';
-import { PaymentStatus } from '../payments/enums/payment-status.enum';
-import { BookingStatus } from '../bookings/enums/booking-status.enum';
+import { PaymentStatus } from '../../../payments/enums/payment-status.enum';
+import { BookingStatus } from '../../../bookings/enums/booking-status.enum';
 
 @Injectable()
 export class VnpayService {
