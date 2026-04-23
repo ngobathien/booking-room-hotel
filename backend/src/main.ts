@@ -23,15 +23,28 @@ async function bootstrap() {
   //   origin: 'http://localhost:5173',
   //   credentials: true,
   // });
-  console.log(process.env.URI_);
-
-  const allowedOrigins = [
-    'http://localhost:5173',
-    'https://booking-room-hotel-murex.vercel.app',
-  ];
 
   app.enableCors({
-    origin: allowedOrigins,
+    origin: function (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ) {
+      const allowedOrigins = [
+        'http://localhost:5173',
+        'https://booking-room-hotel-murex.vercel.app',
+      ];
+
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.log('Blocked CORS:', origin);
+      return callback(new Error('Not allowed by CORS'));
+    },
     credentials: true,
   });
   // await app.listen(port, () => {
