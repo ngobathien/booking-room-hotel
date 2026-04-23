@@ -18,9 +18,19 @@ async function bootstrap() {
   app.setGlobalPrefix(api_url || '/api/v1');
 
   app.useGlobalPipes(new ValidationPipe());
-  // app.enableCors();
+
+  // app.enableCors({
+  //   origin: 'http://localhost:5173',
+  //   credentials: true,
+  // });
+
+  const allowedOrigins = [
+    'http://localhost:5173',
+    process.env.URL_CLIENT,
+  ].filter(Boolean);
+
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: allowedOrigins,
     credentials: true,
   });
   // await app.listen(port, () => {
