@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import { CheckCircle2, ArrowRight, Home, User, Download } from "lucide-react";
+import { ArrowRight, CheckCircle2, Home, User } from "lucide-react";
 
 import { getBookingById } from "../../../common/services/bookingService";
 import { useBooking } from "../../../hooks/booking/useBooking";

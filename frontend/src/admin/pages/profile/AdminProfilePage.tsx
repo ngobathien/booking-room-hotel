@@ -37,7 +37,9 @@ const AdminProfilePage = () => {
         {/* Cột trái: Sidebar Profile */}
         <AdminSidebarProfile
           profileData={profileData}
-          setProfileData={setProfileData}
+          setProfileData={
+            setProfileData as React.Dispatch<React.SetStateAction<User>>
+          }
           logout={logout}
         />
 
@@ -45,7 +47,9 @@ const AdminProfilePage = () => {
         <div className="lg:col-span-2 space-y-8">
           <ProfileInfoForm
             profileData={profileData}
-            setProfileData={setProfileData}
+            setProfileData={
+              setProfileData as React.Dispatch<React.SetStateAction<User>>
+            }
           />
           <ChangePasswordForm />
         </div>

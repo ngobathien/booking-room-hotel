@@ -202,15 +202,17 @@ const NotificationsCard: React.FC = () => {
         )}
       </div>
 
-      <div className="mt-3 text-center">
-        <button
-          onClick={handleLoadMore}
-          disabled={loading}
-          className="text-sm px-3 py-1 bg-slate-100 rounded-full border"
-        >
-          {loading ? "Đang tải..." : "Xem thêm"}
-        </button>
-      </div>
+      {hasMore && (
+        <div className="mt-3 text-center">
+          <button
+            onClick={handleLoadMore}
+            disabled={loading}
+            className="text-sm px-3 py-1 bg-slate-100 rounded-full border"
+          >
+            {loading ? "Đang tải..." : "Xem thêm"}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

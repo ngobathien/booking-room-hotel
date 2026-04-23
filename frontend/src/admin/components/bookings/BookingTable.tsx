@@ -18,7 +18,6 @@ const STATUS_COLORS: Record<string, string> = {
 export default function BookingTable({
   bookings,
   onRowClick,
-  onEdit,
   onDelete,
 }: Props) {
   if (bookings.length === 0)

@@ -4,8 +4,10 @@ import { cn } from "../../../lib/utils";
 type StatCardProps = {
   label?: string;
   value?: number | string;
-  icon?: React.ElementType; // nhận component icon
+  icon?: React.ElementType;
   color?: "blue" | "emerald" | "amber" | "rose" | "slate";
+  iconBgClass?: string;
+  iconColorClass?: string;
   loading?: boolean;
 };
 
@@ -14,6 +16,8 @@ export const StatCard = ({
   value = 0,
   icon: Icon,
   color = "blue",
+  iconBgClass,
+  iconColorClass,
   loading = false,
 }: StatCardProps) => {
   const colors: Record<string, string> = {
@@ -30,15 +34,14 @@ export const StatCard = ({
         <div
           className={cn(
             "w-10 h-10 rounded-xl flex items-center justify-center mb-3",
-            colors[color],
+            iconBgClass || colors[color],
             loading ? "animate-pulse" : "",
           )}
         >
-          {!loading && <Icon className="w-5 h-5" />}
+          {!loading && <Icon className={cn("w-5 h-5", iconColorClass)} />}
         </div>
       )}
 
-      {/* Label */}
       <p
         className={cn(
           "text-slate-500 text-xs font-semibold uppercase tracking-wider",
@@ -48,7 +51,6 @@ export const StatCard = ({
         {!loading && label}
       </p>
 
-      {/* Value */}
       <p
         className={cn(
           "text-xl font-bold text-slate-900 mt-1",

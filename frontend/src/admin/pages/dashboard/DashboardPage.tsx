@@ -1,12 +1,10 @@
-import React from "react";
-
 import { useDashboard } from "../../../hooks/dashboard/useDashboard";
 import { BookingChart } from "../../components/charts/BookingChart";
 import { RevenueChart } from "../../components/charts/RevenueChart";
 import { RoomStatusChart } from "../../components/charts/RoomStatusChart";
 import NotificationsCard from "../../components/NotificationsCard";
 
-import { Hotel, CalendarCheck, DollarSign, Users, Filter } from "lucide-react";
+import { CalendarCheck, DollarSign, Filter, Hotel, Users } from "lucide-react";
 
 const DashboardPage = () => {
   const {
@@ -67,10 +65,7 @@ const DashboardPage = () => {
               return;
             }
 
-            refetch({
-              fromDate,
-              toDate,
-            });
+            refetch();
           }}
           className="bg-blue-500 hover:bg-blue-600 transition text-white px-4 py-2 rounded-lg"
         >

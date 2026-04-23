@@ -18,7 +18,7 @@ const RoomLayout = () => {
   const [viewMode, setViewMode] = React.useState<"grid" | "list">("list");
 
   // Filter UI state (chỉ UI, logic filter xử lý ở context/backend)
-  const [priceRange, setPriceRange] = React.useState(
+  const [_priceRange, setPriceRange] = React.useState(
     Number(searchParams.get("maxPrice")) || 3000000,
   );
   const [capacity, setCapacity] = React.useState(

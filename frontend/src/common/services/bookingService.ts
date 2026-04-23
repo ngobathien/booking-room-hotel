@@ -4,7 +4,6 @@ import type {
   BookingStats,
   CheckRoomAvailabilityParams,
   CreateBookingPayload,
-  GetAllBookingsResponse,
 } from "../../types/booking.types";
 import apiClient from "./apiClient";
 
@@ -30,7 +29,7 @@ export const createBooking = async (
 
 export const getAllBookings = async (
   params?: BookingQueryPaymentParams,
-): Promise<GetAllBookingsResponse> => {
+): Promise<Booking[]> => {
   const res = await apiClient.get("/bookings", { params });
   return res.data.data;
 };

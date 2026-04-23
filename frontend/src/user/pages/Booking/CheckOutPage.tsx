@@ -149,7 +149,7 @@ export const CheckoutPage = () => {
 
           {step === 2 && (
             <ConfirmationStep
-              onNext={nextStep}
+              // onNext={nextStep}
               onBack={prevStep}
               room={currentRoom}
               checkInDate={checkInDate}

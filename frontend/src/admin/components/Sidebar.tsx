@@ -14,7 +14,7 @@ interface SidebarProps {
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
-  const { hotel, loading } = useHotel();
+  const { hotel } = useHotel();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const navItems = [

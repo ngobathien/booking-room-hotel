@@ -71,7 +71,15 @@ const HotelSettings = () => {
         await updateHotel(info._id, info);
         toast.success("✓ Cập nhật thông tin khách sạn thành công");
       } else {
-        await createHotel(info);
+        await createHotel({
+          name: info.name!,
+          phone: info.phone!,
+          email: info.email!,
+          address: info.address || "",
+          description: info.description || "",
+          policy: info.policy || "",
+          images: info.images || [],
+        });
         toast.success("✓ Tạo khách sạn thành công");
       }
       setHasChanges(false);
@@ -100,11 +108,11 @@ const HotelSettings = () => {
     setConfirmAction(null);
   };
 
-  const handleDeleteImage = (index: number) => {
-    if (!info) return;
-    setSelectedImageIndex(index);
-    setConfirmAction("delete-image");
-  };
+  // const handleDeleteImage = (index: number) => {
+  //   if (!info) return;
+  //   setSelectedImageIndex(index);
+  //   setConfirmAction("delete-image");
+  // };
 
   const confirmDeleteImage = () => {
     if (selectedImageIndex === null || !info) return;
@@ -125,13 +133,13 @@ const HotelSettings = () => {
     }
   };
 
-  const handleAddImage = () => {
-    if (!info) return;
-    const url = prompt("Nhập URL hình ảnh:");
-    if (!url?.trim()) return;
-    setInfo({ ...info, images: [...(info.images || []), url] });
-    setHasChanges(true);
-  };
+  // const handleAddImage = () => {
+  //   if (!info) return;
+  //   const url = prompt("Nhập URL hình ảnh:");
+  //   if (!url?.trim()) return;
+  //   setInfo({ ...info, images: [...(info.images || []), url] });
+  //   setHasChanges(true);
+  // };
 
   const handleFieldChange = <K extends keyof Hotel>(
     field: K,

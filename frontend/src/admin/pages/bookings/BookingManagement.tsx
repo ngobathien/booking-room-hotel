@@ -1,11 +1,10 @@
+import { CheckCircle, Clock, List, Star, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBooking } from "../../../hooks/booking/useBooking";
 import { useBookingAction } from "../../../hooks/booking/useBookingAction";
-import BookingTable from "../../components/bookings/BookingTable";
-import BookingStats from "../../components/bookings/BookingStats";
 import { BOOKING_STATUS } from "../../../types/booking.types";
-import { CheckCircle, Clock, List, Star, XCircle } from "lucide-react";
+import BookingTable from "../../components/bookings/BookingTable";
 import { StatCard } from "../../components/commons/StatCard";
 
 export default function BookingManagement() {

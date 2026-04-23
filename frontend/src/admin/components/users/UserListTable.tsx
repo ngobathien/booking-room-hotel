@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 
 import ConfirmModal from "../../../common/components/ConfirmModal";
 import { ROLES } from "../../../common/constants/roleConstant";
-import { useUserActions } from "../../../hooks/user/useUserActions";
 import { useUsers } from "../../../hooks/user/useUser";
+import { useUserActions } from "../../../hooks/user/useUserActions";
 import {
   ROLE_LABEL,
-  STATUS_USER_LABEL,
   STATUS_USER_STYLE,
   type User,
   type UserRole,

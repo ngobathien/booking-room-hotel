@@ -167,7 +167,7 @@ const RoomDetailPage = () => {
                       className="flex items-center gap-4 group p-2 rounded-2xl hover:bg-slate-50"
                     >
                       <div className="w-11 h-11 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-blue-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-200 transition-all">
-                        {/* {renderIcon(item.icon)}  */}
+                        {renderIcon(item.icon)}
                       </div>
 
                       <span className="font-bold text-slate-700 text-sm italic group-hover:text-blue-600">

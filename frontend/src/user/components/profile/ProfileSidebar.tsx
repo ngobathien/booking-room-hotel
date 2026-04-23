@@ -1,7 +1,7 @@
-import { Headset, History, LogOut, Shield, User } from "lucide-react";
+import { LogOut, Shield, User } from "lucide-react";
 import React from "react";
-import { cn } from "../../../lib/utils";
 import { useAuth } from "../../../hooks/auth/useAuth";
+import { cn } from "../../../lib/utils";
 
 type UserRole = "ADMIN" | "USER";
 

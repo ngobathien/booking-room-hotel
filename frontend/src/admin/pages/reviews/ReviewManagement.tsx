@@ -1,4 +1,4 @@
-import { Edit2, Star, Trash2, User } from "lucide-react";
+import { Star, Trash2, User } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { useNavigate } from "react-router";

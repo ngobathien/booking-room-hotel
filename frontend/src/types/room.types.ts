@@ -66,10 +66,10 @@ export interface RoomContextType {
   filterParams: FilterParams;
 
   // thêm pagination
-  page: number;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
-  limit: number;
-  total: number;
+  // page: number;
+  // setPage: React.Dispatch<React.SetStateAction<number>>;
+  // limit: number;
+  // total: number;
 }
 
 // dùng cho search phòng

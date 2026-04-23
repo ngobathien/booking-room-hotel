@@ -1,11 +1,9 @@
 import { Hotel, Menu, User, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import LoadingSkeleton from "../../../common/LoadingSkeleton";
 import { useAuth } from "../../../hooks/auth/useAuth";
-import type { Hotel as Hoteltype } from "../../../types/hotel.types";
-import { getHotelInfo } from "../../../common/services/hotelService";
 import { useHotel } from "../../../hooks/hotel/useHotel";
 
 interface NavLink {
@@ -75,7 +73,7 @@ const Navbar = () => {
                 ))}
 
             {/* Greeting & Logout */}
-            {/* {isLoggedIn && (
+            {isLoggedIn && (
               <>
                 <button
                   onClick={handleLogout}
@@ -84,7 +82,7 @@ const Navbar = () => {
                   Đăng xuất
                 </button>
               </>
-            )} */}
+            )}
 
             {/* Cart Button */}
 

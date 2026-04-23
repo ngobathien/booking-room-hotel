@@ -32,13 +32,13 @@ const RoomListTable: React.FC<RoomTableProps> = ({ rooms, onDelete }) => {
           </span>
         );
 
-      case RoomStatus.BOOKED:
-        return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-50 text-primary-600 text-xs font-bold">
-            <span className="size-1.5 rounded-full bg-primary-600"></span>
-            Đã được đặt
-          </span>
-        );
+      // case RoomStatus.BOOKED:
+      //   return (
+      //     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-50 text-primary-600 text-xs font-bold">
+      //       <span className="size-1.5 rounded-full bg-primary-600"></span>
+      //       Đã được đặt
+      //     </span>
+      //   );
 
       case RoomStatus.MAINTENANCE:
         return (

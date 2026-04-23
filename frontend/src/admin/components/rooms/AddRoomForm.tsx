@@ -24,7 +24,7 @@ const AddRoomForm: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const { hotel, loading: hotelLoading } = useHotel();
+  const { hotel, loading: _hotelLoading } = useHotel();
 
   const [formData, setFormData] = useState<RoomFormData>({
     roomNumber: "",

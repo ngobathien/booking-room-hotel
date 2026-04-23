@@ -1,17 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
-import axios from "axios";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  MessageSquare,
-  X,
-  Send,
   Bot,
-  User,
   Loader2,
-  Sparkles,
+  MessageSquare,
   Minus,
   RefreshCw,
+  Send,
+  Sparkles,
+  User,
+  X,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
 import ConfirmModal from "../../../common/components/ConfirmModal";
 import apiClient from "../../../common/services/apiClient";
 
