@@ -3,21 +3,19 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateRoomDto } from './dto/create-room.dto';
-import { UpdateRoomDto } from './dto/update-room.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Room, RoomDocument } from './schemas/room.schema';
-import { isValidObjectId, Model, Types } from 'mongoose';
-import { SupabaseService } from '../config/supabase.config';
-import { sanitizeFileName } from '../common/utils/sanitizeFileName.utils';
+import { isValidObjectId, Model, PipelineStage, Types } from 'mongoose';
 import { Booking, BookingDocument } from '../bookings/schemas/booking.schema';
-import { SearchRoomDto } from './dto/search-room.dto';
+import { sanitizeFileName } from '../common/utils/sanitizeFileName.utils';
+import { SupabaseService } from '../config/supabase.config';
+import { RoomAmenitiesService } from '../room-amenities/room-amenities.service';
+import { CreateRoomDto } from './dto/create-room.dto';
 import { FindRoomsDto } from './dto/find-rooms.dto';
-import { RoomAmenitiesService } from 'src/room-amenities/room-amenities.service';
-import { RoomLean } from './interfaces/room-populate.type';
+import { SearchRoomDto } from './dto/search-room.dto';
+import { UpdateRoomDto } from './dto/update-room.dto';
 import { RoomSort } from './enums/room-sort.enum';
 import { RoomStatus } from './enums/room-status.enum';
-import { PipelineStage } from 'mongoose';
+import { Room, RoomDocument } from './schemas/room.schema';
 
 type RoomMatchType = {
   'roomType.capacity'?: number;

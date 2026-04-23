@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Booking, BookingDocument } from 'src/bookings/schemas/booking.schema';
-import { Payment, PaymentDocument } from 'src/payments/schemas/payment.schema';
-import { Review, ReviewDocument } from 'src/reviews/schemas/review.schema';
+import { Booking, BookingDocument } from '../bookings/schemas/booking.schema';
+import { Payment, PaymentDocument } from '../payments/schemas/payment.schema';
+import { Review, ReviewDocument } from '../reviews/schemas/review.schema';
 import {
   RoomType,
   RoomTypeDocument,
-} from 'src/room-types/schemas/room-type.schema';
-import { Room, RoomDocument } from 'src/rooms/schemas/room.schema';
-import { User, UserDocument } from 'src/users/schemas/user.schema';
+} from '../room-types/schemas/room-type.schema';
+import { Room, RoomDocument } from '../rooms/schemas/room.schema';
+import { User, UserDocument } from '../users/schemas/user.schema';
 
 @Injectable()
 export class DashboardsService {

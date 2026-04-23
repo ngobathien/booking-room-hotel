@@ -1,8 +1,8 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { DashboardsService } from './dashboards.service';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { UserRole } from 'src/users/schemas/user.schema';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../users/schemas/user.schema';
+import { AuthGuard } from '../auth/guards/auth.guard';
 
 @Controller('dashboards')
 @UseGuards(AuthGuard)

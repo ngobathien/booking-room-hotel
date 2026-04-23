@@ -6,7 +6,7 @@ import { Payment, PaymentSchema } from './schemas/payment.schema';
 import { Booking, BookingSchema } from '../bookings/schemas/booking.schema';
 import { VnpayService } from './gateways/vnpay/vnpay.service';
 import { MailModule } from '../services/mail.module';
-import { UsersModule } from 'src/users/users.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [

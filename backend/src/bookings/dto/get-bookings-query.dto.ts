@@ -1,4 +1,3 @@
-// src/bookings/dto/get-bookings-query.dto.ts
 import { IsOptional, IsInt, Min, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
 import { BookingStatus } from '../enums/booking-status.enum';

@@ -13,7 +13,7 @@ import { sanitizeFileName } from '../common/utils/sanitizeFileName.utils';
 import { Booking, BookingDocument } from '../bookings/schemas/booking.schema';
 import { SearchRoomDto } from './dto/search-room.dto';
 import { FindRoomsDto } from './dto/find-rooms.dto';
-import { RoomAmenitiesService } from 'src/room-amenities/room-amenities.service';
+import { RoomAmenitiesService } from '../room-amenities/room-amenities.service';
 
 @Injectable()
 export class RoomsService {

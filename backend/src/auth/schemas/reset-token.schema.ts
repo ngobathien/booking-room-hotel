@@ -1,4 +1,3 @@
-// backend/src/auth/schemas/refresh-token.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 

@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenAI } from '@google/genai';
-import { Room, RoomDocument } from 'src/rooms/schemas/room.schema';
-import { RoomType } from 'src/room-types/schemas/room-type.schema';
+import { Room, RoomDocument } from '../rooms/schemas/room.schema';
+import { RoomType } from '../room-types/schemas/room-type.schema';
 
 @Injectable()
 export class AiChatbotService {

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { generateBookingCode } from 'src/common/utils/booking/generate-booking-code';
+import { generateBookingCode } from '../common/utils/booking/generate-booking-code';
 import {
   RoomType,
   RoomTypeDocument,
@@ -18,9 +18,9 @@ import { BookingStatus } from './enums/booking-status.enum';
 import { BookingStayStatus } from './enums/booking-stay-status.enum';
 import { Booking, BookingDocument } from './schemas/booking.schema';
 import { GetBookingsQueryDto } from './dto/get-bookings-query.dto';
-import { NotificationsGateway } from 'src/notifications/notifications.gateway';
-import { NotificationsService } from 'src/notifications/notifications.service';
-import { RoomStatus } from 'src/rooms/enums/room-status.enum';
+import { NotificationsGateway } from '../notifications/notifications.gateway';
+import { NotificationsService } from '../notifications/notifications.service';
+import { RoomStatus } from '../rooms/enums/room-status.enum';
 
 interface BookingStatsAgg {
   _id: BookingStatus;

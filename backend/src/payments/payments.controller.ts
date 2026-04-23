@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Param,
-  Patch,
   Post,
   Query,
   Req,
@@ -11,15 +10,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { UserRole } from '../users/schemas/user.schema';
+import { AdminQueryPaymentDto } from './dto/admin-query-payment.dto';
 import { CreatePaymentDto } from './dto/create-payment.dto';
+import { RevenueByMethodDto } from './dto/revenue-by-method.dto';
 import { VnpayService } from './gateways/vnpay/vnpay.service';
 import { PaymentsService } from './payments.service';
-import { AdminQueryPaymentDto } from './dto/admin-query-payment.dto';
-import { PaymentStatus } from './enums/payment-status.enum';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { UserRole } from 'src/users/schemas/user.schema';
-import { RevenueByMethodDto } from './dto/revenue-by-method.dto';
 
 @Controller('payments')
 export class PaymentsController {

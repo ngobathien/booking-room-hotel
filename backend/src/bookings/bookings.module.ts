@@ -16,7 +16,7 @@ import { User, UserSchema } from '../users/schemas/user.schema';
 import {
   BookingItem,
   BookingItemSchema,
-} from 'src/booking-items/schemas/booking-item.schema';
+} from '../booking-items/schemas/booking-item.schema';
 
 @Module({
   imports: [

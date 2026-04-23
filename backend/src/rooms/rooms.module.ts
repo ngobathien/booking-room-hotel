@@ -8,7 +8,7 @@ import { Room, RoomSchema } from './schemas/room.schema';
 import { RoomTypesModule } from '../room-types/room-types.module';
 import { UsersModule } from '../users/users.module';
 
-import { RoomAmenitiesModule } from 'src/room-amenities/room-amenities.module';
+import { RoomAmenitiesModule } from '../room-amenities/room-amenities.module';
 import { BookingsModule } from '../bookings/bookings.module';
 import { Booking, BookingSchema } from '../bookings/schemas/booking.schema';
 import { SupabaseService } from '../config/supabase.config';

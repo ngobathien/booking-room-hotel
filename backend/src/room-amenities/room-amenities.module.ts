@@ -3,8 +3,8 @@ import { RoomAmenitiesService } from './room-amenities.service';
 import { RoomAmenitiesController } from './room-amenities.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RoomAmenity, RoomAmenitySchema } from './schemas/room-amenity.schema';
-import { Amenity, AmenitySchema } from 'src/amenities/schemas/amenity.schema';
-import { Room, RoomSchema } from 'src/rooms/schemas/room.schema';
+import { Amenity, AmenitySchema } from '../amenities/schemas/amenity.schema';
+import { Room, RoomSchema } from '../rooms/schemas/room.schema';
 
 @Module({
   imports: [

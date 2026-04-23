@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
-// backend/src/services/mail.service.ts
+
 @Injectable()
 export class MailService {
   // dịch vụ gửi mail

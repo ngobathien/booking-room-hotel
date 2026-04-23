@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Review, ReviewDocument } from './schemas/review.schema';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { UserRole } from 'src/users/schemas/user.schema';
+import { UserRole } from '../users/schemas/user.schema';
 // Define type cho kết quả thống kê
 interface ReviewStats {
   _id?: Types.ObjectId;
