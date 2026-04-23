@@ -9,7 +9,7 @@ import { Model, Types } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SupabaseService } from '../config/supabase.config';
-import { sanitizeFileName } from 'src/common/utils/sanitizeFileName.utils';
+import { sanitizeFileName } from '../common/utils/sanitizeFileName.utils';
 
 @Injectable()
 export class UsersService {
