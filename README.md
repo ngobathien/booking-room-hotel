@@ -293,11 +293,3 @@ The backend provides REST APIs for:
 API testing was performed using:
 
 - Postman
-
-Tested:
-
-- Authentication APIs
-- Room APIs
-- Booking APIs
-- Payment APIs
-- Chatbot APIs
